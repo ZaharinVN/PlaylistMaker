@@ -8,4 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blue">#1E90FF</color>
+    <dimen name="main_txt_size">22sp</dimen>
+    <dimen name="marginLeft">16dp</dimen>
+    <dimen name="marginRight">16dp</dimen>
+    <dimen name="iconPadding">16dp</dimen>
+    <dimen name="cornerRadius">16dp</dimen>
+    <dimen name="settings_txt_size">16sp</dimen>
+    <dimen name="settings_layout_height_size">61dp</dimen>
 </resources>
