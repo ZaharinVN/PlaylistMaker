@@ -20,7 +20,7 @@
         android:textStyle="bold"/>
 
     <Button
-        android:id="@+id/btn_Search"
+        android:id="@+id/btn_search"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_weight="1"
