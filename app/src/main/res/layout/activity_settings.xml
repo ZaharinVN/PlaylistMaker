@@ -6,118 +6,41 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="@dimen/marginRight"
-        android:backgroundTint="@color/white"
-        android:text="@string/settings"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:icon="@drawable/ic_arrow_back"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/iconPadding"
-        app:iconTint="@color/black" />
+    <Button style="@style/SettingsBackBtnStyle"
+        android:id="@+id/btn_back"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_layout_height_size"
-        android:layout_marginLeft="@dimen/marginLeft"
-        android:layout_marginRight="@dimen/marginRight"
-        android:orientation="horizontal">
-
+    <LinearLayout style="@style/SettingsLayoutStyle">
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/dark_theme"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_txt_size"
-            android:textStyle="bold" />
-
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end" />
-
+            style="@style/SettingsTextStyle"
+            android:text="@string/dark_theme" />
+        <Switch style="@style/SettingsImageStyle" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_layout_height_size"
-        android:layout_marginLeft="@dimen/marginLeft"
-        android:layout_marginRight="@dimen/marginRight"
-        android:orientation="horizontal">
-
+    <LinearLayout style="@style/SettingsLayoutStyle">
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/share_app"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_txt_size"
-            android:layout_weight="1"
-            android:textStyle="bold" />
-
+            style="@style/SettingsTextStyle"
+            android:text="@string/share_app" />
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            style="@style/SettingsImageStyle"
             android:src="@drawable/ic_share_app"/>
-
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_layout_height_size"
-        android:layout_marginLeft="@dimen/marginLeft"
-        android:layout_marginRight="@dimen/marginRight"
-        android:orientation="horizontal">
-
+    <LinearLayout style="@style/SettingsLayoutStyle">
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/contact_support"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_txt_size"
-            android:layout_weight="1"
-            android:textStyle="bold"
-            app:iconGravity="textEnd" />
-
+            style="@style/SettingsTextStyle"
+            android:text="@string/contact_support"/>
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_contact_support"
-            android:layout_gravity="end"
-            />
-
+            style="@style/SettingsImageStyle"
+            android:src="@drawable/ic_contact_support"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_layout_height_size"
-        android:layout_marginLeft="@dimen/marginLeft"
-        android:layout_marginRight="@dimen/marginRight"
-        android:orientation="horizontal">
-
+    <LinearLayout style="@style/SettingsLayoutStyle">
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/terms_of_use"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_txt_size"
-            android:layout_weight="1"
-            android:textStyle="bold"/>
-
+            style="@style/SettingsTextStyle"
+            android:text="@string/terms_of_use" />
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:src="@drawable/ic_terms_of_use" />
-
+            style="@style/SettingsImageStyle"
+            android:src="@drawable/ic_terms_of_use"/>
     </LinearLayout>
 
 </LinearLayout>
