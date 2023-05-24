@@ -1,0 +1,47 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_settings"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button style="@style/SettingsBackBtnStyle"
+        android:id="@+id/btn_back"/>
+
+    <LinearLayout style="@style/SettingsLayoutStyle">
+        <TextView
+            style="@style/SettingsTextStyle"
+            android:text="@string/dark_theme" />
+        <Switch style="@style/SettingsImageStyle" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/SettingsLayoutStyle">
+        <TextView
+            style="@style/SettingsTextStyle"
+            android:text="@string/share_app" />
+        <ImageView
+            style="@style/SettingsImageStyle"
+            android:src="@drawable/ic_share_app"/>
+    </LinearLayout>
+
+    <LinearLayout style="@style/SettingsLayoutStyle">
+        <TextView
+            style="@style/SettingsTextStyle"
+            android:text="@string/contact_support"/>
+        <ImageView
+            style="@style/SettingsImageStyle"
+            android:src="@drawable/ic_contact_support"/>
+    </LinearLayout>
+
+    <LinearLayout style="@style/SettingsLayoutStyle">
+        <TextView
+            style="@style/SettingsTextStyle"
+            android:text="@string/terms_of_use" />
+        <ImageView
+            style="@style/SettingsImageStyle"
+            android:src="@drawable/ic_terms_of_use"/>
+    </LinearLayout>
+
+</LinearLayout>
+
