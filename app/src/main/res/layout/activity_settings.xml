@@ -7,16 +7,18 @@
     android:orientation="vertical">
 
     <Button style="@style/SettingsBackBtnStyle"
-        android:id="@+id/btn_back"/>
+        android:id="@+id/btnSettingsBack"/>
 
-    <LinearLayout style="@style/SettingsLayoutStyle">
+    <LinearLayout style="@style/SettingsLayoutStyle"
+        android:id="@+id/btn_darkMode">
         <TextView
             style="@style/SettingsTextStyle"
             android:text="@string/dark_theme" />
         <Switch style="@style/SettingsImageStyle" />
     </LinearLayout>
 
-    <LinearLayout style="@style/SettingsLayoutStyle">
+    <LinearLayout style="@style/SettingsLayoutStyle"
+        android:onClick="onShareClick">
         <TextView
             style="@style/SettingsTextStyle"
             android:text="@string/share_app" />
@@ -25,7 +27,8 @@
             android:src="@drawable/ic_share_app"/>
     </LinearLayout>
 
-    <LinearLayout style="@style/SettingsLayoutStyle">
+    <LinearLayout style="@style/SettingsLayoutStyle"
+        android:onClick="onSupportClick">
         <TextView
             style="@style/SettingsTextStyle"
             android:text="@string/contact_support"/>
@@ -34,7 +37,8 @@
             android:src="@drawable/ic_contact_support"/>
     </LinearLayout>
 
-    <LinearLayout style="@style/SettingsLayoutStyle">
+    <LinearLayout style="@style/SettingsLayoutStyle"
+        android:onClick="onAgreementClick">
         <TextView
             style="@style/SettingsTextStyle"
             android:text="@string/terms_of_use" />
