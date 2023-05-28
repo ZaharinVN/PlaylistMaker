@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="MainTitleText">
         <item name="android:layout_width">150dp</item>
         <item name="android:layout_height">26dp</item>
@@ -8,7 +9,7 @@
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:gravity">top</item>
         <item name="android:text">@string/title_main</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textFontWeight">500</item>
         <item name="android:textSize">@dimen/main_txt_size</item>
         <item name="android:textStyle">bold</item>
@@ -22,15 +23,15 @@
         <item name="android:layout_marginRight">@dimen/marginRight</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
         <item name="android:gravity">center</item>
-        <item name="android:backgroundTint">@color/black</item>
+        <item name="android:backgroundTint">@color/white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textFontWeight">500</item>
         <item name="android:textSize">@dimen/main_txt_size</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/black</item>
         <item name="iconGravity">textStart</item>
-        <item name="iconTint">@color/white</item>
+        <item name="iconTint">@color/black</item>
         <item name="iconPadding">@dimen/iconPadding</item>
         <item name="cornerRadius">@dimen/cornerRadius</item>/>
     </style>
@@ -77,6 +78,14 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">end</item>
+    </style>
+    <style name="EditTextRounded">
+        <item name="android:background">@drawable/edit_text_rounded_bg</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:textColorHint">@color/gray2</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
 </resources>
