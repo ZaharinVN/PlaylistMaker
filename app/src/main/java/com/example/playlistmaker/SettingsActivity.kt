@@ -16,33 +16,31 @@ class SettingsActivity : AppCompatActivity() {
 
         val backButton = findViewById<Button>(R.id.btnSettingsBack)
         backButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
             finish()
         }
     }
     fun onShareClick(view: View?) {
-        val share_url = getString(R.string.share_url)
+        val shareUrl = getString(R.string.shareUrl)
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_TEXT, share_url)
-        startActivity(Intent.createChooser(intent, "Поделиться приложением"))
+        intent.putExtra(Intent.EXTRA_TEXT, shareUrl)
+        startActivity(Intent.createChooser(intent, "@string/shareApp"))
     }
     fun onSupportClick(view: View?) {
         val intent = Intent(Intent.ACTION_SENDTO)
-        intent.data = Uri.parse("mailto:vitalikz85@yandex.ru")
+        intent.data = Uri.parse("@string/sendTo")
         intent.putExtra(
             Intent.EXTRA_SUBJECT,
-            "Сообщение разработчикам и разработчицам приложения Playlist Maker")
+            "@string/sendHeader")
         intent.putExtra(
             Intent.EXTRA_TEXT,
-            "Спасибо разработчикам и разработчицам за крутое приложение!")
-        startActivity(Intent.createChooser(intent, "Send email"))
+            "@string/sendText")
+        startActivity(Intent.createChooser(intent, "@string/sendTitle"))
     }
     fun onAgreementClick(view: View?) {
-        val agreement_url = getString(R.string.agreement_url)
+        val agreementUrl = getString(R.string.agreementUrl)
         val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(agreement_url)
+        intent.data = Uri.parse(agreementUrl)
         startActivity(intent)
     }
 }

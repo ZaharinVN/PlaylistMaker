@@ -11,20 +11,20 @@
         android:id="@+id/title"
         style="@style/MainTitleText"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSearch"
         style="@style/MainButtonStyle"
         android:text="@string/search"
         app:icon="@drawable/ic_search"
         android:layout_marginTop="16dp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLibrary"
         style="@style/MainButtonStyle"
         android:text="@string/library"
         app:icon="@drawable/ic_library" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSettings"
         style="@style/MainButtonStyle"
         android:text="@string/settings"

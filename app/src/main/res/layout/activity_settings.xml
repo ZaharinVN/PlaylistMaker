@@ -6,42 +6,49 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button style="@style/SettingsBackBtnStyle"
-        android:id="@+id/btnSettingsBack"/>
+    <Button
+        style="@style/SettingsBackBtnStyle"
+        android:id="@+id/btnSettingsBack"
+        android:background="@null"
+        android:outlineProvider="none"/>
 
-    <LinearLayout style="@style/SettingsLayoutStyle"
+    <LinearLayout
+        style="@style/SettingsLayoutStyle"
         android:id="@+id/btn_darkMode">
         <TextView
             style="@style/SettingsTextStyle"
-            android:text="@string/dark_theme" />
+            android:text="@string/darkTheme" />
         <Switch style="@style/SettingsImageStyle" />
     </LinearLayout>
 
-    <LinearLayout style="@style/SettingsLayoutStyle"
+    <LinearLayout
+        style="@style/SettingsLayoutStyle"
         android:onClick="onShareClick">
         <TextView
             style="@style/SettingsTextStyle"
-            android:text="@string/share_app" />
+            android:text="@string/shareApp" />
         <ImageView
             style="@style/SettingsImageStyle"
             android:src="@drawable/ic_share_app"/>
     </LinearLayout>
 
-    <LinearLayout style="@style/SettingsLayoutStyle"
+    <LinearLayout
+        style="@style/SettingsLayoutStyle"
         android:onClick="onSupportClick">
         <TextView
             style="@style/SettingsTextStyle"
-            android:text="@string/contact_support"/>
+            android:text="@string/contactSupport"/>
         <ImageView
             style="@style/SettingsImageStyle"
             android:src="@drawable/ic_contact_support"/>
     </LinearLayout>
 
-    <LinearLayout style="@style/SettingsLayoutStyle"
+    <LinearLayout
+        style="@style/SettingsLayoutStyle"
         android:onClick="onAgreementClick">
         <TextView
             style="@style/SettingsTextStyle"
-            android:text="@string/terms_of_use" />
+            android:text="@string/termsOfUse"/>
         <ImageView
             style="@style/SettingsImageStyle"
             android:src="@drawable/ic_terms_of_use"/>
