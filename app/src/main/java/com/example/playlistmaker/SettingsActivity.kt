@@ -28,15 +28,16 @@ class SettingsActivity : AppCompatActivity() {
     }
     fun onSupportClick(view: View?) {
         val intent = Intent(Intent.ACTION_SENDTO)
-        intent.data = Uri.parse("@string/sendTo")
+        intent.data = Uri.parse(getString(R.string.sendTo))
         intent.putExtra(
             Intent.EXTRA_SUBJECT,
-            "@string/sendHeader")
+            getString(R.string.sendHeader))
         intent.putExtra(
             Intent.EXTRA_TEXT,
-            "@string/sendText")
-        startActivity(Intent.createChooser(intent, "@string/sendTitle"))
+            getString(R.string.sendText))
+        startActivity(Intent.createChooser(intent, getString(R.string.sendTitle)))
     }
+
     fun onAgreementClick(view: View?) {
         val agreementUrl = getString(R.string.agreementUrl)
         val intent = Intent(Intent.ACTION_VIEW)
