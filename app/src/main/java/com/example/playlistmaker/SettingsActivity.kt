@@ -28,13 +28,7 @@ class SettingsActivity : AppCompatActivity() {
     }
     fun onSupportClick(view: View?) {
         val intent = Intent(Intent.ACTION_SENDTO)
-        intent.data = Uri.parse(getString(R.string.sendTo))
-        intent.putExtra(
-            Intent.EXTRA_SUBJECT,
-            getString(R.string.sendHeader))
-        intent.putExtra(
-            Intent.EXTRA_TEXT,
-            getString(R.string.sendText))
+        intent.data = Uri.parse(getString(R.string.sendTo) + "?subject=${getString(R.string.sendHeader)}&body=${getString(R.string.sendText)}")
         startActivity(Intent.createChooser(intent, getString(R.string.sendTitle)))
     }
 

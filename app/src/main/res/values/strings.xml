@@ -9,7 +9,7 @@
     <string name="termsOfUse">Пользовательское соглашение</string>
     <string name="shareUrl">https://practicum.yandex.ru/android-developer/</string>
     <string name="agreementUrl">https://yandex.ru/legal/practicum_offer/</string>
-    <string name="sendTitle">mailto:vitalikz85@yandex.ru</string>
+    <string name="sendTitle">Отправить письмо</string>
     <string name="sendTo">mailto:vitalikz85@yandex.ru</string>
     <string name="sendHeader">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="sendText">Спасибо разработчикам и разработчицам за крутое приложение!</string>
