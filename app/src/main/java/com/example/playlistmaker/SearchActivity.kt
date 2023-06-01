@@ -15,14 +15,22 @@ import android.widget.ImageView
 
 class SearchActivity : AppCompatActivity() {
     private var searchQuery: String = ""
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString("search_query", searchQuery)
+        super.onSaveInstanceState(outState)
+    }
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        searchQuery = savedInstanceState.getString("search_query", "")
+        val searchText = findViewById<EditText>(R.id.searchEditText)
+        searchText.setText(searchQuery)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
         val backButton = findViewById<Button>(R.id.btnSettingsBack)
         backButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
             finish()
         }
 
@@ -74,19 +82,8 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearImageView.visibility = if (s.toString().isEmpty()) View.GONE else View.VISIBLE
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
-        fun onSaveInstanceState(outState: Bundle) {
-            outState.putString("search_query", searchQuery)
-            super.onSaveInstanceState(outState)
-        }
 
-        fun onRestoreInstanceState(savedInstanceState: Bundle) {
-            super.onRestoreInstanceState(savedInstanceState)
-            searchQuery = savedInstanceState.getString("search_query", "")
-            val searchText = findViewById<EditText>(R.id.searchEditText)
-            searchText.setText(searchQuery)
-        }
     }
 }
