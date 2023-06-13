@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="MainTitleText">
         <item name="android:layout_width">150dp</item>
         <item name="android:layout_height">26dp</item>
@@ -79,13 +78,24 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">end</item>
     </style>
-    <style name="EditTextRounded">
-        <item name="android:background">@drawable/edit_text_rounded_bg</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-        <item name="android:textCursorDrawable">@null</item>
-        <item name="android:textColorHint">@color/gray2</item>
-        <item name="android:textSize">16sp</item>
+    <style name="RelativeLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/settingsLayoutHeightSize</item>
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+
+    <style name="SearchImageStyle">
+        <item name="android:layout_width">@dimen/searchImgLayWidth</item>
+        <item name="android:layout_height">@dimen/searchImgLayHeight</item>
+        <item name="android:layout_marginLeft">@dimen/searchImgLayMLeft</item>
+        <item name="android:layout_marginTop">@dimen/searchImgLayMTop2</item>
+        <item name="android:layout_marginBottom">@dimen/searchImgLayMBottom</item>
+        <item name="cornerRadius">@dimen/searchImgRadius</item>/>
+        <item name="icon">@drawable/placeholder_dark</item>
+
     </style>
     <style name="RelativeLayoutStyle">
         <item name="android:layout_width">match_parent</item>

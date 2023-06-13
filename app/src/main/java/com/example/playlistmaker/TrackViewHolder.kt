@@ -1,12 +1,14 @@
 package com.example.playlistmaker
 
 import android.view.LayoutInflater
+import android.view.RoundedCorner
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val track_name: TextView = itemView.findViewById(R.id.track_name)
@@ -20,6 +22,9 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         track_time.text = track.trackTime
         Glide.with(itemView.context)
             .load(track.artworkUrl100)
+            .placeholder(R.drawable.placeholder)
+            .centerCrop()
+            .transform(RoundedCorners(2))
             .into(track_artwork)
     }
 }

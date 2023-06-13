@@ -78,14 +78,12 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">end</item>
     </style>
-
     <style name="RelativeLayoutStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/settingsLayoutHeightSize</item>
         <item name="android:layout_marginLeft">0dp</item>
         <item name="android:layout_marginRight">0dp</item>
         <item name="android:orientation">horizontal</item>
-        />
     </style>
 
     <style name="SearchImageStyle">
@@ -98,7 +96,5 @@
         <item name="icon">@drawable/placeholder</item>
 
     </style>
-
-
 
 </resources>

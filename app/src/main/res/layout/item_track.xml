@@ -14,20 +14,18 @@
 
         <ImageView
             android:id="@+id/track_artwork"
-            style="@style/SearchImageStyle"
-            android:src="@drawable/placeholder"
-            app:tint="?attr/colorOnSurface" />
+            style="@style/SearchImageStyle"/>
 
         <TextView
             android:id="@+id/track_name"
             android:layout_width="250dp"
             android:layout_height="19dp"
+            android:text="Track Name"
+            android:textSize="16sp"
             android:layout_marginLeft="66dp"
             android:layout_marginTop="14dp"
             android:layout_marginBottom="1dp"
-            android:gravity="top"
-            android:text="Track Name"
-            android:textSize="16sp" />
+            android:gravity="top" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -41,19 +39,21 @@
             android:id="@+id/artist_name"
             android:layout_width="54dp"
             android:layout_height="13dp"
+            android:text="Artist Name"
+            android:textSize="11sp"
             android:layout_below="@id/track_name"
             android:layout_marginLeft="66dp"
-            android:text="Artist Name"
-            android:textSize="11sp" />
+ />
 
         <TextView
             android:id="@+id/track_time"
             android:layout_width="64dp"
             android:layout_height="13dp"
+            android:text="Track Time"
+            android:textSize="11sp"
             android:layout_below="@id/track_name"
             android:layout_marginLeft="133dp"
-            android:text="Track Time"
-            android:textSize="11sp" />
+             />
 
         <ImageView
             android:layout_width="wrap_content"
