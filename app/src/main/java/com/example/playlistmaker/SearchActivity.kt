@@ -10,7 +10,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 
@@ -30,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search_main)
+        setContentView(R.layout.activity_search)
 
         val backButton = findViewById<Button>(R.id.btnSettingsBack)
         backButton.setOnClickListener {
