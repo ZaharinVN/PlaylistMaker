@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="MainTitleText">
         <item name="android:layout_width">150dp</item>
         <item name="android:layout_height">26dp</item>
@@ -79,13 +78,67 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">end</item>
     </style>
-    <style name="EditTextRounded">
-        <item name="android:background">@drawable/edit_text_rounded_bg</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-        <item name="android:textCursorDrawable">@null</item>
-        <item name="android:textColorHint">@color/gray2</item>
+
+    <style name="trackArtwork">
+        <item name="android:layout_width">45dp</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_marginLeft">13dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+    <style name="trackInfo">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:layout_marginBottom">14dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="trackName">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">19dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="artist_time_layout">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">13dp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="artist_time">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="dot_style">
+        <item name="android:layout_width">3dp</item>
+        <item name="android:layout_height">3dp</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_weight">0</item>
+    </style>
+
+    <style name="right_arrow">
+        <item name="android:layout_width">9dp</item>
+        <item name="android:layout_height">14dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginTop">23dp</item>
+        <item name="android:layout_marginBottom">23dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
     </style>
 
 </resources>

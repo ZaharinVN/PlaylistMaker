@@ -7,4 +7,5 @@
     <dimen name="cornerRadius">16dp</dimen>
     <dimen name="settingsTextSize">16sp</dimen>
     <dimen name="settingsLayoutHeightSize">61dp</dimen>
+
 </resources>

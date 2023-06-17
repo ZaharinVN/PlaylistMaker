@@ -49,9 +49,10 @@
         <TextView
             style="@style/SettingsTextStyle"
             android:text="@string/termsOfUse"/>
+
         <ImageView
             style="@style/SettingsImageStyle"
-            android:src="@drawable/ic_terms_of_use"/>
+            android:src="@drawable/ic_terms_of_use" />
     </LinearLayout>
 
 </LinearLayout>
