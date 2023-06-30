@@ -2,18 +2,16 @@ package com.example.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -28,6 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
     private var searchQuery: String = ""
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("search_query", searchQuery)
         super.onSaveInstanceState(outState)
@@ -48,6 +47,7 @@ class SearchActivity : AppCompatActivity() {
         backButton.setOnClickListener {
             finish()
         }
+        val RESPONSE_CODE = 200
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         val noResultsLayout = findViewById<FrameLayout>(R.id.noResults)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
@@ -57,43 +57,43 @@ class SearchActivity : AppCompatActivity() {
             .build()
         val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
         searchEditText.addTextChangedListener(object : TextWatcher {
-            
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                val query = s.toString()
+            fun makeNetworkRequest(query: String) {
                 val call = itunesSearchApi.search(query)
                 call.enqueue(object : Callback<JsonObject> {
-                    override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                        val resultJson = response.body()
-                        val searchResults: List<ItunesSearchResult> = Gson().fromJson(
-                            resultJson?.getAsJsonArray("results"),
-                            object : TypeToken<List<ItunesSearchResult>>() {}.type
-                        )
-                        if (searchResults.isEmpty()) {
-                            runOnUiThread {
+                    override fun onResponse(
+                        call: Call<JsonObject>,
+                        response: Response<JsonObject>,
+                    ) {
+                        runOnUiThread {
+                            val resultJson = response.body()
+                            val searchResults: List<ItunesSearchResult> = Gson().fromJson(
+                                resultJson?.getAsJsonArray("results"),
+                                object : TypeToken<List<ItunesSearchResult>>() {}.type
+                            )
+
+                            if (searchResults.isEmpty()) {
                                 noResultsLayout.visibility = View.VISIBLE
-                            }
-                        } else {
-                            runOnUiThread {
+                            } else {
                                 noResultsLayout.visibility = View.GONE
                             }
+                            recyclerView.adapter = TrackAdapter(searchResults)
                         }
-                        recyclerView.adapter = TrackAdapter(searchResults)
                     }
 
                     @SuppressLint("WrongView")
                     override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                        if (t is HttpException) {
-                            val response = t.response()
-                            if (response != null && response.code() == 200) {
-                                runOnUiThread {
+                        runOnUiThread {
+                            if (t is HttpException) {
+                                val response = t.response()
+                                if (response != null && response.code() == RESPONSE_CODE) {
                                     val noResultsLayout = findViewById<FrameLayout>(R.id.noResults)
                                     noResultsLayout.visibility = View.VISIBLE
-                                }
-                            } else {
-                                runOnUiThread {
-                                    val noInternetLayout = findViewById<FrameLayout>(R.id.noInternet)
+                                } else {
+                                    val noInternetLayout =
+                                        findViewById<FrameLayout>(R.id.noInternet)
                                     noInternetLayout.visibility = View.VISIBLE
 
                                     val refreshButton = findViewById<Button>(R.id.refresh)
@@ -102,16 +102,12 @@ class SearchActivity : AppCompatActivity() {
                                         noInternetLayout.visibility = View.GONE
                                     }
                                 }
-                            }
-                        } else {
-
-                            runOnUiThread {
+                            } else {
                                 val noInternetLayout = findViewById<FrameLayout>(R.id.noInternet)
                                 noInternetLayout.visibility = View.VISIBLE
 
                                 val refreshButton = findViewById<Button>(R.id.refresh)
                                 refreshButton.setOnClickListener {
-
                                     call.clone().enqueue(this)
                                     noInternetLayout.visibility = View.GONE
                                 }
@@ -119,6 +115,11 @@ class SearchActivity : AppCompatActivity() {
                         }
                     }
                 })
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val query = s.toString()
+                makeNetworkRequest(query)
             }
         })
 
@@ -136,7 +137,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-            // заглушка, добавить код для работы с поисковым запросом
+                // заглушка, добавить код для работы с поисковым запросом
             }
         })
         clearImageView.setOnClickListener {
@@ -170,6 +171,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearImageView.visibility = if (s.toString().isEmpty()) View.GONE else View.VISIBLE
             }
+
             override fun afterTextChanged(s: Editable?) {}
         })
 

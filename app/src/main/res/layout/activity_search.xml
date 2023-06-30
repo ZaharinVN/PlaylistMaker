@@ -69,9 +69,7 @@
     <FrameLayout
         android:id="@+id/noInternet"
         style="@style/error_frameLayout"
-        android:layout_height="400dp"
-        android:layout_marginTop="80dp"
-        >
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/imageViewNoInternet"
@@ -80,21 +78,16 @@
         <TextView
             android:id="@+id/textViewNoInternet"
             style="@style/error_text"
-            android:layout_width="match_parent"
-            android:layout_marginTop="140dp"
             android:text="@string/noInternet" />
         <Button
             android:id="@+id/refresh"
             style="@style/RefreshBtnStyle"
-            android:layout_marginTop="80dp"
-            android:background="@drawable/button"
             app:backgroundTint="@color/icon_color1"/>
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/noResults"
         style="@style/error_frameLayout"
-        android:layout_marginTop="90dp"
         android:visibility="gone">
         <ImageView
             android:id="@+id/imageViewNoResults"
@@ -103,7 +96,6 @@
         <TextView
             android:id="@+id/textViewNoResults"
             style="@style/error_text"
-            android:layout_marginTop="120dp"
             android:text="@string/NoResults" />
     </FrameLayout>
 
