@@ -30,7 +30,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var noInternetLayout: FrameLayout
     private lateinit var refreshButton: Button
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("search_query", searchQuery)
         super.onSaveInstanceState(outState)
@@ -83,7 +82,9 @@ class SearchActivity : AppCompatActivity() {
                     override fun onResponse(
                         call: Call<JsonObject>,
                         response: Response<JsonObject>,
-                    ) { handleResponse(call, response) }
+                    ) {
+                        handleResponse(call, response)
+                    }
 
                     fun showErrorLayout() {
                         noInternetLayout = findViewById(R.id.noInternet)
@@ -95,7 +96,7 @@ class SearchActivity : AppCompatActivity() {
                             noInternetLayout.visibility = View.GONE
                         }
                     }
-                    
+
                     @SuppressLint("WrongView")
                     override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                         runOnUiThread {

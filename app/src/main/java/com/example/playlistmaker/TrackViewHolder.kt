@@ -29,7 +29,8 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .apply(RequestOptions.bitmapTransform(RoundedCorners(5)))
             .into(trackArtwork)
     }
-    }
+}
+
 class TimeUtils {
     companion object {
         fun formatTime(duration: Int): String {
