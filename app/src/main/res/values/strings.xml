@@ -13,4 +13,6 @@
     <string name="sendTo">mailto:vitalikz85@yandex.ru</string>
     <string name="sendHeader">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="sendText">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="noInternet">Проблемы со связью\n\nЗагрузка не удалась.Проверьте \n подключение к интернету"</string>
+    <string name="NoResults">Ничего не нашлось</string>
 </resources>
