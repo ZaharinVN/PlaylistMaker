@@ -1,14 +1,18 @@
 package com.example.playlistmaker
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.appcompat.app.AppCompatDelegate
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setAppTheme()
         setContentView(R.layout.activity_main)
 
         val btnSearch = findViewById<Button>(R.id.btnSearch)
@@ -29,5 +33,15 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+    }
+
+    private fun setAppTheme() {
+        val sharedPrefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val darkMode = sharedPrefs.getBoolean("darkTheme", false)
+        if (darkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
     }
 }

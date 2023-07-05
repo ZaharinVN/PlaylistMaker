@@ -23,10 +23,10 @@ class SettingsActivity : AppCompatActivity() {
 
         switch = findViewById(R.id.themeSwitcher)
         sharedPrefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        switch.isChecked = sharedPrefs.getBoolean("darkMode", false)
+        switch.isChecked = sharedPrefs.getBoolean("darkTheme", false)
 
         switch.setOnCheckedChangeListener { _, isChecked ->
-            sharedPrefs.edit().putBoolean("darkMode", isChecked).apply()
+            sharedPrefs.edit().putBoolean("darkTheme", isChecked).apply()
             setAppTheme()
         }
 
@@ -40,20 +40,22 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setAppTheme() {
-        val darkMode = sharedPrefs.getBoolean("darkMode", false)
+        val darkMode = sharedPrefs.getBoolean("darkTheme", false)
         if (darkMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
+
     fun onShareClick(view: View?) {
         val shareUrl = getString(R.string.shareUrl)
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
         intent.putExtra(Intent.EXTRA_TEXT, shareUrl)
-        startActivity(Intent.createChooser(intent, "@string/shareApp"))
+        startActivity(Intent.createChooser(intent, getString(R.string.shareApp)))
     }
+
     fun onSupportClick(view: View?) {
         val intent = Intent(Intent.ACTION_SENDTO)
         intent.data = Uri.parse(getString(R.string.sendTo) + "?subject=${getString(R.string.sendHeader)}&body=${getString(R.string.sendText)}")
