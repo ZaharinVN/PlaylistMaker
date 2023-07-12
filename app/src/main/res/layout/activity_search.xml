@@ -11,8 +11,6 @@
     <Button
         android:id="@+id/btnSettingsBack"
         style="@style/SettingsBackBtnStyle"
-        android:background="@null"
-        android:outlineProvider="none"
         android:text="@string/search" />
 
     <FrameLayout
@@ -23,20 +21,9 @@
 
         <EditText
             android:id="@+id/searchEditText"
-            android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:background="@drawable/edit_text_rounded_bg"
-            android:fontFamily="@font/ys_display_regular"
-            android:gravity="start|center_vertical"
+            style="@style/searchEditTextStyle"
             android:hint="@string/search"
-            android:inputType="text"
-            android:maxLines="1"
-            android:paddingStart="36dp"
-            android:textColor="@color/black"
-            android:textColorHint="@color/gray"
-            android:textSize="@dimen/settingsTextSize"
-            android:imeOptions="actionDone"
-            android:singleLine="true"/>
+            android:imeOptions="actionDone" />
 
         <ImageView
             android:layout_width="14dp"
@@ -57,15 +44,6 @@
             android:visibility="gone" />
     </FrameLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:itemCount="1"
-        tools:listitem="@layout/layout_track" />
-
     <FrameLayout
         android:id="@+id/noInternet"
         style="@style/error_frameLayout"
@@ -75,28 +53,57 @@
             android:id="@+id/imageViewNoInternet"
             style="@style/error_image"
             android:src="@drawable/ic_no_internet" />
+
         <TextView
             android:id="@+id/textViewNoInternet"
             style="@style/error_text"
             android:text="@string/noInternet" />
+
         <Button
             android:id="@+id/refresh"
             style="@style/RefreshBtnStyle"
-            app:backgroundTint="@color/icon_color1"/>
+            app:backgroundTint="@color/icon_color1" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/noResults"
         style="@style/error_frameLayout"
         android:visibility="gone">
+
         <ImageView
             android:id="@+id/imageViewNoResults"
             style="@style/error_image"
             android:src="@drawable/ic_no_results" />
+
         <TextView
             android:id="@+id/textViewNoResults"
             style="@style/error_text"
             android:text="@string/NoResults" />
     </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/history_message"
+            style="@style/history_message_Style"
+            android:text="История поиска" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/layout_track" />
+
+        <Button
+            android:id="@+id/clearHistoryButton"
+            style="@style/ClearBtnStyle"
+            app:backgroundTint="@color/icon_color1" />
+    </LinearLayout>
 
 </LinearLayout>
