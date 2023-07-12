@@ -1,7 +1,8 @@
 package com.example.playlistmaker
 
-import android.annotation.SuppressLint
+
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -23,13 +25,15 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
 class SearchActivity : AppCompatActivity() {
     private var searchQuery: String = ""
     private lateinit var noResultsLayout: FrameLayout
     private lateinit var noInternetLayout: FrameLayout
     private lateinit var refreshButton: Button
-
+    private lateinit var searchHistory: MutableList<ItunesSearchResult>
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var clearHistoryButton: Button
+    private lateinit var historyMessageTextView: TextView
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("search_query", searchQuery)
         super.onSaveInstanceState(outState)
@@ -37,6 +41,7 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val RESPONSE_CODE = 200
+        const val PREFERENCES_KEY = "search_history"
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -44,6 +49,9 @@ class SearchActivity : AppCompatActivity() {
         searchQuery = savedInstanceState.getString("search_query", "")
         val searchText = findViewById<EditText>(R.id.searchEditText)
         searchText.setText(searchQuery)
+        if (searchQuery.isEmpty()) {
+            searchText.requestFocus()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,83 +60,39 @@ class SearchActivity : AppCompatActivity() {
         val backButton = findViewById<Button>(R.id.btnSettingsBack)
         backButton.setOnClickListener { finish() }
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
-        noInternetLayout = findViewById(R.id.noInternet)
         noResultsLayout = findViewById(R.id.noResults)
-        refreshButton = findViewById(R.id.refresh)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        sharedPreferences = getSharedPreferences(PREFERENCES_KEY, Context.MODE_PRIVATE)
+        searchHistory = loadSearchHistory()
+        clearHistoryButton = findViewById(R.id.clearHistoryButton)
+        clearHistoryButton.visibility = if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
+        clearHistoryButton.setOnClickListener {
+            clearSearchHistory()
+            searchHistory.clear()
+            recyclerView.adapter?.notifyDataSetChanged()
+            clearHistoryButton.visibility = View.GONE
+            historyMessageTextView.visibility = View.GONE
+        }
+        historyMessageTextView = findViewById(R.id.history_message)
+        historyMessageTextView.visibility =
+            if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         val retrofit = Retrofit.Builder()
             .baseUrl("https://itunes.apple.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
         searchEditText.addTextChangedListener(object : TextWatcher {
-            fun handleResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                runOnUiThread {
-                    val resultJson = response.body()
-                    val searchResults: List<ItunesSearchResult> = Gson().fromJson(
-                        resultJson?.getAsJsonArray("results"),
-                        object : TypeToken<List<ItunesSearchResult>>() {}.type
-                    )
-                    if (searchResults.isEmpty()) {
-                        noResultsLayout.visibility = View.VISIBLE
-                    } else {
-                        noResultsLayout.visibility = View.GONE
-                    }
-                    recyclerView.adapter = TrackAdapter(searchResults)
-                }
-            }
-
-            fun makeNetworkRequest(query: String) {
-                val call = itunesSearchApi.search(query)
-                call.enqueue(object : Callback<JsonObject> {
-                    override fun onResponse(
-                        call: Call<JsonObject>,
-                        response: Response<JsonObject>,
-                    ) {
-                        handleResponse(call, response)
-                    }
-
-                    fun showErrorLayout() {
-
-                        noInternetLayout.visibility = View.VISIBLE
-                        refreshButton.setOnClickListener {
-                            call.clone().enqueue(this)
-                            noInternetLayout.visibility = View.GONE
-                        }
-                    }
-
-                    @SuppressLint("WrongView")
-                    override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                        runOnUiThread {
-                            if (t is HttpException) {
-                                val response = t.response()
-                                if (response != null && response.code() == RESPONSE_CODE) {
-                                    val noResultsLayout = findViewById<FrameLayout>(R.id.noResults)
-                                    noResultsLayout.visibility = View.VISIBLE
-                                } else {
-                                    showErrorLayout()
-                                }
-                            } else {
-                                showErrorLayout()
-                            }
-                        }
-                    }
-                })
-            }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                val query = s.toString()
-                if (query.isEmpty()) {
-                    noResultsLayout.visibility = View.GONE
-                    recyclerView.adapter = null
-                } else {
-                    makeNetworkRequest(query)
-                }
+                searchQuery = s.toString()
+                search(searchQuery, itunesSearchApi)
             }
         })
-
+        val trackAdapter = TrackAdapter(searchHistory) { track ->
+            addTrackToHistory(track)
+        }
+        recyclerView.adapter = trackAdapter
         val clearImageView = findViewById<ImageView>(R.id.clearImageView)
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -142,7 +106,6 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                // заглушка, добавить код для работы с поисковым запросом
             }
         })
         clearImageView.setOnClickListener {
@@ -171,15 +134,89 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearImageView.visibility = if (s.toString().isEmpty()) View.GONE else View.VISIBLE
+    }
+
+    private fun search(query: String, api: ItunesSearchApi) {
+        val call = api.search(query)
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                runOnUiThread {
+                    val resultJson = response.body()
+                    val searchResults: List<ItunesSearchResult> = Gson().fromJson(
+                        resultJson?.getAsJsonArray("results"),
+                        object : TypeToken<List<ItunesSearchResult>>() {}.type
+                    )
+                    if (searchResults.isEmpty()) {
+                        noResultsLayout.visibility = View.VISIBLE
+                    } else {
+                        noResultsLayout.visibility = View.GONE
+                    }
+                    val trackAdapter = TrackAdapter(searchResults) { track ->
+                        addTrackToHistory(track)
+                    }
+                    recyclerView.adapter = trackAdapter
+                }
             }
 
-            override fun afterTextChanged(s: Editable?) {}
-        })
+            fun showErrorLayout() {
+                noInternetLayout = findViewById(R.id.noInternet)
+                noInternetLayout.visibility = View.VISIBLE
+                refreshButton = findViewById(R.id.refresh)
+                refreshButton.setOnClickListener {
+                    call.clone().enqueue(this)
+                    noInternetLayout.visibility = View.GONE
+                }
+            }
 
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                runOnUiThread {
+                    if (t is HttpException) {
+                        val response = t.response()
+                        if (response != null && response.code() == RESPONSE_CODE) {
+                            val noResultsLayout = findViewById<FrameLayout>(R.id.noResults)
+                            noResultsLayout.visibility = View.VISIBLE
+                        } else {
+                            showErrorLayout()
+                        }
+                    } else {
+                        showErrorLayout()
+                    }
+                }
+            }
+        })
+    }
+    
+    private fun addTrackToHistory(track: ItunesSearchResult) {
+        searchHistory.removeAll { it.trackId == track.trackId }
+        searchHistory.add(0, track)
+        if (searchHistory.size > 10) {
+            searchHistory.removeLast()
+        }
+        saveSearchHistory()
+    }
+
+    private fun clearSearchHistory() {
+        searchHistory.clear()
+        saveSearchHistory()
+        clearHistoryButton.visibility = View.GONE
+        historyMessageTextView.visibility = View.GONE
+    }
+
+    private fun saveSearchHistory() {
+        val editor = sharedPreferences.edit()
+        val searchHistoryJson = Gson().toJson(searchHistory)
+        editor.putString(PREFERENCES_KEY, searchHistoryJson)
+        editor.apply()
+    }
+
+    private fun loadSearchHistory(): MutableList<ItunesSearchResult> {
+        val searchHistoryJson = sharedPreferences.getString(PREFERENCES_KEY, null)
+        val type = object : TypeToken<MutableList<ItunesSearchResult>>() {}.type
+        return Gson().fromJson(searchHistoryJson, type) ?: mutableListOf()
     }
 }
+
+
+
 
