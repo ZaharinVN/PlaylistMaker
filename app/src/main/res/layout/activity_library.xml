@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textColor="@color/icon_color1"
+        android:textColor="@color/main_black"
         android:text="Медиатека"
         android:textSize="50dp"
         android:textStyle="bold" />

@@ -34,6 +34,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var clearHistoryButton: Button
     private lateinit var historyMessageTextView: TextView
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("search_query", searchQuery)
         super.onSaveInstanceState(outState)
@@ -106,17 +107,25 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
+                if (s?.length ?: 0 > 0) {
+                    clearImageView.visibility = View.VISIBLE
+                } else {
+                    clearImageView.visibility = View.GONE
+                }
+                searchQuery = s.toString()
+
             }
         })
         clearImageView.setOnClickListener {
             // Очищаем поисковый запрос
             searchEditText.setText("")
-            // Скрываем клавиатуру
+            clearImageView.visibility = View.GONE// Скрываем клавиатуру
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(searchEditText.windowToken, 0)
             // Скрываем кнопку сброса
             clearImageView.visibility = View.GONE
+
         }
         searchEditText.setOnFocusChangeListener { v, hasFocus ->
             // Отображение клавиатуры и фокуса на поле ввода поискового запроса
@@ -148,14 +157,16 @@ class SearchActivity : AppCompatActivity() {
                         object : TypeToken<List<ItunesSearchResult>>() {}.type
                     )
                     if (searchResults.isEmpty()) {
-                        noResultsLayout.visibility = View.VISIBLE
+                        val historyAdapter = TrackAdapter(searchHistory) { track ->
+                            addTrackToHistory(track)
+                        }
+                        recyclerView.adapter = historyAdapter
                     } else {
-                        noResultsLayout.visibility = View.GONE
+                        val trackAdapter = TrackAdapter(searchResults) { track ->
+                            addTrackToHistory(track)
+                        }
+                        recyclerView.adapter = trackAdapter
                     }
-                    val trackAdapter = TrackAdapter(searchResults) { track ->
-                        addTrackToHistory(track)
-                    }
-                    recyclerView.adapter = trackAdapter
                 }
             }
 
@@ -186,7 +197,7 @@ class SearchActivity : AppCompatActivity() {
             }
         })
     }
-    
+
     private fun addTrackToHistory(track: ItunesSearchResult) {
         searchHistory.removeAll { it.trackId == track.trackId }
         searchHistory.add(0, track)
@@ -197,10 +208,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun clearSearchHistory() {
-        searchHistory.clear()
-        saveSearchHistory()
-        clearHistoryButton.visibility = View.GONE
-        historyMessageTextView.visibility = View.GONE
+        sharedPreferences.edit().remove(PREFERENCES_KEY).apply()
     }
 
     private fun saveSearchHistory() {
@@ -210,12 +218,15 @@ class SearchActivity : AppCompatActivity() {
         editor.apply()
     }
 
+
     private fun loadSearchHistory(): MutableList<ItunesSearchResult> {
         val searchHistoryJson = sharedPreferences.getString(PREFERENCES_KEY, null)
         val type = object : TypeToken<MutableList<ItunesSearchResult>>() {}.type
         return Gson().fromJson(searchHistoryJson, type) ?: mutableListOf()
     }
 }
+
+
 
 
 
