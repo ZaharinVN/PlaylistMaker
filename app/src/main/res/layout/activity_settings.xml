@@ -18,7 +18,9 @@
         <TextView
             style="@style/SettingsTextStyle"
             android:text="@string/darkTheme" />
-        <Switch style="@style/SettingsImageStyle" />
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/themeSwitcher"
+            style="@style/SettingsImageStyle" />
     </LinearLayout>
 
     <LinearLayout
