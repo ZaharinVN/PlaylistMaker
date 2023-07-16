@@ -41,7 +41,7 @@
         <item name="android:layout_marginLeft">0dp</item>
         <item name="android:layout_marginRight">@dimen/marginRight</item>
         <item name="android:backgroundTint">@color/black</item>
-        <item name="android:text">@string/settings</item>
+        <item name="android:text">@string/search</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textFontWeight">500</item>
         <item name="android:textAllCaps">false</item>
@@ -52,6 +52,23 @@
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">@dimen/iconPadding</item>
         <item name="iconTint">@color/white</item>
+        <item name="android:background">@null</item>
+        <item name="android:outlineProvider">none</item>
+    </style>
+
+    <style name="searchEditTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:background">@drawable/edit_text_rounded_bg</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:inputType">text</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:paddingStart">36dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/gray</item>
+        <item name="android:textSize">@dimen/settingsTextSize</item>
     </style>
 
     <style name="SettingsLayoutStyle">
@@ -140,11 +157,12 @@
         <item name="android:layout_marginBottom">23dp</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>
+
     <style name="error_text">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/icon_color1</item>
+        <item name="android:textColor">@color/main_black</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">19sp</item>
         <item name="android:layout_marginTop">140dp</item>
@@ -169,11 +187,36 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/icon_color2</item>
+        <item name="android:textColor">@color/main_white</item>
         <item name="android:text">Обновить</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:layout_marginTop">80dp</item>
         <item name="android:background">@drawable/refresh_button</item>
+    </style>
+
+    <style name="ClearBtnStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/main_white</item>
+        <item name="android:text">Очистить историю</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/ic_clear_history</item>
+    </style>
+
+    <style name="history_message_Style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:gravity">center</item>
+        <item name="android:text">История поиска</item>
+        <item name="android:textColor">@color/main_black</item>
+        <item name="android:textSize">19sp</item>
     </style>
 
 </resources>
