@@ -14,6 +14,7 @@ class TrackAdapter(
     private val data: List<ItunesSearchResult>,
     private val onItemClick: (ItunesSearchResult) -> Unit,
 ) : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.layout_track, parent, false)
@@ -33,9 +34,11 @@ class TrackAdapter(
         private val artistName: TextView = itemView.findViewById(R.id.artist_name)
         private val trackTime: TextView = itemView.findViewById(R.id.track_time)
         private val trackArtwork: ImageView = itemView.findViewById(R.id.track_artwork)
+
         fun bind(track: ItunesSearchResult) {
             trackName.text = track.trackName
             artistName.text = track.artistName
+
             val duration = (track.trackTimeMillis.toLong() / 1000).toInt()
             trackTime.text = TimeUtils.formatTime(duration)
             Glide.with(itemView.context)
@@ -44,6 +47,7 @@ class TrackAdapter(
                 .centerCrop()
                 .apply(RequestOptions.bitmapTransform(RoundedCorners(5)))
                 .into(trackArtwork)
+
         }
     }
 
@@ -57,7 +61,3 @@ class TrackAdapter(
         }
     }
 }
-
-
-
-

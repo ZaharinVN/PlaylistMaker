@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
@@ -92,6 +93,8 @@ class SearchActivity : AppCompatActivity() {
         })
         val trackAdapter = TrackAdapter(searchHistory) { track ->
             addTrackToHistory(track)
+            val intent = Intent(this@SearchActivity, MediaActivity::class.java)
+            startActivity(intent)
         }
         recyclerView.adapter = trackAdapter
         val clearImageView = findViewById<ImageView>(R.id.clearImageView)
@@ -113,7 +116,7 @@ class SearchActivity : AppCompatActivity() {
                     clearImageView.visibility = View.GONE
                 }
                 searchQuery = s.toString()
-
+                search(searchQuery, itunesSearchApi)
             }
         })
         clearImageView.setOnClickListener {
@@ -164,6 +167,8 @@ class SearchActivity : AppCompatActivity() {
                     } else {
                         val trackAdapter = TrackAdapter(searchResults) { track ->
                             addTrackToHistory(track)
+                            val intent = Intent(this@SearchActivity, MediaActivity::class.java)
+                            startActivity(intent)
                         }
                         recyclerView.adapter = trackAdapter
                     }
@@ -217,7 +222,6 @@ class SearchActivity : AppCompatActivity() {
         editor.putString(PREFERENCES_KEY, searchHistoryJson)
         editor.apply()
     }
-
 
     private fun loadSearchHistory(): MutableList<ItunesSearchResult> {
         val searchHistoryJson = sharedPreferences.getString(PREFERENCES_KEY, null)
