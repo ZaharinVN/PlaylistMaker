@@ -1,7 +1,5 @@
 package com.example.playlistmaker
 
-import java.util.Locale
-
 data class ItunesSearchResult(
     val trackId: String?,
     val trackName: String,

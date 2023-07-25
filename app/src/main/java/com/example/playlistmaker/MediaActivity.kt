@@ -1,12 +1,13 @@
 package com.example.playlistmaker
 
-import android.icu.util.TimeUnit
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.example.playlistmaker.SearchActivity.Companion.EXTRA_TRACK_COVER
 
 class MediaActivity : AppCompatActivity() {
 
@@ -15,7 +16,7 @@ class MediaActivity : AppCompatActivity() {
         setContentView(R.layout.activity_player)
 
         // Получение информации из Extra и установка значений в соответствующие View
-        val trackCoverUrl = intent.getStringExtra("trackCoverUrl")
+        val trackCoverUrl = intent.getStringExtra(EXTRA_TRACK_COVER)
         val trackName = intent.getStringExtra("trackName")
         val artistName = intent.getStringExtra("artistName")
         val trackTime = intent.getLongExtra("trackTimeMillis", 0)
@@ -54,8 +55,8 @@ class MediaActivity : AppCompatActivity() {
         backButton.setOnClickListener { finish() }
     }
 
-    private fun getCoverArtwork(artworkUrl: String): String {
-        return artworkUrl.replaceAfterLast('/', "512x512bb.jpg")
+    private fun getCoverArtwork(artworkUrl100: String): String {
+        return artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
     }
 
     private fun formatTrackDuration(duration: Long): String {
