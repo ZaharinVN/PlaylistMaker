@@ -3,6 +3,7 @@ package com.example.playlistmaker
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,7 @@ class TrackAdapter(
         holder.bind(data[position])
         holder.itemView.setOnClickListener {
             onItemClick(data[position])
+            animateItemClick(holder.itemView)
         }
     }
 
@@ -35,10 +37,10 @@ class TrackAdapter(
         private val trackTime: TextView = itemView.findViewById(R.id.track_time)
         private val trackArtwork: ImageView = itemView.findViewById(R.id.track_artwork)
 
+
         fun bind(track: ItunesSearchResult) {
             trackName.text = track.trackName
             artistName.text = track.artistName
-
             val duration = (track.trackTimeMillis.toLong() / 1000).toInt()
             trackTime.text = TimeUtils.formatTime(duration)
             Glide.with(itemView.context)
@@ -51,6 +53,11 @@ class TrackAdapter(
         }
     }
 
+    private fun animateItemClick(view: View) {
+        val anim = AnimationUtils.loadAnimation(view.context, R.anim.click_animation)
+        view.startAnimation(anim)
+    }
+
     class TimeUtils {
         companion object {
             fun formatTime(duration: Int): String {
@@ -60,4 +67,5 @@ class TrackAdapter(
             }
         }
     }
+
 }

@@ -44,6 +44,15 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val RESPONSE_CODE = 200
         const val PREFERENCES_KEY = "search_history"
+        const val EXTRA_TRACK_ID = "trackId"
+        const val EXTRA_TRACK_NAME = "trackName"
+        const val EXTRA_ARTIST_NAME = "artistName"
+        const val EXTRA_TRACK_TIME = "trackTimeMillis"
+        const val EXTRA_TRACK_COVER = "trackCover"
+        const val EXTRA_COLLECTION_NAME = "collectionName"
+        const val EXTRA_RELEASE_DATE = "releaseDate"
+        const val EXTRA_PRIMARY_GENRE_NAME = "primaryGenreName"
+        const val EXTRA_COUNTRY = "country"
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -64,7 +73,7 @@ class SearchActivity : AppCompatActivity() {
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         noResultsLayout = findViewById(R.id.noResults)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        sharedPreferences = getSharedPreferences(PREFERENCES_KEY, Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("Search History", Context.MODE_PRIVATE)
         searchHistory = loadSearchHistory()
         clearHistoryButton = findViewById(R.id.clearHistoryButton)
         clearHistoryButton.visibility = if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
@@ -93,7 +102,17 @@ class SearchActivity : AppCompatActivity() {
         })
         val trackAdapter = TrackAdapter(searchHistory) { track ->
             addTrackToHistory(track)
-            val intent = Intent(this@SearchActivity, MediaActivity::class.java)
+            val intent = Intent(this@SearchActivity, MediaActivity::class.java).apply {
+                putExtra(EXTRA_TRACK_ID, track.trackId)
+                putExtra(EXTRA_TRACK_NAME, track.trackName)
+                putExtra(EXTRA_ARTIST_NAME, track.artistName)
+                putExtra(EXTRA_TRACK_TIME, track.trackTimeMillis)
+                putExtra(EXTRA_TRACK_COVER, track.artworkUrl100)
+                putExtra(EXTRA_COLLECTION_NAME, track.collectionName)
+                putExtra(EXTRA_RELEASE_DATE, track.releaseDate)
+                putExtra(EXTRA_PRIMARY_GENRE_NAME, track.primaryGenreName)
+                putExtra(EXTRA_COUNTRY, track.country)
+            }
             startActivity(intent)
         }
         recyclerView.adapter = trackAdapter
@@ -167,10 +186,21 @@ class SearchActivity : AppCompatActivity() {
                     } else {
                         val trackAdapter = TrackAdapter(searchResults) { track ->
                             addTrackToHistory(track)
-                            val intent = Intent(this@SearchActivity, MediaActivity::class.java)
+                            val intent = Intent(this@SearchActivity, MediaActivity::class.java).apply {
+                                putExtra(EXTRA_TRACK_ID, track.trackId)
+                                putExtra(EXTRA_TRACK_NAME, track.trackName)
+                                putExtra(EXTRA_ARTIST_NAME, track.artistName)
+                                putExtra(EXTRA_TRACK_TIME, track.trackTimeMillis)
+                                putExtra(EXTRA_TRACK_COVER, track.artworkUrl100)
+                                putExtra(EXTRA_COLLECTION_NAME, track.collectionName)
+                                putExtra(EXTRA_RELEASE_DATE, track.releaseDate)
+                                putExtra(EXTRA_PRIMARY_GENRE_NAME, track.primaryGenreName)
+                                putExtra(EXTRA_COUNTRY, track.country)
+                            }
                             startActivity(intent)
                         }
                         recyclerView.adapter = trackAdapter
+
                     }
                 }
             }
@@ -229,9 +259,3 @@ class SearchActivity : AppCompatActivity() {
         return Gson().fromJson(searchHistoryJson, type) ?: mutableListOf()
     }
 }
-
-
-
-
-
-
