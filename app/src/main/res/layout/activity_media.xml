@@ -34,51 +34,49 @@
         android:id="@+id/track_cover"
         style="@style/playerCoverTrack"
         android:src="@drawable/placeholder"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="49dp"
+        tools:layout_editor_absoluteY="56dp" />
 
     <TextView
         android:id="@+id/trackNameResult"
-        android:layout_width="312dp"
+        android:layout_width="0dp"
         android:layout_height="26dp"
         android:fontFamily="@font/ys_display_medium"
-
         android:textSize="19sp"
         app:layout_constraintBottom_toTopOf="@+id/artistNameResult"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/track_cover"
+        app:layout_constraintStart_toStartOf="@+id/track_cover"
         app:layout_constraintTop_toBottomOf="@+id/track_cover" />
 
     <TextView
         android:id="@+id/artistNameResult"
-        android:layout_width="312dp"
+        android:layout_width="0dp"
         android:layout_height="16dp"
         android:fontFamily="@font/ys_display_medium"
-
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnPlay"
+        app:layout_constraintEnd_toEndOf="@+id/track_cover"
+        app:layout_constraintStart_toStartOf="@+id/track_cover"
         app:layout_constraintTop_toBottomOf="@+id/trackNameResult" />
 
-    <LinearLayout
-        android:id="@+id/buttonLayout"
+
+    <ImageButton
+        android:id="@+id/btnAdd"
+        style="@style/addButton"
+        tools:ignore="MissingConstraints" />
+
+    <ImageButton
+        android:id="@+id/btnPlay"
         style="@style/playButton"
-        android:layout_marginTop="0dp"
-        tools:ignore="MissingConstraints">
+        android:layout_marginTop="20dp"
+        tools:ignore="MissingConstraints" />
 
-        <ImageButton
-            android:id="@+id/btnAdd"
-            style="@style/addButton" />
+    <ImageButton
+        android:id="@+id/btnFavorite"
+        style="@style/favoriteButton"
+        tools:ignore="MissingConstraints" />
 
-        <ImageButton
-            android:id="@+id/btnPlay"
-            style="@style/playButton"
-            android:layout_marginTop="20dp" />
-
-        <ImageButton
-            android:id="@+id/btnFavorite"
-            style="@style/favoriteButton" />
-    </LinearLayout>
 
     <TextView
         android:id="@+id/progressTime"
@@ -88,7 +86,7 @@
         app:layout_constraintBottom_toTopOf="@+id/trackTime_field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/btnPlay" />
 
     <TextView
         android:id="@+id/trackTime_field"

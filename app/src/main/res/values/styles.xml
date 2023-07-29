@@ -238,6 +238,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/text_gray</item>
         <item name="layout_constraintEnd_toEndOf">@id/rightBorder</item>
         <item name="layout_constraintStart_toStartOf">@id/leftBorder</item>
     </style>
@@ -247,6 +248,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/black</item>
         <item name="layout_constraintEnd_toEndOf">@id/rightBorder</item>
     </style>
 
@@ -260,13 +262,13 @@
     </style>
 
     <style name="playButton">
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:backgroundTint">@color/white</item>
         <item name="iconTint">@color/black</item>
         <item name="android:orientation">horizontal</item>
-        <item name="layout_constraintStart_toStartOf">@+id/track_cover</item>
-        <item name="layout_constraintEnd_toEndOf">@+id/track_cover</item>
+        <item name="layout_constraintStart_toEndOf">@+id/btnAdd</item>
+        <item name="layout_constraintEnd_toStartOf">@+id/btnFavorite</item>
         <item name="layout_constraintTop_toBottomOf">@+id/artistNameResult</item>
         <item name="layout_constraintBottom_toTopOf">@+id/progressTime</item>
         <item name="android:layout_marginTop">44dp</item>
@@ -275,26 +277,26 @@
     </style>
 
     <style name="addButton">
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:backgroundTint">@color/white</item>
-        <item name="android:orientation">horizontal</item>
-        <item name="layout_constraintStart_toStartOf">@+id/track_cover</item>
-        <item name="layout_constraintEnd_toEndOf">@+id/track_cover</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintEnd_toStartOf">@+id/btnPlay</item>
         <item name="layout_constraintTop_toBottomOf">@+id/artistNameResult</item>
         <item name="layout_constraintBottom_toTopOf">@+id/progressTime</item>
         <item name="android:layout_marginTop">44dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:src">@drawable/ic_add</item>
+
     </style>
 
     <style name="favoriteButton">
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:backgroundTint">@color/white</item>
-        <item name="android:orientation">horizontal</item>
-        <item name="layout_constraintStart_toStartOf">@+id/track_cover</item>
-        <item name="layout_constraintEnd_toEndOf">@+id/track_cover</item>
+
+        <item name="layout_constraintStart_toEndOf">@+id/btnPlay</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
         <item name="layout_constraintTop_toBottomOf">@+id/artistNameResult</item>
         <item name="layout_constraintBottom_toTopOf">@+id/progressTime</item>
         <item name="android:layout_marginTop">44dp</item>

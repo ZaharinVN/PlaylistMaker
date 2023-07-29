@@ -8,5 +8,6 @@
     <dimen name="settingsTextSize">16sp</dimen>
     <dimen name="settingsLayoutHeightSize">61dp</dimen>
     <dimen name="corner_radius">5</dimen>
+    <dimen name="cover_radius">8dp</dimen>
 
 </resources>

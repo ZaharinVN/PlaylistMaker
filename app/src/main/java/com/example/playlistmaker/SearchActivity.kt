@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -35,7 +36,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var clearHistoryButton: Button
     private lateinit var historyMessageTextView: TextView
-
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("search_query", searchQuery)
         super.onSaveInstanceState(outState)
@@ -65,6 +65,7 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -93,8 +94,12 @@ class SearchActivity : AppCompatActivity() {
             .build()
         val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
         searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
             override fun afterTextChanged(s: Editable?) {
                 searchQuery = s.toString()
                 search(searchQuery, itunesSearchApi)
@@ -120,7 +125,7 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s?.length ?: 0 > 0) {
+                if ((s?.length ?: 0) > 0) {
                     clearImageView.visibility = View.VISIBLE
                 } else {
                     clearImageView.visibility = View.GONE
@@ -135,36 +140,35 @@ class SearchActivity : AppCompatActivity() {
                     clearImageView.visibility = View.GONE
                 }
                 searchQuery = s.toString()
-                search(searchQuery, itunesSearchApi)
             }
         })
-        clearImageView.setOnClickListener {
-            // Очищаем поисковый запрос
+        clearImageView.setOnClickListener { // Очищаем поисковый запрос
             searchEditText.setText("")
-            clearImageView.visibility = View.GONE// Скрываем клавиатуру
+            clearImageView.visibility = View.GONE
+            val historyAdapter = TrackAdapter(searchHistory) { track ->
+                addTrackToHistory(track)
+            }
+            recyclerView.adapter = historyAdapter
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.hideSoftInputFromWindow(searchEditText.windowToken, 0)
-            // Скрываем кнопку сброса
+            inputMethodManager.hideSoftInputFromWindow(
+                searchEditText.windowToken,
+                0
+            ) // Скрываем кнопку сброса
             clearImageView.visibility = View.GONE
-
         }
-        searchEditText.setOnFocusChangeListener { v, hasFocus ->
-            // Отображение клавиатуры и фокуса на поле ввода поискового запроса
+        searchEditText.setOnFocusChangeListener { v, hasFocus -> // Отображение клавиатуры и фокуса на поле ввода поискового запроса
             if (hasFocus) {
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT)
                 clearImageView.visibility =
                     if (searchEditText.text.toString().isEmpty()) View.GONE else View.VISIBLE
-            }
-            // Скрытие кнопки сброса поискового запроса и клавиатуры при потере фокуса
-            else {
+            } else { // Скрытие кнопки сброса поискового запроса и клавиатуры при потере фокуса
                 clearImageView.visibility = View.GONE
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
             }
         }
-
     }
 
     private fun search(query: String, api: ItunesSearchApi) {
@@ -179,28 +183,38 @@ class SearchActivity : AppCompatActivity() {
                         object : TypeToken<List<ItunesSearchResult>>() {}.type
                     )
                     if (searchResults.isEmpty()) {
+                        noResultsLayout.visibility = View.VISIBLE
                         val historyAdapter = TrackAdapter(searchHistory) { track ->
                             addTrackToHistory(track)
                         }
                         recyclerView.adapter = historyAdapter
+                        val clearImageView = findViewById<ImageView>(R.id.clearImageView)
+                        clearImageView.setOnClickListener {
+                            noResultsLayout.visibility = View.GONE
+                            val historyAdapter = TrackAdapter(searchHistory) { track ->
+                                addTrackToHistory(track)
+                            }
+                            recyclerView.adapter = historyAdapter
+                        }
                     } else {
+
                         val trackAdapter = TrackAdapter(searchResults) { track ->
                             addTrackToHistory(track)
-                            val intent = Intent(this@SearchActivity, MediaActivity::class.java).apply {
-                                putExtra(EXTRA_TRACK_ID, track.trackId)
-                                putExtra(EXTRA_TRACK_NAME, track.trackName)
-                                putExtra(EXTRA_ARTIST_NAME, track.artistName)
-                                putExtra(EXTRA_TRACK_TIME, track.trackTimeMillis)
-                                putExtra(EXTRA_TRACK_COVER, track.artworkUrl100)
-                                putExtra(EXTRA_COLLECTION_NAME, track.collectionName)
-                                putExtra(EXTRA_RELEASE_DATE, track.releaseDate)
-                                putExtra(EXTRA_PRIMARY_GENRE_NAME, track.primaryGenreName)
-                                putExtra(EXTRA_COUNTRY, track.country)
-                            }
+                            val intent =
+                                Intent(this@SearchActivity, MediaActivity::class.java).apply {
+                                    putExtra(EXTRA_TRACK_ID, track.trackId)
+                                    putExtra(EXTRA_TRACK_NAME, track.trackName)
+                                    putExtra(EXTRA_ARTIST_NAME, track.artistName)
+                                    putExtra(EXTRA_TRACK_TIME, track.trackTimeMillis)
+                                    putExtra(EXTRA_TRACK_COVER, track.artworkUrl100)
+                                    putExtra(EXTRA_COLLECTION_NAME, track.collectionName)
+                                    putExtra(EXTRA_RELEASE_DATE, track.releaseDate)
+                                    putExtra(EXTRA_PRIMARY_GENRE_NAME, track.primaryGenreName)
+                                    putExtra(EXTRA_COUNTRY, track.country)
+                                }
                             startActivity(intent)
                         }
                         recyclerView.adapter = trackAdapter
-
                     }
                 }
             }
@@ -251,6 +265,7 @@ class SearchActivity : AppCompatActivity() {
         val searchHistoryJson = Gson().toJson(searchHistory)
         editor.putString(PREFERENCES_KEY, searchHistoryJson)
         editor.apply()
+        startActivity(intent)
     }
 
     private fun loadSearchHistory(): MutableList<ItunesSearchResult> {
@@ -258,4 +273,5 @@ class SearchActivity : AppCompatActivity() {
         val type = object : TypeToken<MutableList<ItunesSearchResult>>() {}.type
         return Gson().fromJson(searchHistoryJson, type) ?: mutableListOf()
     }
+
 }
