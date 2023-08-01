@@ -17,7 +17,7 @@
             android:exported="false"
            />
         <activity
-            android:name=".LibraryActivity"
+            android:name=".MediaActivity"
             android:exported="false"
            />
         <activity

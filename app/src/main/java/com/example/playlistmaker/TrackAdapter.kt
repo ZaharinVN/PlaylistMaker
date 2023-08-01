@@ -3,6 +3,7 @@ package com.example.playlistmaker
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ class TrackAdapter(
     private val data: List<ItunesSearchResult>,
     private val onItemClick: (ItunesSearchResult) -> Unit,
 ) : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.layout_track, parent, false)
@@ -24,6 +26,7 @@ class TrackAdapter(
         holder.bind(data[position])
         holder.itemView.setOnClickListener {
             onItemClick(data[position])
+            animateItemClick(holder.itemView)
         }
     }
 
@@ -33,6 +36,8 @@ class TrackAdapter(
         private val artistName: TextView = itemView.findViewById(R.id.artist_name)
         private val trackTime: TextView = itemView.findViewById(R.id.track_time)
         private val trackArtwork: ImageView = itemView.findViewById(R.id.track_artwork)
+
+
         fun bind(track: ItunesSearchResult) {
             trackName.text = track.trackName
             artistName.text = track.artistName
@@ -44,7 +49,13 @@ class TrackAdapter(
                 .centerCrop()
                 .apply(RequestOptions.bitmapTransform(RoundedCorners(5)))
                 .into(trackArtwork)
+
         }
+    }
+
+    private fun animateItemClick(view: View) {
+        val anim = AnimationUtils.loadAnimation(view.context, R.anim.click_animation)
+        view.startAnimation(anim)
     }
 
     class TimeUtils {
@@ -56,8 +67,5 @@ class TrackAdapter(
             }
         }
     }
+
 }
-
-
-
-

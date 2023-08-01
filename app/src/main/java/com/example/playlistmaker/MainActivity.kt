@@ -1,9 +1,7 @@
 package com.example.playlistmaker
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -22,9 +20,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val btnLibrary = findViewById<Button>(R.id.btnLibrary)
+        val btnLibrary = findViewById<Button>(R.id.btnMedia)
         btnLibrary.setOnClickListener {
-            val intent = Intent(this, LibraryActivity::class.java)
+            val intent = Intent(this, MediaActivity::class.java)
             startActivity(intent)
         }
 
