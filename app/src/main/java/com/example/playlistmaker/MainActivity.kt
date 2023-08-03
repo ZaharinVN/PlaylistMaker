@@ -1,5 +1,6 @@
 package com.example.playlistmaker
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatDelegate
 
 class MainActivity : AppCompatActivity() {
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setAppTheme()
@@ -20,9 +22,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val btnLibrary = findViewById<Button>(R.id.btnMedia)
+        val btnLibrary = findViewById<Button>(R.id.btnLibrary)
         btnLibrary.setOnClickListener {
-            val intent = Intent(this, MediaActivity::class.java)
+            val intent = Intent(this, LibraryActivity::class.java)
             startActivity(intent)
         }
 
