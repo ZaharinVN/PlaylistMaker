@@ -70,7 +70,17 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         val backButton = findViewById<Button>(R.id.btnSettingsBack)
-        backButton.setOnClickListener { finish() }
+        backButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+        val clearImageView = findViewById<ImageView>(R.id.clearImageView)
+        val searchText = findViewById<EditText>(R.id.searchEditText)
+        clearImageView.setOnClickListener {
+            searchText.text.clear()
+            clearImageView.visibility = View.GONE
+        }
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         noResultsLayout = findViewById(R.id.noResults)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
@@ -101,6 +111,7 @@ class SearchActivity : AppCompatActivity() {
                 search(searchQuery, itunesSearchApi)
             }
         })
+
         val trackAdapter = TrackAdapter(searchHistory) { track ->
             addTrackToHistory(track)
             val intent = Intent(this@SearchActivity, MediaActivity::class.java).apply {
@@ -117,17 +128,14 @@ class SearchActivity : AppCompatActivity() {
             startActivity(intent)
         }
         recyclerView.adapter = trackAdapter
-        val clearImageView = findViewById<ImageView>(R.id.clearImageView)
+
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if ((s?.length ?: 0) > 0) {
                     clearImageView.visibility = View.VISIBLE
-                    noResultsLayout.visibility = View.GONE
-                    recyclerView.adapter = trackAdapter
                 } else {
                     clearImageView.visibility = View.GONE
-                    noResultsLayout.visibility = View.GONE
                 }
                 searchQuery = s.toString()
             }
@@ -141,16 +149,16 @@ class SearchActivity : AppCompatActivity() {
                 searchQuery = s.toString()
             }
         })
-        clearImageView.setOnClickListener {
-            // Очищаем поисковый запрос
-            searchEditText.setText("")
-            noResultsLayout.visibility = View.GONE
-            clearImageView.visibility = View.GONE// Скрываем клавиатуру
+        clearImageView.setOnClickListener { // Очищаем поисковый запрос
+            searchEditText.text.clear()
+            clearImageView.visibility = View.GONE
+            // Скрываем клавиатуру
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(searchEditText.windowToken, 0)
             // Скрываем кнопку сброса
             clearImageView.visibility = View.GONE
+
         }
         searchEditText.setOnFocusChangeListener { v, hasFocus -> // Отображение клавиатуры и фокуса на поле ввода поискового запроса
             if (hasFocus) {
@@ -179,16 +187,13 @@ class SearchActivity : AppCompatActivity() {
                     )
                     if (searchResults.isEmpty()) {
                         noResultsLayout.visibility = View.VISIBLE
-                        val clearImageView = findViewById<ImageView>(R.id.clearImageView)
-                        clearImageView.setOnClickListener {
+                        if (query.isEmpty()) {
                             noResultsLayout.visibility = View.GONE
-                            val searchEditText = findViewById<EditText>(R.id.searchEditText)
-                            searchEditText.text = (null)
-                            val historyAdapter = TrackAdapter(searchHistory) { track ->
-                                addTrackToHistory(track)
-                            }
-                            recyclerView.adapter = historyAdapter
                         }
+                        val historyAdapter = TrackAdapter(searchHistory) { track ->
+                            addTrackToHistory(track)
+                        }
+                        recyclerView.adapter = historyAdapter
                     } else {
                         val trackAdapter = TrackAdapter(searchResults) { track ->
                             addTrackToHistory(track)
@@ -211,22 +216,25 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
 
-            fun showErrorLayout() {
-                noInternetLayout = findViewById(R.id.noInternet)
-                noInternetLayout.visibility = View.VISIBLE
-                refreshButton = findViewById(R.id.refresh)
-                refreshButton.setOnClickListener {
-                    call.clone().enqueue(this)
-                    noInternetLayout.visibility = View.GONE
-                }
-            }
-
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                fun showErrorLayout() {
+                    noInternetLayout = findViewById(R.id.noInternet)
+                    noInternetLayout.visibility = View.VISIBLE
+                    refreshButton = findViewById(R.id.refresh)
+                    refreshButton.setOnClickListener {
+                        call.clone().enqueue(this)
+                        noInternetLayout.visibility = View.GONE
+                    }
+                }
                 runOnUiThread {
                     if (t is HttpException) {
                         val response = t.response()
                         if (response != null && response.code() == RESPONSE_CODE) {
                             noResultsLayout.visibility = View.VISIBLE
+                            val historyAdapter = TrackAdapter(searchHistory) { track ->
+                                addTrackToHistory(track)
+                            }
+                            recyclerView.adapter = historyAdapter
                         } else {
                             showErrorLayout()
                         }
