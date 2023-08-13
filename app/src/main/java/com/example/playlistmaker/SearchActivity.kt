@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -39,6 +41,9 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyMessageTextView: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var progressSearch: FrameLayout
+    private lateinit var debounceHandler: Handler
+    private val DEBOUNCE_DELAY = 2000L
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("search_query", searchQuery)
         super.onSaveInstanceState(outState)
@@ -68,7 +73,7 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged", "CutPasteId", "MissingInflatedId")
+    @SuppressLint("NotifyDataSetChanged", "CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -103,17 +108,22 @@ class SearchActivity : AppCompatActivity() {
         historyMessageTextView = findViewById(R.id.history_message)
         historyMessageTextView.visibility =
             if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
+        debounceHandler = Handler(Looper.getMainLooper())
         val retrofit = Retrofit.Builder()
             .baseUrl("https://itunes.apple.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
         searchEditText.addTextChangedListener(object : TextWatcher {
+            private var searchRunnable: Runnable = Runnable {
+                searchQuery = searchEditText.text.toString()
+                search(searchQuery, itunesSearchApi)
+            }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                searchQuery = s.toString()
-                search(searchQuery, itunesSearchApi)
+                debounceHandler.removeCallbacks(searchRunnable)
+                debounceHandler.postDelayed(searchRunnable, DEBOUNCE_DELAY)
             }
         })
 
