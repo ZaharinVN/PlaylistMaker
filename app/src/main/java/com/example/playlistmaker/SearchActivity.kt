@@ -14,6 +14,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +37,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var clearHistoryButton: Button
     private lateinit var historyMessageTextView: TextView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var progressSearch: FrameLayout
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("search_query", searchQuery)
         super.onSaveInstanceState(outState)
@@ -65,10 +68,12 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint("NotifyDataSetChanged", "CutPasteId", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+        progressBar = findViewById(R.id.progressBar) // Инициализация ProgressBar
+        progressSearch = findViewById(R.id.progressSearch)
         val backButton = findViewById<Button>(R.id.btnSettingsBack)
         backButton.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
@@ -141,7 +146,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if (s?.length ?: 0 > 0) {
+                if ((s?.length ?: 0) > 0) {
                     clearImageView.visibility = View.VISIBLE
                 } else {
                     clearImageView.visibility = View.GONE
@@ -174,13 +179,21 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    // Метод для отображения/скрытия ProgressBar
+    private fun showProgressBar(show: Boolean) {
+        progressBar.visibility = if (show) View.VISIBLE else View.GONE
+        progressSearch.visibility = if (show) View.VISIBLE else View.GONE
+    }
     private fun search(query: String, api: ItunesSearchApi) {
+        showProgressBar(true) // Показать ProgressBar перед выполнением запроса
+
         val call = api.search(query)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 runOnUiThread {
                     val resultJson = response.body()
+                    showProgressBar(false)// Скрыть ProgressBar после получения ответа
                     val searchResults: List<ItunesSearchResult> = Gson().fromJson(
                         resultJson?.getAsJsonArray("results"),
                         object : TypeToken<List<ItunesSearchResult>>() {}.type
@@ -224,6 +237,7 @@ class SearchActivity : AppCompatActivity() {
                     refreshButton.setOnClickListener {
                         call.clone().enqueue(this)
                         noInternetLayout.visibility = View.GONE
+                        showProgressBar(false)// Скрыть ProgressBar после получения ответа
                     }
                 }
                 runOnUiThread {
