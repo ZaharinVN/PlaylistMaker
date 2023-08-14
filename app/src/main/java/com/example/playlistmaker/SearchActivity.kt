@@ -61,6 +61,7 @@ class SearchActivity : AppCompatActivity() {
         const val EXTRA_RELEASE_DATE = "releaseDate"
         const val EXTRA_PRIMARY_GENRE_NAME = "primaryGenreName"
         const val EXTRA_COUNTRY = "country"
+        const val EXTRA_PREVIEW = "previewUrl"
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -139,6 +140,7 @@ class SearchActivity : AppCompatActivity() {
                 putExtra(EXTRA_RELEASE_DATE, track.releaseDate)
                 putExtra(EXTRA_PRIMARY_GENRE_NAME, track.primaryGenreName)
                 putExtra(EXTRA_COUNTRY, track.country)
+                putExtra(EXTRA_PREVIEW, track.previewUrl)
             }
             startActivity(intent)
         }
@@ -231,6 +233,7 @@ class SearchActivity : AppCompatActivity() {
                                     putExtra(EXTRA_RELEASE_DATE, track.releaseDate)
                                     putExtra(EXTRA_PRIMARY_GENRE_NAME, track.primaryGenreName)
                                     putExtra(EXTRA_COUNTRY, track.country)
+                                    putExtra(EXTRA_PREVIEW, track.previewUrl)
                                 }
                             startActivity(intent)
                         }
