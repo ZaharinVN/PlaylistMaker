@@ -299,7 +299,7 @@
         <item name="layout_constraintEnd_toStartOf">@+id/btnPlay</item>
         <item name="layout_constraintTop_toBottomOf">@+id/artistNameResult</item>
         <item name="layout_constraintBottom_toTopOf">@+id/progressTime</item>
-        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:layout_marginTop">44dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:src">@drawable/ic_add</item>
 
@@ -316,6 +316,19 @@
         <item name="android:layout_marginTop">44dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:src">@drawable/ic_favorite</item>
+    </style>
+
+    <style name="disLikeButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="layout_constraintStart_toEndOf">@+id/btnPlay</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="layout_constraintTop_toBottomOf">@+id/artistNameResult</item>
+        <item name="layout_constraintBottom_toTopOf">@+id/progressTime</item>
+        <item name="android:layout_marginTop">44dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:src">@drawable/ic_dislike_day</item>
     </style>
 
 </resources>

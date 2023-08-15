@@ -1,5 +1,6 @@
 package com.example.playlistmaker
 
+
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -19,17 +20,22 @@ import com.example.playlistmaker.databinding.ActivityMediaBinding
 import android.media.MediaPlayer
 import android.media.AudioAttributes
 import android.os.Handler
+import android.os.Looper
 import android.widget.TextView
 
 class MediaActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMediaBinding
     private var mediaPlayer: MediaPlayer? = null
-    private var isPlaying: Boolean = false
     private var currentPosition: Int = 0
-    private var progressHandler: Handler = Handler()
+    private var playbackState: Int = STATE_DEFAULT
     private lateinit var progressRunnable: Runnable
-
+    private val progressHandler = Handler(Looper.getMainLooper())
+    private lateinit var btnPlay: ImageButton
+    private lateinit var btnPause: ImageButton
+    private lateinit var progressTime: TextView
+    private lateinit var btnFavorite: ImageButton
+    private lateinit var btnDisLike: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +52,12 @@ class MediaActivity : AppCompatActivity() {
         val primaryGenreName = intent.getStringExtra(EXTRA_PRIMARY_GENRE_NAME)
         val country = intent.getStringExtra(EXTRA_COUNTRY)
         val previewUrl = intent.getStringExtra(EXTRA_PREVIEW)
+
+        btnPlay = findViewById<ImageButton>(R.id.btnPlay)
+        btnPause = findViewById<ImageButton>(R.id.btnPause)
+        progressTime = findViewById<TextView>(R.id.progressTime)
+        btnFavorite = findViewById<ImageButton>(R.id.btnFavorite)
+        btnDisLike = findViewById<ImageButton>(R.id.btnDisLike)
 
         val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
         Glide.with(this)
@@ -64,17 +76,34 @@ class MediaActivity : AppCompatActivity() {
         binding.progressTime.text = "00:00"
 
         //btnAdd.setOnClickListener("ADD")
-        //btnFavorite.setOnClickListener("Favorite")
-        val btnPlay = findViewById<ImageButton>(R.id.btnPlay)
-        val btnPause = findViewById<ImageButton>(R.id.btnPause)
-        val progressTime = findViewById<TextView>(R.id.progressTime)
+        btnFavorite.setOnClickListener {
+            btnDisLike.visibility = View.VISIBLE
+        }
+        btnDisLike.setOnClickListener {
+            btnDisLike.visibility = View.GONE
+        }
 
         btnPlay.setOnClickListener {
             btnPause.visibility = View.VISIBLE
-            if (isPlaying) {
-                pauseAudio()
-            } else {
-                playAudio(previewUrl)
+            when (playbackState) {
+                STATE_DEFAULT -> {
+                    playAudio(previewUrl)
+                }
+
+                STATE_PREPARED -> {
+                    resumeAudio()
+                    btnPause.visibility = View.GONE
+                }
+
+                STATE_PLAYING -> {
+                    playAudio(previewUrl)
+                    btnPause.visibility = View.VISIBLE
+                }
+
+                STATE_PAUSED -> {
+                    resumeAudio()
+
+                }
             }
         }
         btnPause.setOnClickListener {
@@ -89,41 +118,62 @@ class MediaActivity : AppCompatActivity() {
 
     private fun playAudio(audioUrl: String?) {
         try {
-            if (isPlaying) {
-                mediaPlayer?.seekTo(currentPosition)
-                mediaPlayer?.start()
-            } else {
-                mediaPlayer = MediaPlayer().apply {
-                    setAudioAttributes(AudioAttributes.Builder()
+            mediaPlayer = MediaPlayer().apply {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build())
-                    setDataSource(audioUrl)
-                    prepare()
-                    start()
-                    progressHandler.post(progressRunnable)
+                        .build()
+                )
+                setDataSource(audioUrl)
+                prepareAsync()
+                setOnPreparedListener { mp ->
+                    mediaPlayer = mp
+                    startAudio()
                 }
+                setOnCompletionListener {
+                    btnPause.visibility = View.GONE
+                    playbackState = STATE_DEFAULT
+                    progressTime.text = "00:00"
+                    progressHandler.removeCallbacks(progressRunnable)
+                }
+                progressHandler.post(progressRunnable)
             }
-            isPlaying = true
+            playbackState = STATE_PREPARED
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    private fun startAudio() {
+        mediaPlayer?.start()
+        playbackState = STATE_PLAYING
     }
 
     private fun pauseAudio() {
-        try {
-            mediaPlayer?.pause()
-            currentPosition = mediaPlayer?.currentPosition ?: 0
-            isPlaying = false
-            progressHandler.removeCallbacks(progressRunnable)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        mediaPlayer?.pause()
+        currentPosition = mediaPlayer?.currentPosition ?: 0
+        playbackState = STATE_PAUSED
+        progressHandler.removeCallbacks(progressRunnable)
+    }
+
+    private fun resumeAudio() {
+        mediaPlayer?.seekTo(currentPosition)
+        mediaPlayer?.start()
+        playbackState = STATE_PLAYING
+        progressHandler.post(progressRunnable)
     }
 
     private fun updateProgressTime(progressTime: TextView) {
-        val progress = mediaPlayer?.currentPosition ?: 0
-        val duration = mediaPlayer?.duration ?: 0
-        progressTime.text = "${formatTime(progress)}"
+        val progress = mediaPlayer?.currentPosition
+        progressTime.text = "${formatTime(progress!!)}"
+    }
+
+    override fun onPause() {
+        super.onPause()
+        btnPause.visibility = View.GONE
+        if (playbackState == STATE_PLAYING) {
+            pauseAudio()
+        }
     }
 
     private fun formatTime(timeInMillis: Int): String {
@@ -134,8 +184,15 @@ class MediaActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        progressHandler.removeCallbacks(progressRunnable)
         mediaPlayer?.release()
+        progressHandler.removeCallbacks(progressRunnable)
+    }
+
+    companion object {
+        const val STATE_DEFAULT = 0
+        const val STATE_PREPARED = 1
+        const val STATE_PLAYING = 2
+        const val STATE_PAUSED = 3
     }
 }
 

@@ -82,8 +82,17 @@
     <ImageButton
         android:id="@+id/btnFavorite"
         style="@style/favoriteButton"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="302dp"
+        tools:layout_editor_absoluteY="484dp" />
 
+    <ImageButton
+        android:id="@+id/btnDisLike"
+        style="@style/disLikeButton"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="302dp"
+        tools:layout_editor_absoluteY="484dp"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/progressTime"
