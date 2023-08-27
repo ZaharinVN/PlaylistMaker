@@ -42,7 +42,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var progressSearch: FrameLayout
     private lateinit var debounceHandler: Handler
-    private val DEBOUNCE_DELAY = 2000L
+    private val DEBOUNCE_DELAY_MILLIS = 2000L
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("search_query", searchQuery)
@@ -124,7 +124,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 debounceHandler.removeCallbacks(searchRunnable)
-                debounceHandler.postDelayed(searchRunnable, DEBOUNCE_DELAY)
+                debounceHandler.postDelayed(searchRunnable, DEBOUNCE_DELAY_MILLIS)
             }
         })
 

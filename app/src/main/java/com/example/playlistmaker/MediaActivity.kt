@@ -28,7 +28,7 @@ class MediaActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMediaBinding
     private var mediaPlayer: MediaPlayer? = null
     private var currentPosition: Int = 0
-    private var playbackState: Int = STATE_DEFAULT
+    private var playbackState: Int = DEFAULT
     private lateinit var progressRunnable: Runnable
     private val progressHandler = Handler(Looper.getMainLooper())
     private lateinit var btnPlay: ImageButton
@@ -86,21 +86,21 @@ class MediaActivity : AppCompatActivity() {
         btnPlay.setOnClickListener {
             btnPause.visibility = View.VISIBLE
             when (playbackState) {
-                STATE_DEFAULT -> {
+                DEFAULT -> {
                     playAudio(previewUrl)
                 }
 
-                STATE_PREPARED -> {
+                PREPARED -> {
                     resumeAudio()
                     btnPause.visibility = View.GONE
                 }
 
-                STATE_PLAYING -> {
+                PLAYING -> {
                     playAudio(previewUrl)
                     btnPause.visibility = View.VISIBLE
                 }
 
-                STATE_PAUSED -> {
+                PAUSED -> {
                     resumeAudio()
 
                 }
@@ -132,13 +132,13 @@ class MediaActivity : AppCompatActivity() {
                 }
                 setOnCompletionListener {
                     btnPause.visibility = View.GONE
-                    playbackState = STATE_DEFAULT
+                    playbackState = DEFAULT
                     progressTime.text = "00:00"
                     progressHandler.removeCallbacks(progressRunnable)
                 }
                 progressHandler.post(progressRunnable)
             }
-            playbackState = STATE_PREPARED
+            playbackState = PREPARED
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -146,20 +146,20 @@ class MediaActivity : AppCompatActivity() {
 
     private fun startAudio() {
         mediaPlayer?.start()
-        playbackState = STATE_PLAYING
+        playbackState = PLAYING
     }
 
     private fun pauseAudio() {
         mediaPlayer?.pause()
         currentPosition = mediaPlayer?.currentPosition ?: 0
-        playbackState = STATE_PAUSED
+        playbackState = PAUSED
         progressHandler.removeCallbacks(progressRunnable)
     }
 
     private fun resumeAudio() {
         mediaPlayer?.seekTo(currentPosition)
         mediaPlayer?.start()
-        playbackState = STATE_PLAYING
+        playbackState = PLAYING
         progressHandler.post(progressRunnable)
     }
 
@@ -171,7 +171,7 @@ class MediaActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         btnPause.visibility = View.GONE
-        if (playbackState == STATE_PLAYING) {
+        if (playbackState == PLAYING) {
             pauseAudio()
         }
     }
@@ -189,10 +189,10 @@ class MediaActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
+        const val DEFAULT = 0
+        const val PREPARED = 1
+        const val PLAYING = 2
+        const val PAUSED = 3
     }
 }
 
