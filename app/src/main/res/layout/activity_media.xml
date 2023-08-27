@@ -69,20 +69,36 @@
     <ImageButton
         android:id="@+id/btnPlay"
         style="@style/playButton"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="28dp"
+        tools:ignore="MissingConstraints" />
+
+    <ImageButton
+        android:id="@+id/btnPause"
+        style="@style/pauseButton"
+        android:layout_marginTop="28dp"
+        android:visibility="gone"
         tools:ignore="MissingConstraints" />
 
     <ImageButton
         android:id="@+id/btnFavorite"
         style="@style/favoriteButton"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="302dp"
+        tools:layout_editor_absoluteY="484dp" />
 
+    <ImageButton
+        android:id="@+id/btnDisLike"
+        style="@style/disLikeButton"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="302dp"
+        tools:layout_editor_absoluteY="484dp"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/progressTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="00 : 30"
+        tools:text="00:00"
         app:layout_constraintBottom_toTopOf="@+id/trackTime_field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

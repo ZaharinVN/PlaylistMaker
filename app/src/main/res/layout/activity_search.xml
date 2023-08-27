@@ -10,7 +10,7 @@
 
     <Button
         android:id="@+id/btnSettingsBack"
-        style="@style/SettingsBackBtnStyle"/>
+        style="@style/SettingsBackBtnStyle" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -80,6 +80,23 @@
             android:text="@string/NoResults" />
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/progressSearch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/ic_progress_animation"
+        android:visibility="gone" />
+    </FrameLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -103,6 +120,7 @@
             android:id="@+id/clearHistoryButton"
             style="@style/ClearBtnStyle"
             app:backgroundTint="@color/main_black" />
+
     </LinearLayout>
 
 </LinearLayout>

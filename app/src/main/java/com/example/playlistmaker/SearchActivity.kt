@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -14,6 +16,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +39,11 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var clearHistoryButton: Button
     private lateinit var historyMessageTextView: TextView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var progressSearch: FrameLayout
+    private lateinit var debounceHandler: Handler
+    private val DEBOUNCE_DELAY_MILLIS = 2000L
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("search_query", searchQuery)
         super.onSaveInstanceState(outState)
@@ -53,6 +61,7 @@ class SearchActivity : AppCompatActivity() {
         const val EXTRA_RELEASE_DATE = "releaseDate"
         const val EXTRA_PRIMARY_GENRE_NAME = "primaryGenreName"
         const val EXTRA_COUNTRY = "country"
+        const val EXTRA_PREVIEW = "previewUrl"
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -65,10 +74,12 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint("NotifyDataSetChanged", "CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+        progressBar = findViewById(R.id.progressBar) // Инициализация ProgressBar
+        progressSearch = findViewById(R.id.progressSearch)
         val backButton = findViewById<Button>(R.id.btnSettingsBack)
         backButton.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
@@ -98,17 +109,22 @@ class SearchActivity : AppCompatActivity() {
         historyMessageTextView = findViewById(R.id.history_message)
         historyMessageTextView.visibility =
             if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
+        debounceHandler = Handler(Looper.getMainLooper())
         val retrofit = Retrofit.Builder()
             .baseUrl("https://itunes.apple.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
         searchEditText.addTextChangedListener(object : TextWatcher {
+            private var searchRunnable: Runnable = Runnable {
+                searchQuery = searchEditText.text.toString()
+                search(searchQuery, itunesSearchApi)
+            }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                searchQuery = s.toString()
-                search(searchQuery, itunesSearchApi)
+                debounceHandler.removeCallbacks(searchRunnable)
+                debounceHandler.postDelayed(searchRunnable, DEBOUNCE_DELAY_MILLIS)
             }
         })
 
@@ -124,6 +140,7 @@ class SearchActivity : AppCompatActivity() {
                 putExtra(EXTRA_RELEASE_DATE, track.releaseDate)
                 putExtra(EXTRA_PRIMARY_GENRE_NAME, track.primaryGenreName)
                 putExtra(EXTRA_COUNTRY, track.country)
+                putExtra(EXTRA_PREVIEW, track.previewUrl)
             }
             startActivity(intent)
         }
@@ -141,7 +158,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if (s?.length ?: 0 > 0) {
+                if ((s?.length ?: 0) > 0) {
                     clearImageView.visibility = View.VISIBLE
                 } else {
                     clearImageView.visibility = View.GONE
@@ -174,13 +191,21 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    // Метод для отображения/скрытия ProgressBar
+    private fun showProgressBar(show: Boolean) {
+        progressBar.visibility = if (show) View.VISIBLE else View.GONE
+        progressSearch.visibility = if (show) View.VISIBLE else View.GONE
+    }
     private fun search(query: String, api: ItunesSearchApi) {
+        showProgressBar(true) // Показать ProgressBar перед выполнением запроса
+
         val call = api.search(query)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 runOnUiThread {
                     val resultJson = response.body()
+                    showProgressBar(false)// Скрыть ProgressBar после получения ответа
                     val searchResults: List<ItunesSearchResult> = Gson().fromJson(
                         resultJson?.getAsJsonArray("results"),
                         object : TypeToken<List<ItunesSearchResult>>() {}.type
@@ -208,6 +233,7 @@ class SearchActivity : AppCompatActivity() {
                                     putExtra(EXTRA_RELEASE_DATE, track.releaseDate)
                                     putExtra(EXTRA_PRIMARY_GENRE_NAME, track.primaryGenreName)
                                     putExtra(EXTRA_COUNTRY, track.country)
+                                    putExtra(EXTRA_PREVIEW, track.previewUrl)
                                 }
                             startActivity(intent)
                         }
@@ -224,6 +250,7 @@ class SearchActivity : AppCompatActivity() {
                     refreshButton.setOnClickListener {
                         call.clone().enqueue(this)
                         noInternetLayout.visibility = View.GONE
+                        showProgressBar(false)// Скрыть ProgressBar после получения ответа
                     }
                 }
                 runOnUiThread {
