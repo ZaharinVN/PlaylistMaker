@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui
 
 
 import android.annotation.SuppressLint
@@ -20,6 +20,10 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.data.network.ItunesSearchApi
+import com.example.playlistmaker.data.dto.ItunesSearchResult
+import com.example.playlistmaker.R
+import com.example.playlistmaker.presentation.TrackAdapter
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
