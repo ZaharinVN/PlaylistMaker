@@ -2,6 +2,7 @@ package com.example.playlistmaker.presentation.ui
 
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -33,6 +34,7 @@ class MediaActivity : AppCompatActivity(),
     private lateinit var progressTime: TextView
     private lateinit var btnFavorite: ImageButton
     private lateinit var btnDisLike: ImageButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMediaBinding.inflate(layoutInflater)
@@ -49,6 +51,7 @@ class MediaActivity : AppCompatActivity(),
         val repository: MediaRepository = MediaDataSource(intent)
         val presenter =
             MediaPresenter(btnPlay, btnPause, progressTime, btnFavorite, btnDisLike, EXTRA_PREVIEW)
+        Log.d("MediaActivity", "previewUrl-MA: $EXTRA_PREVIEW")
 
         // Настройка обработчиков событий
         binding.btnPlayerBack.setOnClickListener { finish() }

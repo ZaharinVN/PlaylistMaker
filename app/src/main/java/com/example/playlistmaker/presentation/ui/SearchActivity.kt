@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -146,6 +147,7 @@ class SearchActivity : AppCompatActivity() {
                 putExtra(EXTRA_COUNTRY, track.country)
                 putExtra(EXTRA_PREVIEW, track.previewUrl)
             }
+            Log.d("SearchActivity", "previewUrl-SA: ${track.previewUrl}")
             startActivity(intent)
         }
         recyclerView.adapter = trackAdapter

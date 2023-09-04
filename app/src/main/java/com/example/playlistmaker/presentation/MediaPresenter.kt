@@ -4,9 +4,11 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import com.example.playlistmaker.presentation.ui.SearchActivity
 
 
 class MediaPresenter(
@@ -15,10 +17,10 @@ class MediaPresenter(
     private val progressTime: TextView,
     private val btnFavorite: ImageButton,
     private val btnDisLike: ImageButton,
-    private val previewUrl: String
+    private val previewUrl: String,
 ) : MediaContract.Presenter {
 
-    private var mediaPlayer: MediaPlayer? = null
+    private var mediaPlayer = MediaPlayer()
     private var currentPosition: Int = 0
     private var playbackState: Int = DEFAULT
     private val progressHandler = Handler(Looper.getMainLooper())
@@ -31,18 +33,12 @@ class MediaPresenter(
         const val PAUSED = 3
     }
 
-    private fun startAudio() {
-        mediaPlayer?.start()
-        playbackState = PLAYING
-        progressRunnable()
-        progressHandler.post(progressRunnable)
-    }
-
     override fun onPlayClicked() {
         btnPause.visibility = View.VISIBLE
         when (playbackState) {
             DEFAULT -> {
                 playAudio(previewUrl)
+                Log.d("MediaPresenter", "previewUrl-MP-PC: $previewUrl")
             }
 
             PREPARED -> {
@@ -74,14 +70,7 @@ class MediaPresenter(
         btnDisLike.visibility = View.GONE
     }
 
-    override fun progressRunnable() {
-        progressRunnable = Runnable {
-            updateProgressTime()
-            progressHandler.postDelayed(progressRunnable, 1000)
-        }
-    }
-
-    private fun updateProgressTime() {
+    private fun updateProgressTime(progressTime: TextView) {
         val progress = mediaPlayer?.currentPosition
         progressTime.text = "${formatTime(progress!!)}"
     }
@@ -92,7 +81,13 @@ class MediaPresenter(
         return String.format("%02d:%02d", minutes, seconds)
     }
 
+    override fun progressRunnable() {
+        updateProgressTime(progressTime)
+        progressHandler.postDelayed(progressRunnable, 1000)
+    }
+
     private fun playAudio(previewUrl: String?) {
+        Log.d("MediaPresenter", "previewUrl-MP-PA: $previewUrl")
         try {
             mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
@@ -118,6 +113,11 @@ class MediaPresenter(
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    private fun startAudio() {
+        mediaPlayer?.start()
+        playbackState = PLAYING
     }
 
     private fun pauseAudio() {
