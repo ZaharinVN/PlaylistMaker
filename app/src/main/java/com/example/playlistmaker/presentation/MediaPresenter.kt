@@ -7,7 +7,7 @@ import android.os.Looper
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import com.example.playlistmaker.presentation.ui.SearchActivity
+
 
 class MediaPresenter(
     private val btnPlay: ImageButton,
@@ -15,6 +15,7 @@ class MediaPresenter(
     private val progressTime: TextView,
     private val btnFavorite: ImageButton,
     private val btnDisLike: ImageButton,
+    private val previewUrl: String
 ) : MediaContract.Presenter {
 
     private var mediaPlayer: MediaPlayer? = null
@@ -30,51 +31,47 @@ class MediaPresenter(
         const val PAUSED = 3
     }
 
+    private fun startAudio() {
+        mediaPlayer?.start()
+        playbackState = PLAYING
+        progressRunnable()
+        progressHandler.post(progressRunnable)
+    }
+
     override fun onPlayClicked() {
-        btnPlay.setOnClickListener {
-            btnPause.visibility = View.VISIBLE
-            when (playbackState) {
-                DEFAULT -> {
-                    val previewUrl = (SearchActivity.EXTRA_PREVIEW)
-                    playAudio(previewUrl)
-                }
+        btnPause.visibility = View.VISIBLE
+        when (playbackState) {
+            DEFAULT -> {
+                playAudio(previewUrl)
+            }
 
-                PREPARED -> {
-                    resumeAudio()
-                    btnPause.visibility = View.GONE
-                }
+            PREPARED -> {
+                resumeAudio()
+                btnPause.visibility = View.GONE
+            }
 
-                PLAYING -> {
-                    val previewUrl = (SearchActivity.EXTRA_PREVIEW)
-                    playAudio(previewUrl)
-                    btnPause.visibility = View.VISIBLE
-                }
+            PLAYING -> {
+                playAudio(previewUrl)
+                btnPause.visibility = View.VISIBLE
+            }
 
-                PAUSED -> {
-                    resumeAudio()
-
-                }
+            PAUSED -> {
+                resumeAudio()
             }
         }
     }
 
     override fun onPauseAudioClicked() {
-        btnPause.setOnClickListener {
-            btnPause.visibility = View.GONE
-            pauseAudio()
-        }
+        btnPause.visibility = View.GONE
+        pauseAudio()
     }
 
     override fun onFavoriteClicked() {
-        btnFavorite.setOnClickListener {
-            btnDisLike.visibility = View.VISIBLE
-        }
+        btnDisLike.visibility = View.VISIBLE
     }
 
     override fun onDisLikeClicked() {
-        btnDisLike.setOnClickListener {
-            btnDisLike.visibility = View.GONE
-        }
+        btnDisLike.visibility = View.GONE
     }
 
     override fun progressRunnable() {
@@ -84,13 +81,18 @@ class MediaPresenter(
         }
     }
 
+    private fun updateProgressTime() {
+        val progress = mediaPlayer?.currentPosition
+        progressTime.text = "${formatTime(progress!!)}"
+    }
+
     private fun formatTime(timeInMillis: Int): String {
         val minutes = timeInMillis / 1000 / 60
         val seconds = timeInMillis / 1000 % 60
         return String.format("%02d:%02d", minutes, seconds)
     }
 
-    private fun playAudio(audioUrl: String?) {
+    private fun playAudio(previewUrl: String?) {
         try {
             mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
@@ -98,7 +100,7 @@ class MediaPresenter(
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                         .build()
                 )
-                setDataSource(audioUrl)
+                setDataSource(previewUrl)
                 prepareAsync()
                 setOnPreparedListener { mp ->
                     mediaPlayer = mp
@@ -118,11 +120,6 @@ class MediaPresenter(
         }
     }
 
-    private fun startAudio() {
-        mediaPlayer?.start()
-        playbackState = PLAYING
-    }
-
     private fun pauseAudio() {
         mediaPlayer?.pause()
         currentPosition = mediaPlayer?.currentPosition ?: 0
@@ -137,14 +134,8 @@ class MediaPresenter(
         progressHandler.post(progressRunnable)
     }
 
-    private fun updateProgressTime() {
-        val progress = mediaPlayer?.currentPosition
-        progressTime.text = "${formatTime(progress!!)}"
-    }
-
     override fun onDestroy() {
         mediaPlayer?.release()
         progressHandler.removeCallbacks(progressRunnable)
     }
-
 }

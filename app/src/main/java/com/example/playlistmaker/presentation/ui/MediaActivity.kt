@@ -27,14 +27,12 @@ import com.example.playlistmaker.presentation.MediaPresenter
 class MediaActivity : AppCompatActivity(),
     MediaContract {
     private lateinit var presenter: MediaContract.Presenter
-
     private lateinit var binding: ActivityMediaBinding
     private lateinit var btnPlay: ImageButton
     private lateinit var btnPause: ImageButton
     private lateinit var progressTime: TextView
     private lateinit var btnFavorite: ImageButton
     private lateinit var btnDisLike: ImageButton
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMediaBinding.inflate(layoutInflater)
@@ -49,8 +47,8 @@ class MediaActivity : AppCompatActivity(),
 
         // Инициализация презентера и репозитория
         val repository: MediaRepository = MediaDataSource(intent)
-        presenter =
-            MediaPresenter(btnPlay, btnPause, progressTime, btnFavorite, btnDisLike)
+        val presenter =
+            MediaPresenter(btnPlay, btnPause, progressTime, btnFavorite, btnDisLike, EXTRA_PREVIEW)
 
         // Настройка обработчиков событий
         binding.btnPlayerBack.setOnClickListener { finish() }
@@ -78,21 +76,18 @@ class MediaActivity : AppCompatActivity(),
         binding.primaryGenreName.text = primaryGenreName
         binding.country.text = country
         binding.progressTime.text = "00:00"
-
-
         val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
         Glide.with(this)
             .load(trackCoverUrl?.let { ItunesSearchResult.getCoverArtwork(it) })
             .transform(RoundedCorners(radius.toInt()))
             .placeholder(R.drawable.placeholder)
-            .into(binding.trackCover)
-    }
+            .into(binding.trackCover) }
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.onDestroy()
-    }
+        presenter.onDestroy() }
 }
+
 
 
 

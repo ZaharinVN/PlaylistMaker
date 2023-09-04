@@ -82,7 +82,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        progressBar = findViewById(R.id.progressBar) // Инициализация ProgressBar
+        progressBar = findViewById(R.id.progressBar)
         progressSearch = findViewById(R.id.progressSearch)
         val backButton = findViewById<Button>(R.id.btnSettingsBack)
         backButton.setOnClickListener {

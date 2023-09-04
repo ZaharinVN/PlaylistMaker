@@ -10,5 +10,4 @@ interface MediaContract {
         fun progressRunnable()
         fun onDestroy()
     }
-
 }
