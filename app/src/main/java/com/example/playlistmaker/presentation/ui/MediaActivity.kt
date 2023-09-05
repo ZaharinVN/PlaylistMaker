@@ -1,8 +1,10 @@
 package com.example.playlistmaker.presentation.ui
 
 
+import android.media.MediaPlayer
 import android.os.Bundle
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -29,6 +31,9 @@ class MediaActivity : AppCompatActivity(),
     MediaContract {
     private lateinit var presenter: MediaContract.Presenter
     private lateinit var binding: ActivityMediaBinding
+    private var mediaPlayer: MediaPlayer? = null
+    private lateinit var progressRunnable: Runnable
+    private val progressHandler = Handler(Looper.getMainLooper())
     private lateinit var btnPlay: ImageButton
     private lateinit var btnPause: ImageButton
     private lateinit var progressTime: TextView
@@ -39,28 +44,10 @@ class MediaActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityMediaBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Инициализация элементов интерфейса
-        btnPlay = findViewById(R.id.btnPlay)
-        btnPause = findViewById(R.id.btnPause)
-        progressTime = findViewById(R.id.progressTime)
-        btnFavorite = findViewById(R.id.btnFavorite)
-        btnDisLike = findViewById(R.id.btnDisLike)
-
-        // Инициализация презентера и репозитория
-        val repository: MediaRepository = MediaDataSource(intent)
-        val presenter =
-            MediaPresenter(btnPlay, btnPause, progressTime, btnFavorite, btnDisLike, EXTRA_PREVIEW)
-        Log.d("MediaActivity", "previewUrl-MA: $EXTRA_PREVIEW")
-
-        // Настройка обработчиков событий
         binding.btnPlayerBack.setOnClickListener { finish() }
-        btnPlay.setOnClickListener { presenter.onPlayClicked() }
-        btnPause.setOnClickListener { presenter.onPauseAudioClicked() }
-        btnFavorite.setOnClickListener { presenter.onFavoriteClicked() }
-        btnDisLike.setOnClickListener { presenter.onDisLikeClicked() }
+        progressTime = findViewById(R.id.progressTime)
 
-        // Получение данных из Intent
+    // Получение данных из Intent
         val trackCoverUrl = intent.getStringExtra(EXTRA_TRACK_COVER)
         val trackName = intent.getStringExtra(EXTRA_TRACK_NAME)
         val artistName = intent.getStringExtra(EXTRA_ARTIST_NAME)
@@ -69,7 +56,24 @@ class MediaActivity : AppCompatActivity(),
         val releaseDate = intent.getStringExtra(EXTRA_RELEASE_DATE)
         val primaryGenreName = intent.getStringExtra(EXTRA_PRIMARY_GENRE_NAME)
         val country = intent.getStringExtra(EXTRA_COUNTRY)
-        val previewUrl = intent.getStringExtra(EXTRA_PREVIEW)
+
+    // Инициализация элементов интерфейса
+        btnPlay = findViewById(R.id.btnPlay)
+        btnPause = findViewById(R.id.btnPause)
+        progressTime = findViewById(R.id.progressTime)
+        btnFavorite = findViewById(R.id.btnFavorite)
+        btnDisLike = findViewById(R.id.btnDisLike)
+
+    // Инициализация презентера и репозитория
+        val repository: MediaRepository = MediaDataSource(intent)
+        val presenter =
+        MediaPresenter(btnPlay, btnPause, progressTime, btnFavorite, btnDisLike, intent.getStringExtra(EXTRA_PREVIEW))
+
+    // Настройка обработчиков событий
+        btnPlay.setOnClickListener { presenter.onPlayClicked() }
+        btnPause.setOnClickListener { presenter.onPauseAudioClicked() }
+        btnFavorite.setOnClickListener { presenter.onFavoriteClicked() }
+        btnDisLike.setOnClickListener { presenter.onDisLikeClicked() }
 
         binding.trackNameResult.text = trackName
         binding.artistNameResult.text = artistName
@@ -79,6 +83,7 @@ class MediaActivity : AppCompatActivity(),
         binding.primaryGenreName.text = primaryGenreName
         binding.country.text = country
         binding.progressTime.text = "00:00"
+
         val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
         Glide.with(this)
             .load(trackCoverUrl?.let { ItunesSearchResult.getCoverArtwork(it) })
@@ -86,9 +91,14 @@ class MediaActivity : AppCompatActivity(),
             .placeholder(R.drawable.placeholder)
             .into(binding.trackCover) }
 
+    override fun onPause() {
+        super.onPause()
+        presenter.onPause()
+    }
     override fun onDestroy() {
         super.onDestroy()
-        presenter.onDestroy() }
+        presenter.onDestroy()
+    }
 }
 
 

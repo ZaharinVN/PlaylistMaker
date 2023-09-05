@@ -8,6 +8,7 @@ interface MediaContract {
         fun onFavoriteClicked()
         fun onDisLikeClicked()
         fun progressRunnable()
+        fun onPause()
         fun onDestroy()
     }
 }

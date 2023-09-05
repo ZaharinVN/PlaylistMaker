@@ -147,7 +147,7 @@ class SearchActivity : AppCompatActivity() {
                 putExtra(EXTRA_COUNTRY, track.country)
                 putExtra(EXTRA_PREVIEW, track.previewUrl)
             }
-            Log.d("SearchActivity", "previewUrl-SA: ${track.previewUrl}")
+            Log.d("SearchActivity", "previewUrl: ${track.previewUrl}")
             startActivity(intent)
         }
         recyclerView.adapter = trackAdapter

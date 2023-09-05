@@ -10,7 +10,7 @@ data class ItunesSearchResult(
     val releaseDate: String,
     val primaryGenreName: String,
     val country: String,
-    val previewUrl: String,
+    val previewUrl: String
 ) {
     companion object {
         fun getCoverArtwork(artworkUrl100: String): String {
