@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation
+package com.example.playlistmaker.domain
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -15,7 +15,7 @@ class MediaPresenter(
     private val btnFavorite: ImageButton,
     private val btnDisLike: ImageButton,
     private val previewUrl: String?,
-) : MediaContract.Presenter {
+) : MediaContract.Presenter, MediaContract {
     private var mediaPlayer: MediaPlayer? = null
     private var currentPosition: Int = 0
     private var playbackState: Int = DEFAULT

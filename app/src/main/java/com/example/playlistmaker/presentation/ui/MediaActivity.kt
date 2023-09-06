@@ -20,12 +20,13 @@ import com.example.playlistmaker.presentation.ui.SearchActivity.Companion.EXTRA_
 import com.example.playlistmaker.presentation.ui.SearchActivity.Companion.EXTRA_TRACK_TIME
 import com.example.playlistmaker.databinding.ActivityMediaBinding
 import android.widget.TextView
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.data.dto.ItunesSearchResult
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.MediaDataSource
 import com.example.playlistmaker.data.MediaRepository
-import com.example.playlistmaker.presentation.MediaContract
-import com.example.playlistmaker.presentation.MediaPresenter
+import com.example.playlistmaker.domain.MediaContract
+import com.example.playlistmaker.domain.MediaPresenter
 
 class MediaActivity : AppCompatActivity(),
     MediaContract {
@@ -44,7 +45,6 @@ class MediaActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityMediaBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.btnPlayerBack.setOnClickListener { finish() }
         progressTime = findViewById(R.id.progressTime)
 
     // Получение данных из Intent
@@ -65,7 +65,7 @@ class MediaActivity : AppCompatActivity(),
         btnDisLike = findViewById(R.id.btnDisLike)
 
     // Инициализация презентера и репозитория
-        val repository: MediaRepository = MediaDataSource(intent)
+        val repository = Creator.createMediaRepository(intent)
         val presenter =
         MediaPresenter(btnPlay, btnPause, progressTime, btnFavorite, btnDisLike, intent.getStringExtra(EXTRA_PREVIEW))
 
@@ -74,6 +74,7 @@ class MediaActivity : AppCompatActivity(),
         btnPause.setOnClickListener { presenter.onPauseAudioClicked() }
         btnFavorite.setOnClickListener { presenter.onFavoriteClicked() }
         btnDisLike.setOnClickListener { presenter.onDisLikeClicked() }
+        binding.btnPlayerBack.setOnClickListener { this.finish() }
 
         binding.trackNameResult.text = trackName
         binding.artistNameResult.text = artistName

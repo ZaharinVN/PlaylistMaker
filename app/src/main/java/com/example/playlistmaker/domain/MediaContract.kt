@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation
+package com.example.playlistmaker.domain
 
 interface MediaContract {
     interface Presenter {
