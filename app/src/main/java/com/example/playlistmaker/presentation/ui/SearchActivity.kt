@@ -22,8 +22,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.data.network.ItunesSearchApi
-import com.example.playlistmaker.data.dto.ItunesSearchResult
+import com.example.playlistmaker.domain.models.ItunesSearchResult
 import com.example.playlistmaker.R
+import com.example.playlistmaker.data.MediaActivity
 import com.example.playlistmaker.presentation.TrackAdapter
 import com.google.gson.Gson
 import com.google.gson.JsonObject

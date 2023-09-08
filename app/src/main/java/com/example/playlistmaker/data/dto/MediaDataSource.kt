@@ -1,6 +1,7 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.data.dto
 
 import android.content.Intent
+import com.example.playlistmaker.domain.api.MediaRepository
 import com.example.playlistmaker.presentation.ui.SearchActivity
 
 class MediaDataSource(private val intent: Intent) : MediaRepository {

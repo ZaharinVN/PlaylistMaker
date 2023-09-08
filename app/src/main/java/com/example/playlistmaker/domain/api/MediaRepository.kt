@@ -1,4 +1,4 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.domain.api
 
 interface MediaRepository {
     fun getTrackCoverUrl(): String?

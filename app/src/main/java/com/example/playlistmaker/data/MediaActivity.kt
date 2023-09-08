@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation.ui
+package com.example.playlistmaker.data
 
 
 import android.media.MediaPlayer
@@ -21,12 +21,10 @@ import com.example.playlistmaker.presentation.ui.SearchActivity.Companion.EXTRA_
 import com.example.playlistmaker.databinding.ActivityMediaBinding
 import android.widget.TextView
 import com.example.playlistmaker.Creator
-import com.example.playlistmaker.data.dto.ItunesSearchResult
+import com.example.playlistmaker.domain.models.ItunesSearchResult
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.MediaDataSource
-import com.example.playlistmaker.data.MediaRepository
 import com.example.playlistmaker.domain.MediaContract
-import com.example.playlistmaker.domain.MediaPresenter
+import com.example.playlistmaker.presentation.MediaPresenter
 
 class MediaActivity : AppCompatActivity(),
     MediaContract {
@@ -65,9 +63,9 @@ class MediaActivity : AppCompatActivity(),
         btnDisLike = findViewById(R.id.btnDisLike)
 
     // Инициализация презентера и репозитория
-        val repository = Creator.createMediaRepository(intent)
-        val presenter =
-        MediaPresenter(btnPlay, btnPause, progressTime, btnFavorite, btnDisLike, intent.getStringExtra(EXTRA_PREVIEW))
+        val mediaRepository =Creator.createMediaRepository(intent)
+        presenter =
+        MediaPresenter(btnPlay, btnPause, progressTime, btnFavorite, btnDisLike, intent.getStringExtra(EXTRA_PREVIEW),mediaRepository)
 
     // Настройка обработчиков событий
         btnPlay.setOnClickListener { presenter.onPlayClicked() }
