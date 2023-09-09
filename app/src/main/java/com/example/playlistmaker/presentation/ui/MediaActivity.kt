@@ -1,10 +1,7 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.presentation.ui
 
 
-import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -25,28 +22,17 @@ import com.example.playlistmaker.domain.models.ItunesSearchResult
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.MediaContract
 import com.example.playlistmaker.domain.api.MediaRepository
-import com.example.playlistmaker.presentation.MediaPresenter
 
 class MediaActivity : AppCompatActivity(),
     MediaContract {
     private lateinit var presenter: MediaContract.Presenter
     private lateinit var binding: ActivityMediaBinding
-    private var mediaPlayer: MediaPlayer? = null
-    private lateinit var progressRunnable: Runnable
-    private val progressHandler = Handler(Looper.getMainLooper())
-    private lateinit var btnPlay: ImageButton
-    private lateinit var btnPause: ImageButton
-    private lateinit var progressTime: TextView
-    private lateinit var btnFavorite: ImageButton
-    private lateinit var btnDisLike: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMediaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-    // Получение данных из Intent
         val trackCoverUrl = intent.getStringExtra(EXTRA_TRACK_COVER)
         val trackName = intent.getStringExtra(EXTRA_TRACK_NAME)
         val artistName = intent.getStringExtra(EXTRA_ARTIST_NAME)
@@ -56,14 +42,6 @@ class MediaActivity : AppCompatActivity(),
         val primaryGenreName = intent.getStringExtra(EXTRA_PRIMARY_GENRE_NAME)
         val country = intent.getStringExtra(EXTRA_COUNTRY)
 
-    // Инициализация элементов интерфейса
-        btnPlay = findViewById(R.id.btnPlay)
-        btnPause = findViewById(R.id.btnPause)
-        progressTime = findViewById(R.id.progressTime)
-        btnFavorite = findViewById(R.id.btnFavorite)
-        btnDisLike = findViewById(R.id.btnDisLike)
-
-    // Инициализация презентера и репозитория
         val intent = getIntent()
         val repository: MediaRepository = Creator.createMediaRepository(intent)
         val btnPlay = findViewById<ImageButton>(R.id.btnPlay)
@@ -73,8 +51,14 @@ class MediaActivity : AppCompatActivity(),
         val btnDisLike = findViewById<ImageButton>(R.id.btnDisLike)
         val previewUrl = intent.getStringExtra(EXTRA_PREVIEW)
 
-        presenter = Creator.createMediaPresenter(btnPlay, btnPause, progressTime, btnFavorite, btnDisLike, intent.getStringExtra(EXTRA_PREVIEW))
-
+        presenter = Creator.createMediaPresenter(
+            btnPlay,
+            btnPause,
+            progressTime,
+            btnFavorite,
+            btnDisLike,
+            intent.getStringExtra(EXTRA_PREVIEW)
+        )
 
     // Настройка обработчиков событий
         btnPlay.setOnClickListener { presenter.onPlayClicked() }
@@ -97,16 +81,14 @@ class MediaActivity : AppCompatActivity(),
             .load(trackCoverUrl?.let { ItunesSearchResult.getCoverArtwork(it) })
             .transform(RoundedCorners(radius.toInt()))
             .placeholder(R.drawable.placeholder)
-            .into(binding.trackCover) }
+            .into(binding.trackCover)
+    }
 
     override fun onPause() {
         super.onPause()
         presenter.onPause()
     }
-    override fun onDestroy() {
-        super.onDestroy()
-        presenter.onDestroy()
-    }
+
 }
 
 
