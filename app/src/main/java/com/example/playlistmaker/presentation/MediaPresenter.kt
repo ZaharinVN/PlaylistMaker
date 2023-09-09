@@ -17,7 +17,7 @@ class MediaPresenter(
     private val btnFavorite: ImageButton,
     private val btnDisLike: ImageButton,
     private val previewUrl: String?,
-    private val mediaRepository: MediaRepository
+
 ) : MediaContract.Presenter, MediaContract {
     private var mediaPlayer: MediaPlayer? = null
     private var currentPosition: Int = 0

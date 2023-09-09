@@ -24,6 +24,7 @@ import com.example.playlistmaker.Creator
 import com.example.playlistmaker.domain.models.ItunesSearchResult
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.MediaContract
+import com.example.playlistmaker.domain.api.MediaRepository
 import com.example.playlistmaker.presentation.MediaPresenter
 
 class MediaActivity : AppCompatActivity(),
@@ -43,7 +44,7 @@ class MediaActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityMediaBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        progressTime = findViewById(R.id.progressTime)
+
 
     // Получение данных из Intent
         val trackCoverUrl = intent.getStringExtra(EXTRA_TRACK_COVER)
@@ -63,9 +64,17 @@ class MediaActivity : AppCompatActivity(),
         btnDisLike = findViewById(R.id.btnDisLike)
 
     // Инициализация презентера и репозитория
-        val mediaRepository =Creator.createMediaRepository(intent)
-        presenter =
-        MediaPresenter(btnPlay, btnPause, progressTime, btnFavorite, btnDisLike, intent.getStringExtra(EXTRA_PREVIEW),mediaRepository)
+        val intent = getIntent()
+        val repository: MediaRepository = Creator.createMediaRepository(intent)
+        val btnPlay = findViewById<ImageButton>(R.id.btnPlay)
+        val btnPause = findViewById<ImageButton>(R.id.btnPause)
+        val progressTime = findViewById<TextView>(R.id.progressTime)
+        val btnFavorite = findViewById<ImageButton>(R.id.btnFavorite)
+        val btnDisLike = findViewById<ImageButton>(R.id.btnDisLike)
+        val previewUrl = intent.getStringExtra(EXTRA_PREVIEW)
+
+        presenter = Creator.createMediaPresenter(btnPlay, btnPause, progressTime, btnFavorite, btnDisLike, intent.getStringExtra(EXTRA_PREVIEW))
+
 
     // Настройка обработчиков событий
         btnPlay.setOnClickListener { presenter.onPlayClicked() }
