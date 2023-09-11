@@ -3,7 +3,6 @@ package com.example.playlistmaker.presentation
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import com.example.playlistmaker.domain.impl.PlayerImpl
 import com.example.playlistmaker.domain.MediaContract
 import com.example.playlistmaker.domain.Player
 
@@ -14,6 +13,7 @@ class MediaPresenter(
     private val btnFavorite: ImageButton,
     private val btnDisLike: ImageButton,
     private val previewUrl: String?,
+    private val player: Player
 ) : MediaContract.Presenter {
     override fun onFavoriteClicked() {
         btnDisLike.visibility = View.VISIBLE
@@ -43,7 +43,7 @@ class MediaPresenter(
         player.pauseAudio()
     }
 
-    private val player: Player = PlayerImpl(previewUrl, progressTime)
+
 }
 
 
