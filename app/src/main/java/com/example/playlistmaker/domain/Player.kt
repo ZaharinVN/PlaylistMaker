@@ -4,6 +4,4 @@ interface Player {
     fun startAudio()
     fun pauseAudio()
     fun isPlaying(): Boolean
-    fun updateProgressTime()
-
 }

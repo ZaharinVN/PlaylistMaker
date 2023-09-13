@@ -2,26 +2,37 @@ package com.example.playlistmaker.domain.impl
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
-import android.widget.TextView
 import com.example.playlistmaker.domain.PlayerInteractor
 
-
-class PlayerInteractorImpl(private val audioUrl: String?, private val progressTime: TextView) :
-    PlayerInteractor {
+class PlayerInteractorImpl(private val audioUrl: String?) : PlayerInteractor {
     private var mediaPlayer: MediaPlayer? = null
-    private lateinit var progressRunnable: Runnable
-    private val progressHandler = Handler(Looper.getMainLooper())
     private var currentPosition: Int = 0
-    private var playbackState: Int = DEFAULT
+    private var playbackState: PlayerState = PlayerState.DEFAULT
 
-    init {
-        progressRunnable()
-        setupMediaPlayer()
+    override fun startAudio() {
+        mediaPlayer?.start()
+        playbackState = PlayerState.PLAYING
     }
 
-    private fun setupMediaPlayer() {
+    override fun pauseAudio() {
+        mediaPlayer?.pause()
+        currentPosition = mediaPlayer?.currentPosition ?: 0
+        playbackState = PlayerState.PAUSED
+    }
+
+    override fun isPlaying(): Boolean {
+        return mediaPlayer?.isPlaying ?: false
+    }
+
+    override fun currentPosition(): Int {
+        return mediaPlayer?.currentPosition ?: 0
+    }
+
+    override fun preparePlayer(
+        dataSource: String,
+        onPreparedListener: () -> Unit,
+        onCompletionListener: () -> Unit
+    ) {
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(
                 AudioAttributes.Builder()
@@ -30,55 +41,39 @@ class PlayerInteractorImpl(private val audioUrl: String?, private val progressTi
             )
             setDataSource(audioUrl)
             prepareAsync()
-            setOnPreparedListener { mp ->
-                mediaPlayer = mp
+            setOnPreparedListener {
+                onPreparedListener()
+                playbackState = PlayerState.PREPARED
+
             }
             setOnCompletionListener {
-                playbackState = DEFAULT
-                progressTime.text = "00:00"
-                progressHandler.removeCallbacks(progressRunnable)
+                onCompletionListener()
+                playbackState = PlayerState.DEFAULT
+
             }
         }
     }
 
-    override fun startAudio() {
-        mediaPlayer?.start()
-        progressHandler.post(progressRunnable)
-        playbackState = PLAYING
-    }
+    override fun playbackControl(onStartPlayer: () -> Unit, onPausePlayer: () -> Unit) {
+        when (playbackState) {
+            PlayerState.PLAYING -> {
+                onPausePlayer()
+                pauseAudio()
+                playbackState = PlayerState.PAUSED
+            }
 
-    override fun pauseAudio() {
-        mediaPlayer?.pause()
-        currentPosition = mediaPlayer?.currentPosition ?: 0
-        playbackState = PAUSED
-        progressHandler.removeCallbacks(progressRunnable)
-    }
+            PlayerState.PREPARED, PlayerState.PAUSED -> {
+                onStartPlayer()
+                startAudio()
+                playbackState = PlayerState.PLAYING
+            }
 
-    override fun isPlaying(): Boolean {
-        return mediaPlayer?.isPlaying ?: false
-    }
-
-    override fun updateProgressTime() {
-        val progress = mediaPlayer?.currentPosition
-        progressTime.text = formatTime(progress!!)
-    }
-
-    private fun progressRunnable() {
-        progressRunnable = Runnable {
-            updateProgressTime()
-            progressHandler.postDelayed(progressRunnable, 1000)
+            PlayerState.DEFAULT -> {}
         }
     }
 
-    private fun formatTime(timeInMillis: Int): String {
-        val minutes = timeInMillis / 1000 / 60
-        val seconds = timeInMillis / 1000 % 60
-        return String.format("%02d:%02d", minutes, seconds)
-    }
-
-    companion object {
-        const val DEFAULT = 0
-        const val PLAYING = 1
-        const val PAUSED = 2
+    enum class PlayerState {
+        DEFAULT, PREPARED, PLAYING, PAUSED
     }
 }
+

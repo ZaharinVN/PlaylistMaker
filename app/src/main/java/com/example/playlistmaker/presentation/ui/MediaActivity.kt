@@ -29,7 +29,6 @@ class MediaActivity : AppCompatActivity(),
     private lateinit var presenter: MediaContract.Presenter
     private lateinit var binding: ActivityMediaBinding
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMediaBinding.inflate(layoutInflater)
@@ -53,7 +52,7 @@ class MediaActivity : AppCompatActivity(),
         val btnDisLike = findViewById<ImageButton>(R.id.btnDisLike)
         val previewUrl = intent.getStringExtra(EXTRA_PREVIEW)
 
-        val playerInteractor = PlayerInteractorImpl(previewUrl,progressTime)
+        val playerInteractor = PlayerInteractorImpl(previewUrl)
 
         presenter = MediaPresenter(
             btnPlay,
@@ -88,11 +87,13 @@ class MediaActivity : AppCompatActivity(),
             .placeholder(R.drawable.placeholder)
             .into(binding.trackCover)
     }
-    override fun onPause() {
-        super.onPause()
-        presenter.onPause()
+
+        override fun onPause() {
+            super.onPause()
+            presenter.onPause()
+        }
     }
-}
+
 
 
 
