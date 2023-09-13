@@ -1,4 +1,4 @@
-package com.example.playlistmaker.domain
+package com.example.playlistmaker.presentation.ui
 
 interface MediaContract {
     interface Presenter {
@@ -7,5 +7,6 @@ interface MediaContract {
         fun onFavoriteClicked()
         fun onDisLikeClicked()
         fun onPause()
+
     }
 }

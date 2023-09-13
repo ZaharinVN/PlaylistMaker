@@ -20,13 +20,15 @@ import android.widget.TextView
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.domain.models.ItunesSearchResult
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.MediaContract
 import com.example.playlistmaker.domain.api.MediaRepository
+import com.example.playlistmaker.domain.impl.PlayerInteractorImpl
+import com.example.playlistmaker.presentation.MediaPresenter
 
 class MediaActivity : AppCompatActivity(),
     MediaContract {
     private lateinit var presenter: MediaContract.Presenter
     private lateinit var binding: ActivityMediaBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,16 +53,19 @@ class MediaActivity : AppCompatActivity(),
         val btnDisLike = findViewById<ImageButton>(R.id.btnDisLike)
         val previewUrl = intent.getStringExtra(EXTRA_PREVIEW)
 
-        presenter = Creator.createMediaPresenter(
+        val playerInteractor = PlayerInteractorImpl(previewUrl,progressTime)
+
+        presenter = MediaPresenter(
             btnPlay,
             btnPause,
             progressTime,
             btnFavorite,
             btnDisLike,
-            intent.getStringExtra(EXTRA_PREVIEW)
+            intent.getStringExtra(EXTRA_PREVIEW),
+            playerInteractor
         )
 
-    // Настройка обработчиков событий
+        // Настройка обработчиков событий
         btnPlay.setOnClickListener { presenter.onPlayClicked() }
         btnPause.setOnClickListener { presenter.onPauseAudioClicked() }
         btnFavorite.setOnClickListener { presenter.onFavoriteClicked() }
@@ -83,12 +88,10 @@ class MediaActivity : AppCompatActivity(),
             .placeholder(R.drawable.placeholder)
             .into(binding.trackCover)
     }
-
     override fun onPause() {
         super.onPause()
         presenter.onPause()
     }
-
 }
 
 

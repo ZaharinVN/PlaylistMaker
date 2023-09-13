@@ -3,8 +3,9 @@ package com.example.playlistmaker.presentation
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import com.example.playlistmaker.domain.MediaContract
-import com.example.playlistmaker.domain.Player
+import com.example.playlistmaker.domain.PlayerInteractor
+import com.example.playlistmaker.presentation.ui.MediaContract
+
 
 class MediaPresenter(
     private val btnPlay: ImageButton,
@@ -13,7 +14,8 @@ class MediaPresenter(
     private val btnFavorite: ImageButton,
     private val btnDisLike: ImageButton,
     private val previewUrl: String?,
-    private val player: Player
+    private val playerInteractor: PlayerInteractor
+
 ) : MediaContract.Presenter {
     override fun onFavoriteClicked() {
         btnDisLike.visibility = View.VISIBLE
@@ -25,13 +27,13 @@ class MediaPresenter(
 
     override fun onPause() {
         btnPause.visibility = View.GONE
-        player.pauseAudio()
+        playerInteractor.pauseAudio()
     }
 
     override fun onPlayClicked() {
         btnPause.visibility = View.VISIBLE
-        player.startAudio()
-        if (player.isPlaying()) {
+        playerInteractor.startAudio()
+        if (playerInteractor.isPlaying()) {
             btnPause.visibility = View.VISIBLE
         } else {
             btnPause.visibility = View.GONE
@@ -40,10 +42,8 @@ class MediaPresenter(
 
     override fun onPauseAudioClicked() {
         btnPause.visibility = View.GONE
-        player.pauseAudio()
+        playerInteractor.pauseAudio()
     }
-
-
 }
 
 

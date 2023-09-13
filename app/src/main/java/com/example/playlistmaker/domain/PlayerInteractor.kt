@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain
 
-interface Player {
+interface PlayerInteractor {
     fun startAudio()
     fun pauseAudio()
     fun isPlaying(): Boolean
