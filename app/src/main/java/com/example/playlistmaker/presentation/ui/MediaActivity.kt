@@ -20,12 +20,12 @@ import android.widget.TextView
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.domain.models.ItunesSearchResult
 import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.Player
 import com.example.playlistmaker.domain.api.MediaRepository
 import com.example.playlistmaker.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.presentation.MediaPresenter
 
-class MediaActivity : AppCompatActivity(),
-    MediaContract {
+class MediaActivity : AppCompatActivity(), MediaContract {
     private lateinit var presenter: MediaContract.Presenter
     private lateinit var binding: ActivityMediaBinding
 
@@ -33,6 +33,25 @@ class MediaActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityMediaBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val intent = getIntent()
+
+        presenter = MediaPresenter(
+            binding.btnPlay,
+            binding.btnPause,
+            binding.progressTime,
+            binding.btnFavorite,
+            binding.btnDisLike,
+            intent.getStringExtra(EXTRA_PREVIEW),
+            Creator.createInteractor(Creator.createPlayer(intent.getStringExtra(EXTRA_PREVIEW)))
+        )
+
+        // Настройка обработчиков событий
+        binding.btnPlay.setOnClickListener { presenter.onPlayClicked() }
+        binding.btnPause.setOnClickListener { presenter.onPauseAudioClicked() }
+        binding.btnFavorite.setOnClickListener { presenter.onFavoriteClicked() }
+        binding.btnDisLike.setOnClickListener { presenter.onDisLikeClicked() }
+        binding.btnPlayerBack.setOnClickListener { finish() }
 
         val trackCoverUrl = intent.getStringExtra(EXTRA_TRACK_COVER)
         val trackName = intent.getStringExtra(EXTRA_TRACK_NAME)
@@ -42,34 +61,6 @@ class MediaActivity : AppCompatActivity(),
         val releaseDate = intent.getStringExtra(EXTRA_RELEASE_DATE)
         val primaryGenreName = intent.getStringExtra(EXTRA_PRIMARY_GENRE_NAME)
         val country = intent.getStringExtra(EXTRA_COUNTRY)
-
-        val intent = getIntent()
-        val repository: MediaRepository = Creator.createMediaRepository(intent)
-        val btnPlay = findViewById<ImageButton>(R.id.btnPlay)
-        val btnPause = findViewById<ImageButton>(R.id.btnPause)
-        val progressTime = findViewById<TextView>(R.id.progressTime)
-        val btnFavorite = findViewById<ImageButton>(R.id.btnFavorite)
-        val btnDisLike = findViewById<ImageButton>(R.id.btnDisLike)
-        val previewUrl = intent.getStringExtra(EXTRA_PREVIEW)
-
-        val playerInteractor = PlayerInteractorImpl(previewUrl)
-
-        presenter = MediaPresenter(
-            btnPlay,
-            btnPause,
-            progressTime,
-            btnFavorite,
-            btnDisLike,
-            intent.getStringExtra(EXTRA_PREVIEW),
-            playerInteractor
-        )
-
-        // Настройка обработчиков событий
-        btnPlay.setOnClickListener { presenter.onPlayClicked() }
-        btnPause.setOnClickListener { presenter.onPauseAudioClicked() }
-        btnFavorite.setOnClickListener { presenter.onFavoriteClicked() }
-        btnDisLike.setOnClickListener { presenter.onDisLikeClicked() }
-        binding.btnPlayerBack.setOnClickListener { this.finish() }
 
         binding.trackNameResult.text = trackName
         binding.artistNameResult.text = artistName
@@ -88,11 +79,11 @@ class MediaActivity : AppCompatActivity(),
             .into(binding.trackCover)
     }
 
-        override fun onPause() {
-            super.onPause()
-            presenter.onPause()
-        }
+    override fun onPause() {
+        super.onPause()
+        presenter.onPause()
     }
+}
 
 
 

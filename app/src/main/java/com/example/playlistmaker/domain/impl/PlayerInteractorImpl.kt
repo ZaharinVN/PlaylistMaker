@@ -1,57 +1,35 @@
 package com.example.playlistmaker.domain.impl
 
-import android.media.AudioAttributes
-import android.media.MediaPlayer
+import com.example.playlistmaker.domain.Player
 import com.example.playlistmaker.domain.PlayerInteractor
 
-class PlayerInteractorImpl(private val audioUrl: String?) : PlayerInteractor {
-    private var mediaPlayer: MediaPlayer? = null
+class PlayerInteractorImpl(private val player: Player) : PlayerInteractor {
+
     private var currentPosition: Int = 0
     private var playbackState: PlayerState = PlayerState.DEFAULT
 
     override fun startAudio() {
-        mediaPlayer?.start()
+        player.startAudio()
         playbackState = PlayerState.PLAYING
     }
 
     override fun pauseAudio() {
-        mediaPlayer?.pause()
-        currentPosition = mediaPlayer?.currentPosition ?: 0
+        player.pauseAudio()
+        currentPosition = player.currentPosition()
         playbackState = PlayerState.PAUSED
     }
 
     override fun isPlaying(): Boolean {
-        return mediaPlayer?.isPlaying ?: false
+        return player.isPlaying()
     }
 
     override fun currentPosition(): Int {
-        return mediaPlayer?.currentPosition ?: 0
+        return player.currentPosition()
     }
 
-    override fun preparePlayer(
-        dataSource: String,
-        onPreparedListener: () -> Unit,
-        onCompletionListener: () -> Unit
-    ) {
-        mediaPlayer = MediaPlayer().apply {
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build()
-            )
-            setDataSource(audioUrl)
-            prepareAsync()
-            setOnPreparedListener {
-                onPreparedListener()
-                playbackState = PlayerState.PREPARED
-
-            }
-            setOnCompletionListener {
-                onCompletionListener()
-                playbackState = PlayerState.DEFAULT
-
-            }
-        }
+    override fun preparePlayer(dataSource: String, onPreparedListener: () -> Unit, onCompletionListener: () -> Unit) {
+        player.preparePlayer(dataSource, onPreparedListener, onCompletionListener)
+        playbackState = PlayerState.PREPARED
     }
 
     override fun playbackControl(onStartPlayer: () -> Unit, onPausePlayer: () -> Unit) {
@@ -61,13 +39,11 @@ class PlayerInteractorImpl(private val audioUrl: String?) : PlayerInteractor {
                 pauseAudio()
                 playbackState = PlayerState.PAUSED
             }
-
             PlayerState.PREPARED, PlayerState.PAUSED -> {
                 onStartPlayer()
                 startAudio()
                 playbackState = PlayerState.PLAYING
             }
-
             PlayerState.DEFAULT -> {}
         }
     }
@@ -76,4 +52,5 @@ class PlayerInteractorImpl(private val audioUrl: String?) : PlayerInteractor {
         DEFAULT, PREPARED, PLAYING, PAUSED
     }
 }
+
 
