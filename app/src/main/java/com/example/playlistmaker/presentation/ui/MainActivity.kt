@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.R
 
 class MainActivity : AppCompatActivity() {
 

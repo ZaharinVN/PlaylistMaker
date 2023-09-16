@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui
 
 
 import android.annotation.SuppressLint
@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -20,6 +21,10 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.data.network.ItunesSearchApi
+import com.example.playlistmaker.domain.models.ItunesSearchResult
+import com.example.playlistmaker.R
+import com.example.playlistmaker.presentation.TrackAdapter
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
@@ -78,7 +83,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        progressBar = findViewById(R.id.progressBar) // Инициализация ProgressBar
+        progressBar = findViewById(R.id.progressBar)
         progressSearch = findViewById(R.id.progressSearch)
         val backButton = findViewById<Button>(R.id.btnSettingsBack)
         backButton.setOnClickListener {
@@ -142,6 +147,7 @@ class SearchActivity : AppCompatActivity() {
                 putExtra(EXTRA_COUNTRY, track.country)
                 putExtra(EXTRA_PREVIEW, track.previewUrl)
             }
+            Log.d("SearchActivity", "previewUrl: ${track.previewUrl}")
             startActivity(intent)
         }
         recyclerView.adapter = trackAdapter

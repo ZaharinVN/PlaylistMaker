@@ -15,7 +15,7 @@
         style="@style/MainButtonStyle"
         android:layout_marginTop="16dp"
         android:text="@string/search"
-        app:icon="@drawable/ic_search" />
+        app:icon="@drawable/ic_search_night" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLibrary"
