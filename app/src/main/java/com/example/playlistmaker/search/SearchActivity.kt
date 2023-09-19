@@ -24,6 +24,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.player.ui.MediaActivity
+import com.example.playlistmaker.search.data.ItunesSearchApi
+import com.example.playlistmaker.search.data.ItunesSearchResult
+import com.example.playlistmaker.search.ui.TrackAdapter
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
@@ -133,7 +136,7 @@ class SearchActivity : AppCompatActivity() {
         })
 
         val trackAdapter = TrackAdapter(searchHistory) { track ->
-            addTrackToHistory(track)
+            addTrackToHistory(track as ItunesSearchResult)
             val intent = Intent(this@SearchActivity, MediaActivity::class.java).apply {
                 putExtra(EXTRA_TRACK_ID, track.trackId)
                 putExtra(EXTRA_TRACK_NAME, track.trackName)
@@ -221,12 +224,12 @@ class SearchActivity : AppCompatActivity() {
                             noResultsLayout.visibility = View.GONE
                         }
                         val historyAdapter = TrackAdapter(searchHistory) { track ->
-                            addTrackToHistory(track)
+                            addTrackToHistory(track as ItunesSearchResult)
                         }
                         recyclerView.adapter = historyAdapter
                     } else {
                         val trackAdapter = TrackAdapter(searchResults) { track ->
-                            addTrackToHistory(track)
+                            addTrackToHistory(track as ItunesSearchResult)
                             val intent =
                                 Intent(this@SearchActivity, MediaActivity::class.java).apply {
                                     putExtra(EXTRA_TRACK_ID, track.trackId)
@@ -264,7 +267,7 @@ class SearchActivity : AppCompatActivity() {
                         if (response != null && response.code() == RESPONSE_CODE) {
                             noResultsLayout.visibility = View.VISIBLE
                             val historyAdapter = TrackAdapter(searchHistory) { track ->
-                                addTrackToHistory(track)
+                                addTrackToHistory(track as ItunesSearchResult)
                             }
                             recyclerView.adapter = historyAdapter
                         } else {

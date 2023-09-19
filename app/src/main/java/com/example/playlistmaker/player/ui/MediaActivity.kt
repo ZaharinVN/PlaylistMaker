@@ -16,7 +16,7 @@ import com.example.playlistmaker.search.SearchActivity.Companion.EXTRA_TRACK_NAM
 import com.example.playlistmaker.search.SearchActivity.Companion.EXTRA_TRACK_TIME
 import com.example.playlistmaker.databinding.ActivityMediaBinding
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.search.ItunesSearchResult
+import com.example.playlistmaker.search.data.ItunesSearchResult
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.api.MediaRepository
 

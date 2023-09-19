@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search
+package com.example.playlistmaker.search.ui
 
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +11,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
+import com.example.playlistmaker.search.data.ItunesSearchResult
 
 class TrackAdapter(
     private val data: List<ItunesSearchResult>,
-    private val onItemClick: (ItunesSearchResult) -> Unit,
+    private val listener: (Any) -> Unit
 ) : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
@@ -26,18 +27,18 @@ class TrackAdapter(
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(data[position])
         holder.itemView.setOnClickListener {
-            onItemClick(data[position])
+            listener.invoke(data[position])
             animateItemClick(holder.itemView)
         }
     }
 
     override fun getItemCount() = data.size
+
     class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val trackName: TextView = itemView.findViewById(R.id.track_name)
         private val artistName: TextView = itemView.findViewById(R.id.artist_name)
         private val trackTime: TextView = itemView.findViewById(R.id.track_time)
         private val trackArtwork: ImageView = itemView.findViewById(R.id.track_artwork)
-
 
         fun bind(track: ItunesSearchResult) {
             trackName.text = track.trackName
@@ -50,7 +51,6 @@ class TrackAdapter(
                 .centerCrop()
                 .apply(RequestOptions.bitmapTransform(RoundedCorners(5)))
                 .into(trackArtwork)
-
         }
     }
 
@@ -68,5 +68,5 @@ class TrackAdapter(
             }
         }
     }
-
 }
+

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search
+package com.example.playlistmaker.search.data
 
 import com.google.gson.JsonObject
 import retrofit2.Call
