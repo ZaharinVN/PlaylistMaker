@@ -3,22 +3,15 @@ package com.example.playlistmaker.settings.ui
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.widget.SwitchCompat
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
-import com.example.playlistmaker.settings.domain.SettingsRepositoryInterface
-import com.example.playlistmaker.settings.domain.SettingsUseCaseImpl
-import com.example.playlistmaker.settings.domain.SettingsUseCaseInterface
-import com.example.playlistmaker.sharing.data.SharingRepositoryImpl
-import com.example.playlistmaker.sharing.domain.SharingUseCase
-import com.example.playlistmaker.sharing.domain.SharingUseCaseImpl
+import com.example.playlistmaker.settings.domain.api.SettingsRepositoryInterface
+import com.example.playlistmaker.settings.domain.api.SettingsUseCaseInterface
+import com.example.playlistmaker.sharing.domain.api.SharingUseCase
 
 
 class SettingsActivity : AppCompatActivity() {

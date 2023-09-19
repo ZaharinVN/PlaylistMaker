@@ -1,7 +1,7 @@
-package com.example.playlistmaker.sharing.domain
+package com.example.playlistmaker.sharing.domain.impl
 
-import android.content.Intent
-import android.net.Uri
+import com.example.playlistmaker.sharing.domain.api.SharingRepository
+import com.example.playlistmaker.sharing.domain.api.SharingUseCase
 
 
 class SharingUseCaseImpl(private val sharingRepository: SharingRepository) : SharingUseCase {

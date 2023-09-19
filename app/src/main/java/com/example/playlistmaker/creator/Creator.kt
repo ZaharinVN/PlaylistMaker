@@ -9,13 +9,13 @@ import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.api.MediaRepository
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
-import com.example.playlistmaker.settings.domain.SettingsRepositoryInterface
-import com.example.playlistmaker.settings.domain.SettingsUseCaseImpl
-import com.example.playlistmaker.settings.domain.SettingsUseCaseInterface
-import com.example.playlistmaker.sharing.domain.SharingRepository
+import com.example.playlistmaker.settings.domain.api.SettingsRepositoryInterface
+import com.example.playlistmaker.settings.domain.impl.SettingsUseCaseImpl
+import com.example.playlistmaker.settings.domain.api.SettingsUseCaseInterface
+import com.example.playlistmaker.sharing.domain.api.SharingRepository
 import com.example.playlistmaker.sharing.data.SharingRepositoryImpl
-import com.example.playlistmaker.sharing.domain.SharingUseCase
-import com.example.playlistmaker.sharing.domain.SharingUseCaseImpl
+import com.example.playlistmaker.sharing.domain.api.SharingUseCase
+import com.example.playlistmaker.sharing.domain.impl.SharingUseCaseImpl
 
 
 object Creator {

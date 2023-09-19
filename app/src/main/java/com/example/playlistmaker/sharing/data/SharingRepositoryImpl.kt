@@ -3,7 +3,7 @@ package com.example.playlistmaker.sharing.data
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.example.playlistmaker.sharing.domain.SharingRepository
+import com.example.playlistmaker.sharing.domain.api.SharingRepository
 
 class SharingRepositoryImpl(private val context: Context) : SharingRepository {
     override fun shareApp(text: String) {
