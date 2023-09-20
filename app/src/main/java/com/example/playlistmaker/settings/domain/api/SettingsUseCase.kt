@@ -1,6 +1,6 @@
 package com.example.playlistmaker.settings.domain.api
 
-interface SettingsUseCaseInterface {
+interface SettingsUseCase {
     fun getDarkTheme(): Boolean
     fun setDarkTheme(enabled: Boolean)
 }

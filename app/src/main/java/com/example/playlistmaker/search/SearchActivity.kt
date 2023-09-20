@@ -21,12 +21,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.player.ui.MediaActivity
-import com.example.playlistmaker.search.data.HistoryUseCaseInterface
+import com.example.playlistmaker.search.domain.HistoryUseCase
 import com.example.playlistmaker.search.data.ItunesSearchApi
 import com.example.playlistmaker.search.data.ItunesSearchResult
-import com.example.playlistmaker.search.domain.UseCaseCreator
+import com.example.playlistmaker.search.domain.HistoryRepository
 import com.example.playlistmaker.search.ui.TrackAdapter
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -52,7 +53,14 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var progressSearch: FrameLayout
     private lateinit var debounceHandler: Handler
     private val DEBOUNCE_DELAY_MILLIS = 2000L
-    private lateinit var historyUseCase: HistoryUseCaseInterface
+    private lateinit var historyUseCase: HistoryUseCase
+    private lateinit var historyRepository: HistoryRepository
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString("search_query", searchQuery)
+        super.onSaveInstanceState(outState)
+    }
+
     companion object {
         const val RESPONSE_CODE = 200
         const val PREFERENCES_KEY = "search_history"
@@ -67,10 +75,6 @@ class SearchActivity : AppCompatActivity() {
         const val EXTRA_COUNTRY = "country"
         const val EXTRA_PREVIEW = "previewUrl"
     }
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString("search_query", searchQuery)
-        super.onSaveInstanceState(outState)
-    }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
@@ -81,6 +85,7 @@ class SearchActivity : AppCompatActivity() {
             searchText.requestFocus()
         }
     }
+
     @SuppressLint("NotifyDataSetChanged", "CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,23 +107,26 @@ class SearchActivity : AppCompatActivity() {
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         noResultsLayout = findViewById(R.id.noResults)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        sharedPreferences = getSharedPreferences("Search History", Context.MODE_PRIVATE)
 
-        sharedPreferences = getSharedPreferences("Search History",  Context.MODE_PRIVATE)
-        historyUseCase = UseCaseCreator.createHistoryUseCase()
+        historyRepository = Creator.createHistoryRepository(sharedPreferences)
+        historyUseCase = Creator.createHistoryUseCase(historyRepository)
 
-        searchHistory = historyUseCase.loadSearchHistory()
+        searchHistory = loadSearchHistory()
         clearHistoryButton = findViewById(R.id.clearHistoryButton)
+        historyMessageTextView = findViewById(R.id.history_message)
+        historyMessageTextView.visibility =
+            if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         clearHistoryButton.visibility = if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         clearHistoryButton.setOnClickListener {
+            clearSearchHistory()
             historyUseCase.clearSearchHistory()
             searchHistory.clear()
             recyclerView.adapter?.notifyDataSetChanged()
             clearHistoryButton.visibility = View.GONE
             historyMessageTextView.visibility = View.GONE
+            saveSearchHistory()
         }
-        historyMessageTextView = findViewById(R.id.history_message)
-        historyMessageTextView.visibility =
-            if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         debounceHandler = Handler(Looper.getMainLooper())
         val retrofit = Retrofit.Builder()
             .baseUrl("https://itunes.apple.com/")
@@ -130,6 +138,7 @@ class SearchActivity : AppCompatActivity() {
                 searchQuery = searchEditText.text.toString()
                 search(searchQuery, itunesSearchApi)
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
@@ -137,7 +146,6 @@ class SearchActivity : AppCompatActivity() {
                 debounceHandler.postDelayed(searchRunnable, DEBOUNCE_DELAY_MILLIS)
             }
         })
-
         val trackAdapter = TrackAdapter(searchHistory) { track ->
             addTrackToHistory(track as ItunesSearchResult)
             val intent = Intent(this@SearchActivity, MediaActivity::class.java).apply {
@@ -152,7 +160,6 @@ class SearchActivity : AppCompatActivity() {
                 putExtra(EXTRA_COUNTRY, track.country)
                 putExtra(EXTRA_PREVIEW, track.previewUrl)
             }
-
             startActivity(intent)
         }
         recyclerView.adapter = trackAdapter
@@ -186,7 +193,6 @@ class SearchActivity : AppCompatActivity() {
             inputMethodManager.hideSoftInputFromWindow(searchEditText.windowToken, 0)
             // Скрываем кнопку сброса
             clearImageView.visibility = View.GONE
-
         }
         searchEditText.setOnFocusChangeListener { v, hasFocus -> // Отображение клавиатуры и фокуса на поле ввода поискового запроса
             if (hasFocus) {
@@ -201,21 +207,19 @@ class SearchActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun showProgressBar(show: Boolean) {
         progressBar.visibility = if (show) View.VISIBLE else View.GONE
         progressSearch.visibility = if (show) View.VISIBLE else View.GONE
     }
     private fun search(query: String, api: ItunesSearchApi) {
-        showProgressBar(true) // Показать ProgressBar перед выполнением запроса
-
+        showProgressBar(true)
         val call = api.search(query)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 runOnUiThread {
                     val resultJson = response.body()
-                    showProgressBar(false)// Скрыть ProgressBar после получения ответа
+                    showProgressBar(false)
                     val searchResults: List<ItunesSearchResult> = Gson().fromJson(
                         resultJson?.getAsJsonArray("results"),
                         object : TypeToken<List<ItunesSearchResult>>() {}.type
@@ -260,7 +264,7 @@ class SearchActivity : AppCompatActivity() {
                     refreshButton.setOnClickListener {
                         call.clone().enqueue(this)
                         noInternetLayout.visibility = View.GONE
-                        showProgressBar(false)// Скрыть ProgressBar после получения ответа
+                        showProgressBar(false)
                     }
                 }
                 runOnUiThread {
@@ -284,12 +288,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun addTrackToHistory(track: ItunesSearchResult) {
-        searchHistory.removeAll { it.trackId == track.trackId }
-        searchHistory.add(0, track)
-        if (searchHistory.size > 10) {
-            searchHistory.removeLast()
-        }
-        saveSearchHistory()
+        historyUseCase.addTrackToHistory(track)
+        historyUseCase.saveSearchHistory()
     }
 
     private fun clearSearchHistory() {

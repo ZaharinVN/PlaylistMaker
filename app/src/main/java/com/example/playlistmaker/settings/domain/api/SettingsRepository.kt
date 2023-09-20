@@ -1,6 +1,6 @@
 package com.example.playlistmaker.settings.domain.api
 
-interface SettingsRepositoryInterface {
+interface SettingsRepository {
     fun getDarkTheme(): Boolean
     fun setDarkTheme(enabled: Boolean)
 }

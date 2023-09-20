@@ -1,10 +1,10 @@
 package com.example.playlistmaker.settings.domain.impl
 
-import com.example.playlistmaker.settings.domain.api.SettingsRepositoryInterface
-import com.example.playlistmaker.settings.domain.api.SettingsUseCaseInterface
+import com.example.playlistmaker.settings.domain.api.SettingsRepository
+import com.example.playlistmaker.settings.domain.api.SettingsUseCase
 
-class SettingsUseCaseImpl(private val settingsRepository: SettingsRepositoryInterface) :
-    SettingsUseCaseInterface {
+class SettingsUseCaseImpl(private val settingsRepository: SettingsRepository) :
+    SettingsUseCase {
     override fun getDarkTheme(): Boolean {
         return settingsRepository.getDarkTheme()
     }

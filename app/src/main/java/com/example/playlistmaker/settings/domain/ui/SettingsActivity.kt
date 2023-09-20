@@ -1,4 +1,4 @@
-package com.example.playlistmaker.settings.ui
+package com.example.playlistmaker.settings.domain.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -9,14 +9,14 @@ import android.widget.Button
 import androidx.appcompat.widget.SwitchCompat
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.settings.domain.api.SettingsRepositoryInterface
-import com.example.playlistmaker.settings.domain.api.SettingsUseCaseInterface
+import com.example.playlistmaker.settings.domain.api.SettingsRepository
+import com.example.playlistmaker.settings.domain.api.SettingsUseCase
 import com.example.playlistmaker.sharing.domain.api.SharingUseCase
 
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var switch: SwitchCompat
-    private lateinit var settingsUseCase: SettingsUseCaseInterface
+    private lateinit var settingsUseCase: SettingsUseCase
     private lateinit var sharingUseCase: SharingUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +24,7 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
         switch = findViewById(R.id.themeSwitcher)
         val sharedPrefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val settingsRepository: SettingsRepositoryInterface = Creator.createSettingsRepository(sharedPrefs)
+        val settingsRepository: SettingsRepository = Creator.createSettingsRepository(sharedPrefs)
         settingsUseCase = Creator.createSettingsUseCase(settingsRepository)
         val sharingRepository = Creator.createSharingRepository(this)
         sharingUseCase = Creator.createSharingUseCase(sharingRepository)

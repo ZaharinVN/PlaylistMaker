@@ -2,9 +2,10 @@ package com.example.playlistmaker.search.domain
 
 import com.example.playlistmaker.search.data.ItunesSearchResult
 
-interface HistoryInteractor {
+interface HistoryRepository {
     fun addTrackToHistory(track: ItunesSearchResult)
     fun clearSearchHistory()
     fun saveSearchHistory()
-    fun loadSearchHistory(): MutableList<ItunesSearchResult>
+    fun loadSearchHistory(): MutableList<ItunesSearchResult> = loadSearchHistory()
+
 }
