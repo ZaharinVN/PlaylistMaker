@@ -8,6 +8,9 @@ import com.example.playlistmaker.player.data.MediaDataSource
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.api.MediaRepository
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
+import com.example.playlistmaker.search.data.HistoryUseCaseImpl
+import com.example.playlistmaker.search.domain.HistoryInteractor
+import com.example.playlistmaker.search.domain.HistoryInteractorImpl
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.domain.api.SettingsRepositoryInterface
 import com.example.playlistmaker.settings.domain.impl.SettingsUseCaseImpl
@@ -42,4 +45,5 @@ object Creator {
     fun createSharingUseCase(sharingRepository: SharingRepository): SharingUseCase {
         return SharingUseCaseImpl(sharingRepository)
     }
+
 }

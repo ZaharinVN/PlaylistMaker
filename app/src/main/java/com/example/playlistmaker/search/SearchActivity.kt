@@ -10,7 +10,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -24,8 +23,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.player.ui.MediaActivity
+import com.example.playlistmaker.search.data.HistoryUseCaseInterface
 import com.example.playlistmaker.search.data.ItunesSearchApi
 import com.example.playlistmaker.search.data.ItunesSearchResult
+import com.example.playlistmaker.search.domain.UseCaseCreator
 import com.example.playlistmaker.search.ui.TrackAdapter
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -37,25 +38,21 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 class SearchActivity : AppCompatActivity() {
     private var searchQuery: String = ""
     private lateinit var noResultsLayout: FrameLayout
     private lateinit var noInternetLayout: FrameLayout
     private lateinit var refreshButton: Button
-    private lateinit var searchHistory: MutableList<ItunesSearchResult>
-    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var clearHistoryButton: Button
     private lateinit var historyMessageTextView: TextView
+    private lateinit var searchHistory: MutableList<ItunesSearchResult>
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var progressBar: ProgressBar
     private lateinit var progressSearch: FrameLayout
     private lateinit var debounceHandler: Handler
     private val DEBOUNCE_DELAY_MILLIS = 2000L
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString("search_query", searchQuery)
-        super.onSaveInstanceState(outState)
-    }
-
+    private lateinit var historyUseCase: HistoryUseCaseInterface
     companion object {
         const val RESPONSE_CODE = 200
         const val PREFERENCES_KEY = "search_history"
@@ -70,6 +67,10 @@ class SearchActivity : AppCompatActivity() {
         const val EXTRA_COUNTRY = "country"
         const val EXTRA_PREVIEW = "previewUrl"
     }
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString("search_query", searchQuery)
+        super.onSaveInstanceState(outState)
+    }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
@@ -80,7 +81,6 @@ class SearchActivity : AppCompatActivity() {
             searchText.requestFocus()
         }
     }
-
     @SuppressLint("NotifyDataSetChanged", "CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,12 +102,15 @@ class SearchActivity : AppCompatActivity() {
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         noResultsLayout = findViewById(R.id.noResults)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        sharedPreferences = getSharedPreferences("Search History", Context.MODE_PRIVATE)
-        searchHistory = loadSearchHistory()
+
+        sharedPreferences = getSharedPreferences("Search History",  Context.MODE_PRIVATE)
+        historyUseCase = UseCaseCreator.createHistoryUseCase()
+
+        searchHistory = historyUseCase.loadSearchHistory()
         clearHistoryButton = findViewById(R.id.clearHistoryButton)
         clearHistoryButton.visibility = if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         clearHistoryButton.setOnClickListener {
-            clearSearchHistory()
+            historyUseCase.clearSearchHistory()
             searchHistory.clear()
             recyclerView.adapter?.notifyDataSetChanged()
             clearHistoryButton.visibility = View.GONE
@@ -149,7 +152,7 @@ class SearchActivity : AppCompatActivity() {
                 putExtra(EXTRA_COUNTRY, track.country)
                 putExtra(EXTRA_PREVIEW, track.previewUrl)
             }
-            Log.d("SearchActivity", "previewUrl: ${track.previewUrl}")
+
             startActivity(intent)
         }
         recyclerView.adapter = trackAdapter
@@ -199,7 +202,6 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    // Метод для отображения/скрытия ProgressBar
     private fun showProgressBar(show: Boolean) {
         progressBar.visibility = if (show) View.VISIBLE else View.GONE
         progressSearch.visibility = if (show) View.VISIBLE else View.GONE
@@ -291,20 +293,16 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun clearSearchHistory() {
-        sharedPreferences.edit().remove(PREFERENCES_KEY).apply()
+        historyUseCase.clearSearchHistory()
     }
 
     private fun saveSearchHistory() {
-        val editor = sharedPreferences.edit()
-        val searchHistoryJson = Gson().toJson(searchHistory)
-        editor.putString(PREFERENCES_KEY, searchHistoryJson)
-        editor.apply()
-        startActivity(intent)
+        historyUseCase.saveSearchHistory()
     }
 
     private fun loadSearchHistory(): MutableList<ItunesSearchResult> {
-        val searchHistoryJson = sharedPreferences.getString(PREFERENCES_KEY, null)
-        val type = object : TypeToken<MutableList<ItunesSearchResult>>() {}.type
-        return Gson().fromJson(searchHistoryJson, type) ?: mutableListOf()
+        return historyUseCase.loadSearchHistory()
     }
 }
+
+
