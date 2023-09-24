@@ -10,7 +10,7 @@ class SharingUseCaseImpl(private val sharingRepository: SharingRepository) : Sha
     }
 
     override fun sendSupportEmail() {
-        sharingRepository.sendSupportEmail("Support", "Text of the support email")
+        sharingRepository.sendSupportEmail("Сообщение разработчикам и разработчицам приложения Playlist Maker", "Спасибо разработчикам и разработчицам за крутое приложение!")
     }
 
     override fun openAgreementUrl() {

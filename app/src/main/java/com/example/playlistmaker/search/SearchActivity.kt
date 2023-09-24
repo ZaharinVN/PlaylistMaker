@@ -24,20 +24,16 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.player.ui.MediaActivity
-import com.example.playlistmaker.search.domain.HistoryUseCase
-import com.example.playlistmaker.search.data.ItunesSearchApi
 import com.example.playlistmaker.search.data.ItunesSearchResult
+import com.example.playlistmaker.search.domain.SearchRepository
 import com.example.playlistmaker.search.domain.HistoryRepository
+import com.example.playlistmaker.search.domain.HistoryUseCase
+import com.example.playlistmaker.search.domain.SearchUseCase
 import com.example.playlistmaker.search.ui.TrackAdapter
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
-import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.HttpException
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import com.example.playlistmaker.search.data.ItunesSearchApi as ItunesSearchApi
 
 
 class SearchActivity : AppCompatActivity() {
@@ -55,11 +51,8 @@ class SearchActivity : AppCompatActivity() {
     private val DEBOUNCE_DELAY_MILLIS = 2000L
     private lateinit var historyUseCase: HistoryUseCase
     private lateinit var historyRepository: HistoryRepository
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString("search_query", searchQuery)
-        super.onSaveInstanceState(outState)
-    }
+    private lateinit var searchUseCase: SearchUseCase
+    private lateinit var searchRepository: SearchRepository
 
     companion object {
         const val RESPONSE_CODE = 200
@@ -75,7 +68,10 @@ class SearchActivity : AppCompatActivity() {
         const val EXTRA_COUNTRY = "country"
         const val EXTRA_PREVIEW = "previewUrl"
     }
-
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString("search_query", searchQuery)
+        super.onSaveInstanceState(outState)
+    }
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         searchQuery = savedInstanceState.getString("search_query", "")
@@ -85,7 +81,6 @@ class SearchActivity : AppCompatActivity() {
             searchText.requestFocus()
         }
     }
-
     @SuppressLint("NotifyDataSetChanged", "CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,37 +103,34 @@ class SearchActivity : AppCompatActivity() {
         noResultsLayout = findViewById(R.id.noResults)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         sharedPreferences = getSharedPreferences("Search History", Context.MODE_PRIVATE)
-
         historyRepository = Creator.createHistoryRepository(sharedPreferences)
         historyUseCase = Creator.createHistoryUseCase(historyRepository)
-
-        searchHistory = loadSearchHistory()
+        searchHistory = historyUseCase.loadSearchHistory()
         clearHistoryButton = findViewById(R.id.clearHistoryButton)
-        historyMessageTextView = findViewById(R.id.history_message)
-        historyMessageTextView.visibility =
-            if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         clearHistoryButton.visibility = if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         clearHistoryButton.setOnClickListener {
-            clearSearchHistory()
             historyUseCase.clearSearchHistory()
             searchHistory.clear()
             recyclerView.adapter?.notifyDataSetChanged()
             clearHistoryButton.visibility = View.GONE
             historyMessageTextView.visibility = View.GONE
-            saveSearchHistory()
         }
+        historyMessageTextView = findViewById(R.id.history_message)
+        historyMessageTextView.visibility =
+            if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         debounceHandler = Handler(Looper.getMainLooper())
         val retrofit = Retrofit.Builder()
             .baseUrl("https://itunes.apple.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
+        searchRepository = Creator.createSearchRepository(itunesSearchApi)
+        searchUseCase = Creator.createSearchUseCase(searchRepository)
         searchEditText.addTextChangedListener(object : TextWatcher {
             private var searchRunnable: Runnable = Runnable {
                 searchQuery = searchEditText.text.toString()
-                search(searchQuery, itunesSearchApi)
+                search(searchQuery, searchUseCase)
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
@@ -211,19 +203,13 @@ class SearchActivity : AppCompatActivity() {
         progressBar.visibility = if (show) View.VISIBLE else View.GONE
         progressSearch.visibility = if (show) View.VISIBLE else View.GONE
     }
-    private fun search(query: String, api: ItunesSearchApi) {
+    private fun search(query: String, searchUseCase: SearchUseCase) {
         showProgressBar(true)
-        val call = api.search(query)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        call.enqueue(object : Callback<JsonObject> {
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+        searchUseCase.search(query,
+            onResponse = { searchResults ->
                 runOnUiThread {
-                    val resultJson = response.body()
                     showProgressBar(false)
-                    val searchResults: List<ItunesSearchResult> = Gson().fromJson(
-                        resultJson?.getAsJsonArray("results"),
-                        object : TypeToken<List<ItunesSearchResult>>() {}.type
-                    )
                     if (searchResults.isEmpty()) {
                         noResultsLayout.visibility = View.VISIBLE
                         if (query.isEmpty()) {
@@ -254,15 +240,14 @@ class SearchActivity : AppCompatActivity() {
                         recyclerView.adapter = trackAdapter
                     }
                 }
-            }
-
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+            },
+            onFailure = { t ->
                 fun showErrorLayout() {
                     noInternetLayout = findViewById(R.id.noInternet)
                     noInternetLayout.visibility = View.VISIBLE
                     refreshButton = findViewById(R.id.refresh)
                     refreshButton.setOnClickListener {
-                        call.clone().enqueue(this)
+                        search(query, searchUseCase)
                         noInternetLayout.visibility = View.GONE
                         showProgressBar(false)
                     }
@@ -278,9 +263,6 @@ class SearchActivity : AppCompatActivity() {
                             recyclerView.adapter = historyAdapter
                         } else {
                             showErrorLayout()
-                        }
-                    } else {
-                        showErrorLayout()
                     }
                 }
             }
@@ -289,9 +271,8 @@ class SearchActivity : AppCompatActivity() {
 
     private fun addTrackToHistory(track: ItunesSearchResult) {
         historyUseCase.addTrackToHistory(track)
-        historyUseCase.saveSearchHistory()
+        startActivity(intent)
     }
-
     private fun clearSearchHistory() {
         historyUseCase.clearSearchHistory()
     }
@@ -299,10 +280,15 @@ class SearchActivity : AppCompatActivity() {
     private fun saveSearchHistory() {
         historyUseCase.saveSearchHistory()
     }
-
     private fun loadSearchHistory(): MutableList<ItunesSearchResult> {
         return historyUseCase.loadSearchHistory()
     }
 }
+
+
+
+
+
+
 
 

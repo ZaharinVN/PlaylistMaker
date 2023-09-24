@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.LibraryActivity
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.SearchActivity
-import com.example.playlistmaker.settings.domain.ui.SettingsActivity
+import com.example.playlistmaker.settings.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")

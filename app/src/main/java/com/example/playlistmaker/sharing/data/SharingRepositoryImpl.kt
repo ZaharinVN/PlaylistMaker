@@ -15,10 +15,10 @@ class SharingRepositoryImpl(private val context: Context) : SharingRepository {
 
     override fun sendSupportEmail(subject: String, body: String) {
         val intent = Intent(Intent.ACTION_SENDTO)
-        intent.data = Uri.parse("mailto:")
+        intent.data = Uri.parse("mailto:vitalikz85@yandex.ru")
         intent.putExtra(Intent.EXTRA_SUBJECT, subject)
         intent.putExtra(Intent.EXTRA_TEXT, body)
-        context.startActivity(Intent.createChooser(intent, "Send Email"))
+        context.startActivity(Intent.createChooser(intent, "Сообщение разработчикам и разработчицам приложения Playlist Maker"))
     }
     override fun openAgreementUrl(text: String) {
         val intent = Intent(Intent.ACTION_VIEW)

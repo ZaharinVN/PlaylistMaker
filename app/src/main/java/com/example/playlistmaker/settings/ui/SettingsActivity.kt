@@ -1,4 +1,4 @@
-package com.example.playlistmaker.settings.domain.ui
+package com.example.playlistmaker.settings.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate

@@ -9,9 +9,14 @@ import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.api.MediaRepository
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.search.data.HistoryRepositoryImpl
+import com.example.playlistmaker.search.data.ItunesSearchApi
+import com.example.playlistmaker.search.data.SearchRepositoryImpl
 import com.example.playlistmaker.search.domain.HistoryRepository
 import com.example.playlistmaker.search.domain.HistoryUseCase
 import com.example.playlistmaker.search.domain.HistoryUseCaseImpl
+import com.example.playlistmaker.search.domain.SearchRepository
+import com.example.playlistmaker.search.domain.SearchUseCase
+import com.example.playlistmaker.search.domain.SearchUseCaseImpl
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.domain.api.SettingsRepository
 import com.example.playlistmaker.settings.domain.impl.SettingsUseCaseImpl
@@ -51,5 +56,11 @@ object Creator {
     }
     fun createHistoryRepository(sharedPreferences: SharedPreferences): HistoryRepository {
         return HistoryRepositoryImpl(sharedPreferences)
+    }
+    fun createSearchRepository(api: ItunesSearchApi): SearchRepository {
+        return SearchRepositoryImpl(api)
+    }
+    fun createSearchUseCase(searchRepository: SearchRepository): SearchUseCase {
+        return SearchUseCaseImpl(searchRepository)
     }
 }
