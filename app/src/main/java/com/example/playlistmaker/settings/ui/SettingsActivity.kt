@@ -7,34 +7,42 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.widget.SwitchCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.settings.domain.api.SettingsRepository
-import com.example.playlistmaker.settings.domain.api.SettingsUseCase
-import com.example.playlistmaker.sharing.domain.api.SharingUseCase
 
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var switch: SwitchCompat
-    private lateinit var settingsUseCase: SettingsUseCase
-    private lateinit var sharingUseCase: SharingUseCase
+    private lateinit var viewModel: SettingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         switch = findViewById(R.id.themeSwitcher)
+
         val sharedPrefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
         val settingsRepository: SettingsRepository = Creator.createSettingsRepository(sharedPrefs)
-        settingsUseCase = Creator.createSettingsUseCase(settingsRepository)
-        val sharingRepository = Creator.createSharingRepository(this)
-        sharingUseCase = Creator.createSharingUseCase(sharingRepository)
 
-        switch.isChecked = settingsUseCase.getDarkTheme()
+        val sharingRepository = Creator.createSharingRepository(this)
+        val settingsUseCase = Creator.createSettingsUseCase(settingsRepository)
+        val sharingUseCase = Creator.createSharingUseCase(sharingRepository)
+        viewModel =
+            ViewModelProvider(this, SettingsViewModelFactory(settingsUseCase, sharingUseCase)).get(
+                SettingsViewModel::class.java
+            )
+        viewModel.getDarkThemeLiveData().observe(this, Observer { isDarkTheme ->
+            switch.isChecked = isDarkTheme
+            setAppTheme()
+        })
 
         switch.setOnCheckedChangeListener { _, isChecked ->
-            settingsUseCase.setDarkTheme(isChecked)
+            viewModel.setDarkTheme(isChecked)
             setAppTheme()
         }
+
         val backButton = findViewById<Button>(R.id.btnSettingsBack)
         backButton.setOnClickListener { finish() }
     }
@@ -45,7 +53,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setAppTheme() {
-        val darkMode = settingsUseCase.getDarkTheme()
+        val darkMode = viewModel.getDarkTheme()
         if (darkMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
@@ -54,17 +62,18 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     fun onShareClick(view: View?) {
-        sharingUseCase.shareApp()
+        viewModel.shareApp()
     }
 
     fun onSupportClick(view: View?) {
-        sharingUseCase.sendSupportEmail()
+        viewModel.sendSupportEmail()
     }
 
     fun onAgreementClick(view: View?) {
-        sharingUseCase.openAgreementUrl()
+        viewModel.openAgreementUrl()
     }
 }
+
 
 
 

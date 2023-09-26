@@ -25,6 +25,7 @@
     </LinearLayout>
 
     <LinearLayout
+
         style="@style/SettingsLayoutStyle"
         android:onClick="onShareClick">
 
