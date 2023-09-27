@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.ui
 
+
 interface MediaContract {
     interface Presenter {
         fun onPlayClicked()
@@ -7,6 +8,5 @@ interface MediaContract {
         fun onFavoriteClicked()
         fun onDisLikeClicked()
         fun onPause()
-
     }
 }

@@ -2,7 +2,7 @@ package com.example.playlistmaker.player.data
 
 import android.content.Intent
 import com.example.playlistmaker.player.domain.api.MediaRepository
-import com.example.playlistmaker.search.SearchActivity
+import com.example.playlistmaker.search.ui.SearchActivity
 
 class MediaDataSource(private val intent: Intent) : MediaRepository {
     override fun getTrackCoverUrl(): String? {

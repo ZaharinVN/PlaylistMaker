@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search
+package com.example.playlistmaker.search.ui
 
 
 import android.annotation.SuppressLint
@@ -29,7 +29,6 @@ import com.example.playlistmaker.search.domain.SearchRepository
 import com.example.playlistmaker.search.domain.HistoryRepository
 import com.example.playlistmaker.search.domain.HistoryUseCase
 import com.example.playlistmaker.search.domain.SearchUseCase
-import com.example.playlistmaker.search.ui.TrackAdapter
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

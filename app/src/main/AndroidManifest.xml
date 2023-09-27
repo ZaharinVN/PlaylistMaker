@@ -30,7 +30,7 @@
             android:exported="false"
            />
         <activity
-            android:name=".search.SearchActivity"
+            android:name=".search.ui.SearchActivity"
             android:exported="false"
             />
         <activity
