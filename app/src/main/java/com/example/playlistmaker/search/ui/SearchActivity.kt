@@ -4,7 +4,6 @@ package com.example.playlistmaker.search.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,6 +18,8 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
@@ -36,6 +37,8 @@ import com.example.playlistmaker.search.data.ItunesSearchApi as ItunesSearchApi
 
 
 class SearchActivity : AppCompatActivity() {
+    private lateinit var viewModel: SearchViewModel
+    private lateinit var searchHistoryAdapter: SearchHistoryAdapter
     private var searchQuery: String = ""
     private lateinit var noResultsLayout: FrameLayout
     private lateinit var noInternetLayout: FrameLayout
@@ -43,7 +46,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearHistoryButton: Button
     private lateinit var historyMessageTextView: TextView
     private lateinit var searchHistory: MutableList<ItunesSearchResult>
-    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var progressBar: ProgressBar
     private lateinit var progressSearch: FrameLayout
     private lateinit var debounceHandler: Handler
@@ -67,45 +69,73 @@ class SearchActivity : AppCompatActivity() {
         const val EXTRA_COUNTRY = "country"
         const val EXTRA_PREVIEW = "previewUrl"
     }
+
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString("search_query", searchQuery)
         super.onSaveInstanceState(outState)
+        viewModel.saveSearchQuery(outState.getString("search_query", ""))
     }
+
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        searchQuery = savedInstanceState.getString("search_query", "")
         val searchText = findViewById<EditText>(R.id.searchEditText)
-        searchText.setText(searchQuery)
-        if (searchQuery.isEmpty()) {
+        searchText.setText(viewModel.getSearchQuery())
+
+        if (viewModel.getSearchQuery().isEmpty()) {
             searchText.requestFocus()
         }
     }
+
     @SuppressLint("NotifyDataSetChanged", "CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
         progressBar = findViewById(R.id.progressBar)
         progressSearch = findViewById(R.id.progressSearch)
+
         val backButton = findViewById<Button>(R.id.btnSettingsBack)
         backButton.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
+
         val clearImageView = findViewById<ImageView>(R.id.clearImageView)
         val searchText = findViewById<EditText>(R.id.searchEditText)
         clearImageView.setOnClickListener {
             searchText.text.clear()
             clearImageView.visibility = View.GONE
         }
+
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         noResultsLayout = findViewById(R.id.noResults)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        sharedPreferences = getSharedPreferences("Search History", Context.MODE_PRIVATE)
+
+        val sharedPreferences = getSharedPreferences("Search History", Context.MODE_PRIVATE)
         historyRepository = Creator.createHistoryRepository(sharedPreferences)
         historyUseCase = Creator.createHistoryUseCase(historyRepository)
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://itunes.apple.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
+        searchRepository = Creator.createSearchRepository(itunesSearchApi)
+        searchUseCase = Creator.createSearchUseCase(searchRepository)
+        val viewModelFactory = SearchViewModelFactory(historyUseCase, searchUseCase)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(SearchViewModel::class.java)
+        viewModel.init(historyUseCase, searchUseCase)
+
+        searchHistoryAdapter = SearchHistoryAdapter(viewModel.searchHistory.value ?: emptyList())
+        recyclerView.adapter = searchHistoryAdapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
         searchHistory = historyUseCase.loadSearchHistory()
         clearHistoryButton = findViewById(R.id.clearHistoryButton)
+
+        viewModel.searchHistory.observe(this) { searchHistory ->
+            searchHistoryAdapter.setData(searchHistory)
+        }
+
         clearHistoryButton.visibility = if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         clearHistoryButton.setOnClickListener {
             historyUseCase.clearSearchHistory()
@@ -118,18 +148,14 @@ class SearchActivity : AppCompatActivity() {
         historyMessageTextView.visibility =
             if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         debounceHandler = Handler(Looper.getMainLooper())
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://itunes.apple.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
-        searchRepository = Creator.createSearchRepository(itunesSearchApi)
+
         searchUseCase = Creator.createSearchUseCase(searchRepository)
         searchEditText.addTextChangedListener(object : TextWatcher {
             private var searchRunnable: Runnable = Runnable {
                 searchQuery = searchEditText.text.toString()
                 search(searchQuery, searchUseCase)
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
@@ -178,14 +204,12 @@ class SearchActivity : AppCompatActivity() {
         clearImageView.setOnClickListener { // Очищаем поисковый запрос
             searchEditText.text.clear()
             clearImageView.visibility = View.GONE
-            // Скрываем клавиатуру
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(searchEditText.windowToken, 0)
-            // Скрываем кнопку сброса
             clearImageView.visibility = View.GONE
         }
-        searchEditText.setOnFocusChangeListener { v, hasFocus -> // Отображение клавиатуры и фокуса на поле ввода поискового запроса
+        searchEditText.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT)
@@ -198,10 +222,12 @@ class SearchActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun showProgressBar(show: Boolean) {
         progressBar.visibility = if (show) View.VISIBLE else View.GONE
         progressSearch.visibility = if (show) View.VISIBLE else View.GONE
     }
+
     private fun search(query: String, searchUseCase: SearchUseCase) {
         showProgressBar(true)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
@@ -262,27 +288,18 @@ class SearchActivity : AppCompatActivity() {
                             recyclerView.adapter = historyAdapter
                         } else {
                             showErrorLayout()
+                        }
                     }
                 }
-            }
-        })
+            })
     }
 
     private fun addTrackToHistory(track: ItunesSearchResult) {
         historyUseCase.addTrackToHistory(track)
         startActivity(intent)
     }
-    private fun clearSearchHistory() {
-        historyUseCase.clearSearchHistory()
-    }
-
-    private fun saveSearchHistory() {
-        historyUseCase.saveSearchHistory()
-    }
-    private fun loadSearchHistory(): MutableList<ItunesSearchResult> {
-        return historyUseCase.loadSearchHistory()
-    }
 }
+
 
 
 

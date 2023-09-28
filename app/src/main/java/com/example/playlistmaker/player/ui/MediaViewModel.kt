@@ -4,14 +4,11 @@ package com.example.playlistmaker.player.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.databinding.ActivityMediaBinding
 import com.example.playlistmaker.player.domain.api.MediaRepository
-import com.example.playlistmaker.player.domain.api.PlayerInteractor
 
 class MediaViewModel(
     private val repository: MediaRepository,
 ) : ViewModel() {
-    private lateinit var binding: ActivityMediaBinding
     private lateinit var presenter: MediaContract.Presenter
 
     private val _trackCoverUrl = MutableLiveData<String>()
