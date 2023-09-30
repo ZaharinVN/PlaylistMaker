@@ -17,7 +17,7 @@ class HistoryUseCaseImpl(private val historyRepository: HistoryRepository) : His
         historyRepository.saveSearchHistory()
     }
 
-    override fun loadSearchHistory(): MutableList<ItunesSearchResult>  {
+    override fun loadSearchHistory(): MutableList<ItunesSearchResult> {
         return historyRepository.loadSearchHistory()
     }
 }

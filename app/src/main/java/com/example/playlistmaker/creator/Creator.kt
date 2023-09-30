@@ -25,9 +25,17 @@ import com.example.playlistmaker.sharing.domain.api.SharingRepository
 import com.example.playlistmaker.sharing.data.SharingRepositoryImpl
 import com.example.playlistmaker.sharing.domain.api.SharingUseCase
 import com.example.playlistmaker.sharing.domain.impl.SharingUseCaseImpl
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 object Creator {
+
+    val retrofit = Retrofit.Builder()
+        .baseUrl("https://itunes.apple.com/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
 
     fun createMediaRepository(intent: Intent): MediaRepository {
         return MediaDataSource(intent)

@@ -63,14 +63,17 @@ class PlayerImpl(private val audioUrl: String?) : Player {
                 pauseAudio()
                 playbackState = PlayerState.PAUSED
             }
+
             PlayerState.PREPARED, PlayerState.PAUSED -> {
                 onStartPlayer()
                 startAudio()
                 playbackState = PlayerState.PLAYING
             }
+
             PlayerState.DEFAULT -> {}
         }
     }
+
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
@@ -79,9 +82,11 @@ class PlayerImpl(private val audioUrl: String?) : Player {
         }
         return current
     }
+
     enum class PlayerState {
         DEFAULT, PREPARED, PLAYING, PAUSED
     }
+
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }

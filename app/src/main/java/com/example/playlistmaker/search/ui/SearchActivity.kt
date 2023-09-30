@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.creator.Creator.itunesSearchApi
 import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.player.ui.MediaActivity
 import com.example.playlistmaker.search.data.ItunesSearchResult
@@ -31,10 +32,6 @@ import com.example.playlistmaker.search.domain.HistoryRepository
 import com.example.playlistmaker.search.domain.HistoryUseCase
 import com.example.playlistmaker.search.domain.SearchUseCase
 import retrofit2.HttpException
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import com.example.playlistmaker.search.data.ItunesSearchApi as ItunesSearchApi
-
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var viewModel: SearchViewModel
@@ -114,11 +111,7 @@ class SearchActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("Search History", Context.MODE_PRIVATE)
         historyRepository = Creator.createHistoryRepository(sharedPreferences)
         historyUseCase = Creator.createHistoryUseCase(historyRepository)
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://itunes.apple.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
+
         searchRepository = Creator.createSearchRepository(itunesSearchApi)
         searchUseCase = Creator.createSearchUseCase(searchRepository)
         val viewModelFactory = SearchViewModelFactory(historyUseCase, searchUseCase)

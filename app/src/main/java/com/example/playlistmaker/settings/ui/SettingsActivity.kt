@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.widget.SwitchCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
@@ -33,10 +32,10 @@ class SettingsActivity : AppCompatActivity() {
             ViewModelProvider(this, SettingsViewModelFactory(settingsUseCase, sharingUseCase)).get(
                 SettingsViewModel::class.java
             )
-        viewModel.getDarkThemeLiveData().observe(this, Observer { isDarkTheme ->
+        viewModel.getDarkThemeLiveData().observe(this) { isDarkTheme ->
             switch.isChecked = isDarkTheme
             setAppTheme()
-        })
+        }
 
         switch.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setDarkTheme(isChecked)
