@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.data
 
+import com.example.playlistmaker.search.domain.ItunesSearchResult
 import com.example.playlistmaker.search.domain.SearchRepository
 import com.google.gson.Gson
 import com.google.gson.JsonObject

@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.data.ItunesSearchResult
+import com.example.playlistmaker.search.domain.ItunesSearchResult
 
 class SearchHistoryAdapter(private var searchHistory: List<ItunesSearchResult>) :
     RecyclerView.Adapter<SearchHistoryAdapter.ViewHolder>() {

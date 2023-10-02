@@ -1,14 +1,18 @@
 package com.example.playlistmaker.search.data
 
 import android.content.SharedPreferences
-import com.example.playlistmaker.search.ui.SearchActivity.Companion.PREFERENCES_KEY
 import com.example.playlistmaker.search.domain.HistoryRepository
+import com.example.playlistmaker.search.domain.ItunesSearchResult
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class HistoryRepositoryImpl(private val sharedPreferences: SharedPreferences) :
     HistoryRepository {
     private var searchHistory: MutableList<ItunesSearchResult> = loadSearchHistory()
+
+    companion object {
+        const val PREFERENCES_KEY = "search_history"
+    }
 
     override fun addTrackToHistory(track: ItunesSearchResult) {
         searchHistory.removeAll { it.trackId == track.trackId }
@@ -36,3 +40,4 @@ class HistoryRepositoryImpl(private val sharedPreferences: SharedPreferences) :
         return Gson().fromJson(searchHistoryJson, type) ?: mutableListOf()
     }
 }
+

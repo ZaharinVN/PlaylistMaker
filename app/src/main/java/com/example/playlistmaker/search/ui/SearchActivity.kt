@@ -26,7 +26,7 @@ import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.creator.Creator.itunesSearchApi
 import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.player.ui.MediaActivity
-import com.example.playlistmaker.search.data.ItunesSearchResult
+import com.example.playlistmaker.search.domain.ItunesSearchResult
 import com.example.playlistmaker.search.domain.SearchRepository
 import com.example.playlistmaker.search.domain.HistoryRepository
 import com.example.playlistmaker.search.domain.HistoryUseCase
@@ -54,7 +54,6 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val RESPONSE_CODE = 200
-        const val PREFERENCES_KEY = "search_history"
         const val EXTRA_TRACK_ID = "trackId"
         const val EXTRA_TRACK_NAME = "trackName"
         const val EXTRA_ARTIST_NAME = "artistName"

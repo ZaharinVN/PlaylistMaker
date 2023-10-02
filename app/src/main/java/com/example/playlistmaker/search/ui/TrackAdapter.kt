@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.data.ItunesSearchResult
+import com.example.playlistmaker.search.domain.ItunesSearchResult
 
 class TrackAdapter(
     private val data: List<ItunesSearchResult>,

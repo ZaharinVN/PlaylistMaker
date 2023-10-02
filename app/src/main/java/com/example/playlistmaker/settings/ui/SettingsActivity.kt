@@ -4,14 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import androidx.appcompat.widget.SwitchCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.settings.domain.api.SettingsRepository
-
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var switch: SwitchCompat
@@ -23,8 +20,7 @@ class SettingsActivity : AppCompatActivity() {
         switch = findViewById(R.id.themeSwitcher)
 
         val sharedPrefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val settingsRepository: SettingsRepository = Creator.createSettingsRepository(sharedPrefs)
-
+        val settingsRepository = Creator.createSettingsRepository(sharedPrefs)
         val sharingRepository = Creator.createSharingRepository(this)
         val settingsUseCase = Creator.createSettingsUseCase(settingsRepository)
         val sharingUseCase = Creator.createSharingUseCase(sharingRepository)
@@ -60,18 +56,19 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    fun onShareClick(view: View?) {
+    fun onShareClick() {
         viewModel.shareApp()
     }
 
-    fun onSupportClick(view: View?) {
+    fun onSupportClick() {
         viewModel.sendSupportEmail()
     }
 
-    fun onAgreementClick(view: View?) {
+    fun onAgreementClick() {
         viewModel.openAgreementUrl()
     }
 }
+
 
 
 

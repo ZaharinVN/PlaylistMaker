@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search.data
+package com.example.playlistmaker.search.domain
 
 data class ItunesSearchResult(
     val trackId: String?,

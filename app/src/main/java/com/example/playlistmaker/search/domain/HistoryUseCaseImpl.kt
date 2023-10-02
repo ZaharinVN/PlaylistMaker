@@ -1,7 +1,5 @@
 package com.example.playlistmaker.search.domain
 
-import com.example.playlistmaker.search.data.ItunesSearchResult
-
 class HistoryUseCaseImpl(private val historyRepository: HistoryRepository) : HistoryRepository,
     HistoryUseCase {
 
