@@ -54,48 +54,32 @@ class MediaActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.trackCoverUrl.observe(this) { trackCoverUrl ->
-            val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
-            Glide.with(this)
-                .load(trackCoverUrl?.let { MediaViewModel.getCoverArtwork(it) })
-                .transform(RoundedCorners(radius.toInt()))
-                .placeholder(R.drawable.placeholder)
-                .into(binding.trackCover)
-        }
-        viewModel.trackName.observe(this) { trackName ->
-            binding.trackNameResult.text = trackName
-        }
-        viewModel.artistName.observe(this) { artistName ->
-            binding.artistNameResult.text = artistName
-        }
-        viewModel.trackTime.observe(this) { trackTime ->
-            binding.trackTimeResult.text =
-                MediaViewModel.formatTrackDuration(trackTime.toLong())
-        }
-        viewModel.collectionName.observe(this) { collectionName ->
-            binding.collectionName.text = collectionName
-        }
-        viewModel.releaseDate.observe(this) { releaseDate ->
-            binding.releaseDate.text =
-                MediaViewModel.formatReleaseDate(releaseDate.toString())
-        }
-        viewModel.primaryGenreName.observe(this) { primaryGenreName ->
-            binding.primaryGenreName.text = primaryGenreName
-        }
-        viewModel.country.observe(this) { country ->
-            binding.country.text = country
-        }
-        viewModel.progressTime.observe(this) { progressTime ->
-            binding.progressTime.text = progressTime
+        viewModel.mediaViewState.observe(this) { state ->
+            state.trackCoverUrl?.let { trackCoverUrl ->
+                val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
+                Glide.with(this)
+                    .load(MediaViewModel.getCoverArtwork(trackCoverUrl))
+                    .transform(RoundedCorners(radius.toInt()))
+                    .placeholder(R.drawable.placeholder)
+                    .into(binding.trackCover)
+            }
+            binding.trackNameResult.text = state.trackName
+            binding.artistNameResult.text = state.artistName
+            binding.trackTimeResult.text = state.trackTime?.let {MediaViewModel.formatTrackDuration(it)}
+            binding.collectionName.text = state.collectionName
+            binding.releaseDate.text = state.releaseDate?.let { MediaViewModel.formatReleaseDate(it) }
+            binding.primaryGenreName.text = state.primaryGenreName
+            binding.country.text = state.country
+            binding.progressTime.text = state.progressTime
         }
     }
-
 
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
     }
 }
+
 
 
 
