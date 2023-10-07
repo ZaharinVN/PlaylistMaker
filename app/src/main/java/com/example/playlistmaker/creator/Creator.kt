@@ -31,11 +31,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object Creator {
 
-    val retrofit = Retrofit.Builder()
-        .baseUrl("https://itunes.apple.com/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://itunes.apple.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
 
     fun createMediaRepository(intent: Intent): MediaRepository {
         return MediaDataSource(intent)
@@ -65,8 +65,8 @@ object Creator {
     fun createHistoryRepository(sharedPreferences: SharedPreferences): HistoryRepository {
         return HistoryRepositoryImpl(sharedPreferences)
     }
-    fun createSearchRepository(api: ItunesSearchApi): SearchRepository {
-        return SearchRepositoryImpl(api)
+    fun createSearchRepository(itunesSearchApi: ItunesSearchApi): SearchRepository {
+        return SearchRepositoryImpl(itunesSearchApi)
     }
     fun createSearchUseCase(searchRepository: SearchRepository): SearchUseCase {
         return SearchUseCaseImpl(searchRepository)

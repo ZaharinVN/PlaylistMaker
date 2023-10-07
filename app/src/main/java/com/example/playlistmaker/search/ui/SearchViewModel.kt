@@ -7,8 +7,10 @@ import com.example.playlistmaker.search.domain.ItunesSearchResult
 import com.example.playlistmaker.search.domain.HistoryUseCase
 import com.example.playlistmaker.search.domain.SearchUseCase
 
-class SearchViewModel(private val historyUseCase: HistoryUseCase,
-                      private val searchUseCase: SearchUseCase) : ViewModel() {
+class SearchViewModel(
+    private val historyUseCase: HistoryUseCase,
+    private val searchUseCase: SearchUseCase
+) : ViewModel() {
 
     private val _searchHistory = MutableLiveData<List<ItunesSearchResult>>()
     val searchHistory: LiveData<List<ItunesSearchResult>> = _searchHistory

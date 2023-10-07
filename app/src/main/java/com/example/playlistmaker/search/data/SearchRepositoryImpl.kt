@@ -8,20 +8,29 @@ import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchRepositoryImpl(private val api: ItunesSearchApi) : SearchRepository {
-
-    override fun search(query: String, onResponse: (List<ItunesSearchResult>) -> Unit, onFailure: (Throwable) -> Unit) {
-        val call = api.search(query)
-        call.enqueue(object : Callback<JsonObject> {
+    override fun search(
+        query: String,
+        onResponse: (List<ItunesSearchResult>) -> Unit,
+        onFailure: (Throwable) -> Unit
+    ) {
+        api.search(query).enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                val resultJson = response.body()
-                val searchResults: List<ItunesSearchResult> = Gson().fromJson(
-                    resultJson?.getAsJsonArray("results"),
-                    object : TypeToken<List<ItunesSearchResult>>() {}.type
-                )
-                onResponse(searchResults)
+                if (response.isSuccessful) {
+                    val resultJson = response.body()
+                    val searchResults: List<ItunesSearchResult> = Gson().fromJson(
+                        resultJson?.getAsJsonArray("results"),
+                        object : TypeToken<List<ItunesSearchResult>>() {}.type
+                    )
+                    onResponse(searchResults)
+                } else {
+                    onFailure(Exception("Network request failed with code: ${response.code()}"))
+                }
             }
+
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 onFailure(t)
             }

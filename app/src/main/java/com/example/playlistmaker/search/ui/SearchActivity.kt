@@ -31,7 +31,6 @@ import com.example.playlistmaker.search.domain.SearchRepository
 import com.example.playlistmaker.search.domain.HistoryRepository
 import com.example.playlistmaker.search.domain.HistoryUseCase
 import com.example.playlistmaker.search.domain.SearchUseCase
-import retrofit2.HttpException
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var viewModel: SearchViewModel
@@ -223,15 +222,15 @@ class SearchActivity : AppCompatActivity() {
     private fun search(query: String, searchUseCase: SearchUseCase) {
         showProgressBar(true)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        searchUseCase.search(query,
+
+        searchUseCase.search(
+            query,
             onResponse = { searchResults ->
                 runOnUiThread {
                     showProgressBar(false)
                     if (searchResults.isEmpty()) {
-                        noResultsLayout.visibility = View.VISIBLE
-                        if (query.isEmpty()) {
-                            noResultsLayout.visibility = View.GONE
-                        }
+                        noResultsLayout.visibility =
+                            if (query.isEmpty()) View.GONE else View.VISIBLE
                         val historyAdapter = TrackAdapter(searchHistory) { track ->
                             addTrackToHistory(track as ItunesSearchResult)
                         }
@@ -242,15 +241,6 @@ class SearchActivity : AppCompatActivity() {
                             val intent =
                                 Intent(this@SearchActivity, MediaActivity::class.java).apply {
                                     putExtra(EXTRA_TRACK_ID, track.trackId)
-                                    putExtra(EXTRA_TRACK_NAME, track.trackName)
-                                    putExtra(EXTRA_ARTIST_NAME, track.artistName)
-                                    putExtra(EXTRA_TRACK_TIME, track.trackTimeMillis)
-                                    putExtra(EXTRA_TRACK_COVER, track.artworkUrl100)
-                                    putExtra(EXTRA_COLLECTION_NAME, track.collectionName)
-                                    putExtra(EXTRA_RELEASE_DATE, track.releaseDate)
-                                    putExtra(EXTRA_PRIMARY_GENRE_NAME, track.primaryGenreName)
-                                    putExtra(EXTRA_COUNTRY, track.country)
-                                    putExtra(EXTRA_PREVIEW, track.previewUrl)
                                 }
                             startActivity(intent)
                         }
@@ -259,32 +249,24 @@ class SearchActivity : AppCompatActivity() {
                 }
             },
             onFailure = { t ->
-                fun showErrorLayout() {
-                    noInternetLayout = findViewById(R.id.noInternet)
-                    noInternetLayout.visibility = View.VISIBLE
-                    refreshButton = findViewById(R.id.refresh)
-                    refreshButton.setOnClickListener {
-                        search(query, searchUseCase)
-                        noInternetLayout.visibility = View.GONE
-                        showProgressBar(false)
-                    }
-                }
                 runOnUiThread {
-                    if (t is HttpException) {
-                        val response = t.response()
-                        if (response != null && response.code() == RESPONSE_CODE) {
-                            noResultsLayout.visibility = View.VISIBLE
-                            val historyAdapter = TrackAdapter(searchHistory) { track ->
-                                addTrackToHistory(track as ItunesSearchResult)
-                            }
-                            recyclerView.adapter = historyAdapter
-                        } else {
-                            showErrorLayout()
-                        }
-                    }
+                    showNetworkErrorLayout(query, searchUseCase)
                 }
-            })
+            }
+        )
     }
+
+    private fun showNetworkErrorLayout(query: String, searchUseCase: SearchUseCase) {
+        noInternetLayout = findViewById(R.id.noInternet)
+        noInternetLayout.visibility = View.VISIBLE
+        refreshButton = findViewById(R.id.refresh)
+        refreshButton.setOnClickListener {
+            search(query, searchUseCase)
+            noInternetLayout.visibility = View.GONE
+            showProgressBar(false)
+        }
+    }
+
 
     private fun addTrackToHistory(track: ItunesSearchResult) {
         historyUseCase.addTrackToHistory(track)
