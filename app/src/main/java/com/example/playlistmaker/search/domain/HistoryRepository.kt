@@ -4,6 +4,6 @@ interface HistoryRepository {
     fun addTrackToHistory(track: ItunesSearchResult)
     fun clearSearchHistory()
     fun saveSearchHistory()
-    fun loadSearchHistory(): MutableList<ItunesSearchResult> = loadSearchHistory()
+    fun loadSearchHistory(): MutableList<ItunesSearchResult>
 
 }

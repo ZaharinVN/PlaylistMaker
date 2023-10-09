@@ -18,7 +18,7 @@ class SearchViewModel(
     private val _searchQuery = MutableLiveData<String>()
     val searchQuery: LiveData<String> = _searchQuery
 
-    fun init(historyUseCase: HistoryUseCase, searchUseCase: SearchUseCase) {
+    fun loadSearchHistory(historyUseCase: HistoryUseCase, searchUseCase: SearchUseCase) {
         _searchHistory.value = this.historyUseCase.loadSearchHistory()
     }
 

@@ -114,7 +114,7 @@ class SearchActivity : AppCompatActivity() {
         searchUseCase = Creator.createSearchUseCase(searchRepository)
         val viewModelFactory = SearchViewModelFactory(historyUseCase, searchUseCase)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SearchViewModel::class.java)
-        viewModel.init(historyUseCase, searchUseCase)
+        viewModel.loadSearchHistory(historyUseCase, searchUseCase)
 
         searchHistoryAdapter = SearchHistoryAdapter(viewModel.searchHistory.value ?: emptyList())
         recyclerView.adapter = searchHistoryAdapter

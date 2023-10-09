@@ -1,7 +1,7 @@
 package com.example.playlistmaker.search.domain
 
 data class ItunesSearchResult(
-    val trackId: String?,
+    val trackId: String,
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: Long,

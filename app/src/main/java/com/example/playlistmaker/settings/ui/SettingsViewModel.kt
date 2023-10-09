@@ -3,41 +3,46 @@ package com.example.playlistmaker.settings.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.settings.domain.api.SettingsUseCase
-import com.example.playlistmaker.sharing.domain.api.SharingUseCase
+import com.example.playlistmaker.settings.domain.SettingsInteractor
+import com.example.playlistmaker.sharing.domain.SharingInteractor
+
 
 class SettingsViewModel(
-    private val settingsUseCase: SettingsUseCase,
-    private val sharingUseCase: SharingUseCase
+    private val settingsInteractor: SettingsInteractor,
+    private val sharingInteractor: SharingInteractor
 ) : ViewModel() {
     private val darkThemeLiveData: MutableLiveData<Boolean> = MutableLiveData()
 
-    // функция для получения значения darkThemeLiveData
     fun getDarkThemeLiveData(): LiveData<Boolean> {
         return darkThemeLiveData
     }
 
-    // функция для установки значения darkThemeLiveData
     fun setDarkTheme(isDarkTheme: Boolean) {
-        settingsUseCase.setDarkTheme(isDarkTheme)
+        settingsInteractor.setDarkTheme(isDarkTheme)
         darkThemeLiveData.postValue(isDarkTheme)
     }
 
-    // функция для проверки текущего значения darkThemeLiveData
     fun getDarkTheme(): Boolean {
-        return settingsUseCase.getDarkTheme()
+        return settingsInteractor.getDarkTheme()
     }
 
-    // функции для вызова методов sharingUseCase
     fun shareApp() {
-        sharingUseCase.shareApp()
+        sharingInteractor.shareApp()
     }
 
     fun sendSupportEmail() {
-        sharingUseCase.sendSupportEmail()
+        sharingInteractor.sendSupportEmail()
     }
 
     fun openAgreementUrl() {
-        sharingUseCase.openAgreementUrl()
+        sharingInteractor.openAgreementUrl()
+    }
+
+    fun setAppTheme() {
+        settingsInteractor.setAppTheme()
+
     }
 }
+
+
+
