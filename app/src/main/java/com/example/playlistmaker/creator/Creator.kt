@@ -1,19 +1,17 @@
 package com.example.playlistmaker.creator
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import com.example.playlistmaker.player.data.PlayerImpl
-import com.example.playlistmaker.player.data.MediaDataSource
+import com.example.playlistmaker.player.data.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
-import com.example.playlistmaker.player.domain.api.MediaRepository
+import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.search.data.HistoryRepositoryImpl
 import com.example.playlistmaker.search.data.ItunesSearchApi
 import com.example.playlistmaker.search.data.SearchRepositoryImpl
 import com.example.playlistmaker.search.domain.HistoryRepository
-import com.example.playlistmaker.search.domain.HistoryUseCase
-import com.example.playlistmaker.search.domain.HistoryUseCaseImpl
+import com.example.playlistmaker.search.domain.HistoryInteractor
+import com.example.playlistmaker.search.domain.HistoryInteractorImpl
 import com.example.playlistmaker.search.domain.SearchRepository
 import com.example.playlistmaker.search.domain.SearchUseCase
 import com.example.playlistmaker.search.domain.SearchUseCaseImpl
@@ -29,26 +27,24 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 object Creator {
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://itunes.apple.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
-
-    fun createMediaRepository(intent: Intent): MediaRepository {
-        return MediaDataSource(intent)
+    val retrofit = Retrofit.Builder()
+        .baseUrl("https://itunes.apple.com/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    val itunesSearchApi = retrofit.create(ItunesSearchApi::class.java)
+    fun provideMediaPlayerInteractor(): PlayerInteractor {
+        return PlayerInteractorImpl(provideMediaPlayerRepository(String.toString()))
     }
-    fun createInteractor(audioUrl: String?): PlayerInteractor {
-        val player = PlayerImpl(audioUrl)
-        return PlayerInteractorImpl(player)
+
+    private fun provideMediaPlayerRepository(audioUrl: String?): PlayerRepository {
+        return PlayerRepositoryImpl(audioUrl)
     }
 
     fun createSharingInteractor(sharingRepository: SharingRepository): SharingInteractor {
         return SharingInteractor(sharingRepository)
     }
-    fun createHistoryUseCase(historyRepository: HistoryRepository): HistoryUseCase {
-        return HistoryUseCaseImpl(historyRepository)
+    fun createHistoryUseCase(historyRepository: HistoryRepository): HistoryInteractor {
+        return HistoryInteractorImpl(historyRepository)
     }
     fun createHistoryRepository(sharedPreferences: SharedPreferences): HistoryRepository {
         return HistoryRepositoryImpl(sharedPreferences)

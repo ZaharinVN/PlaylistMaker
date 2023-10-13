@@ -1,6 +1,6 @@
 package com.example.playlistmaker.search.domain
 
-interface HistoryUseCase {
+interface HistoryInteractor {
     fun addTrackToHistory(track: ItunesSearchResult)
     fun clearSearchHistory()
     fun saveSearchHistory()

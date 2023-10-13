@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         setupButtons()
-        observeDarkMode()
+        Companion.observeDarkMode(this)
     }
 
     private fun setupButtons() {
@@ -46,16 +46,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeDarkMode() {
-        val sharedPrefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val darkMode = sharedPrefs.getBoolean("darkTheme", false)
-        viewModel.setDarkModeEnabled(darkMode)
-
-        viewModel.darkModeEnabled.observe(this) { enabled ->
-            if (enabled) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    companion object {
+        private fun observeDarkMode(mainActivity: MainActivity) {
+            val sharedPrefs = mainActivity.getSharedPreferences("settings", MODE_PRIVATE)
+            val darkMode = sharedPrefs.getBoolean("darkTheme", false)
+            mainActivity.viewModel.setDarkModeEnabled(darkMode)
+    
+            mainActivity.viewModel.darkModeEnabled.observe(mainActivity) { enabled ->
+                if (enabled) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
             }
         }
     }

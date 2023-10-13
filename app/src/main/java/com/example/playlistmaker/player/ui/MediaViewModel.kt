@@ -1,92 +1,127 @@
 package com.example.playlistmaker.player.ui
 
-
-import android.widget.ImageButton
-import android.widget.TextView
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.player.domain.api.MediaRepository
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-class MediaViewModel(private val repository: MediaRepository) : ViewModel() {
+class MediaViewModel(
+    private val mediaPlayerInteractor: PlayerInteractor,
+    private val trackUrl: String
+) : ViewModel() {
 
-    private lateinit var presenter: MediaContract.Presenter
-    private val _mediaViewState = MutableLiveData<MediaViewState>()
-    val mediaViewState: LiveData<MediaViewState> = _mediaViewState
+    private val handler = Handler(Looper.getMainLooper())
 
-    fun initialize(
-        btnPlay: ImageButton,
-        btnPause: ImageButton,
-        progressTime: TextView,
-        btnFavorite: ImageButton,
-        btnDisLike: ImageButton,
-        previewUrl: String?,
-        interactor: PlayerInteractor
-    ) {
-        presenter = MediaPresenter(btnPlay, btnPause, progressTime, btnFavorite, btnDisLike, previewUrl, interactor)
+    private var clickAllowed = true
 
-        fetchData()
-    }
-    private fun fetchData() {
-        val trackCoverUrl = repository.getTrackCoverUrl()
-        val trackName = repository.getTrackName()
-        val artistName = repository.getArtistName()
-        val trackTime = repository.getTrackTime()?.toLong()
-        val collectionName = repository.getCollectionName()
-        val releaseDate = repository.getReleaseDate()
-        val primaryGenreName = repository.getPrimaryGenreName()
-        val country = repository.getCountry()
+    private val stateLiveData = MutableLiveData<MediaPlayerState>()
+    private val timerLiveData = MutableLiveData<String>()
+    fun observeState(): LiveData<MediaPlayerState> = stateLiveData
+    fun observeTimer(): LiveData<String> = timerLiveData
 
-        val state = MediaViewState(
-            trackCoverUrl,
-            trackName,
-            artistName,
-            trackTime,
-            collectionName,
-            releaseDate,
-            primaryGenreName,
-            country,
-            progressTime = "0:00"
-        )
-        _mediaViewState.value = state
+    init {
+        renderState(MediaPlayerState.Default)
+        preparePlayer()
+        setOnCompleteListener()
+        isClickAllowed()
     }
 
-    fun onPlayClicked() {
-        presenter.onPlayClicked()
+    private fun preparePlayer() {
+        mediaPlayerInteractor.preparePlayer(trackUrl) {
+            renderState(MediaPlayerState.Prepared)
+        }
     }
 
-    fun onPauseAudioClicked() {
-        presenter.onPauseAudioClicked()
+    private fun startAudioPlayer() {
+        mediaPlayerInteractor.startAudio()
+        renderState(MediaPlayerState.Playing(mediaPlayerInteractor.currentPosition()))
     }
 
-    fun onFavoriteClicked() {
-        presenter.onFavoriteClicked()
+    private fun pauseAudioPlayer() {
+        mediaPlayerInteractor.pauseAudio()
+        renderState(MediaPlayerState.Paused)
     }
 
-    fun onDisLikeClicked() {
-        presenter.onDisLikeClicked()
+
+    private fun getCurrentPosition(): Int {
+        return mediaPlayerInteractor.currentPosition()
+    }
+
+    private fun setOnCompleteListener() {
+        mediaPlayerInteractor.setOnCompletionListener {
+            renderState(MediaPlayerState.Prepared)
+        }
+    }
+
+    fun playbackControl() {
+        when (stateLiveData.value) {
+            is MediaPlayerState.Playing -> {
+                pauseAudioPlayer()
+            }
+
+            is MediaPlayerState.Prepared, MediaPlayerState.Paused -> {
+                startAudioPlayer()
+                handler.post(updateTime())
+            }
+
+            else -> {}
+        }
+    }
+
+    private fun renderState(state: MediaPlayerState) {
+        stateLiveData.postValue(state)
+    }
+
+    override fun onCleared() {
+        handler.removeCallbacksAndMessages(null)
+        mediaPlayerInteractor.destroyPlayer()
     }
 
     fun onPause() {
-        presenter.onPause()
+        pauseAudioPlayer()
+        handler.removeCallbacksAndMessages(updateTime())
+    }
+
+    private fun updateTime(): Runnable {
+        return object : Runnable {
+            override fun run() {
+                timerLiveData.postValue(
+                    SimpleDateFormat("mm:ss", Locale.getDefault())
+                        .format(getCurrentPosition())
+                )
+                handler.postDelayed(this, PLAYBACK_UPDATE_DELAY_MS)
+            }
+        }
+    }
+
+    fun isClickAllowed(): Boolean {
+        val current = clickAllowed
+        if (clickAllowed) {
+            clickAllowed = false
+            handler.postDelayed({ clickAllowed = true }, CLICK_DEBOUNCE_DELAY_MS)
+        }
+        return current
     }
 
     companion object {
-        fun getCoverArtwork(artworkUrl100: String): String {
-            return artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
-        }
+        private const val CLICK_DEBOUNCE_DELAY_MS = 1000L
+        private const val PLAYBACK_UPDATE_DELAY_MS = 300L
 
-        fun formatTrackDuration(duration: Long): String {
-            val minutes = duration / 60000
-            val seconds = (duration % 60000) / 1000
-            return String.format("%02d:%02d", minutes, seconds)
-        }
-
-        fun formatReleaseDate(date: String): String {
-            return date.substring(0, 4)
+        fun getViewModelFactory(url: String): ViewModelProvider.Factory = viewModelFactory() {
+            initializer {
+                MediaViewModel(Creator.provideMediaPlayerInteractor(), url)
+            }
         }
     }
+
 }
 
 

@@ -43,7 +43,7 @@ class TrackAdapter(
         fun bind(track: ItunesSearchResult) {
             trackName.text = track.trackName
             artistName.text = track.artistName
-            val duration = (track.trackTimeMillis.toLong() / 1000).toInt()
+            val duration = (track.trackTimeMillis / 1000).toInt()
             trackTime.text = TimeUtils.formatTime(duration)
             Glide.with(itemView.context)
                 .load(track.artworkUrl100)

@@ -1,36 +1,39 @@
 package com.example.playlistmaker.player.domain.impl
 
-import com.example.playlistmaker.player.domain.api.Player
+import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 
-class PlayerInteractorImpl(private val player: Player) : PlayerInteractor {
+class PlayerInteractorImpl(private val playerRepository: PlayerRepository) : PlayerInteractor {
 
     override fun startAudio() {
-        player.startAudio()
+        playerRepository.startAudio()
     }
 
     override fun pauseAudio() {
-        player.pauseAudio()
+        playerRepository.pauseAudio()
     }
 
     override fun isPlaying(): Boolean {
-        return player.isPlaying()
+        return playerRepository.isPlaying()
     }
 
     override fun currentPosition(): Int {
-        return player.currentPosition()
+        return playerRepository.currentPosition()
     }
 
-    override fun preparePlayer(
-        dataSource: String,
-        onPreparedListener: () -> Unit,
-        onCompletionListener: () -> Unit
-    ) {
-        player.preparePlayer(dataSource, onPreparedListener, onCompletionListener)
+    override fun preparePlayer(url: String, onPreparedListener: () -> Unit) {
+        playerRepository.preparePlayer(url, onPreparedListener)
+    }
+
+    override fun setOnCompletionListener(onCompletionListener: () -> Unit) {
+        playerRepository.setOnCompletionListener(onCompletionListener)
     }
 
     override fun playbackControl(onStartPlayer: () -> Unit, onPausePlayer: () -> Unit) {
-        player.playbackControl(onStartPlayer, onPausePlayer)
+        playerRepository.playbackControl(onStartPlayer, onPausePlayer)
+    }
+    override fun destroyPlayer() {
+        playerRepository.destroyPlayer()
     }
 }
 

@@ -29,7 +29,7 @@ import com.example.playlistmaker.player.ui.MediaActivity
 import com.example.playlistmaker.search.domain.ItunesSearchResult
 import com.example.playlistmaker.search.domain.SearchRepository
 import com.example.playlistmaker.search.domain.HistoryRepository
-import com.example.playlistmaker.search.domain.HistoryUseCase
+import com.example.playlistmaker.search.domain.HistoryInteractor
 import com.example.playlistmaker.search.domain.SearchUseCase
 
 class SearchActivity : AppCompatActivity() {
@@ -46,7 +46,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var progressSearch: FrameLayout
     private lateinit var debounceHandler: Handler
     private val DEBOUNCE_DELAY_MILLIS = 2000L
-    private lateinit var historyUseCase: HistoryUseCase
+    private lateinit var historyInteractor: HistoryInteractor
     private lateinit var historyRepository: HistoryRepository
     private lateinit var searchUseCase: SearchUseCase
     private lateinit var searchRepository: SearchRepository
@@ -108,19 +108,19 @@ class SearchActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences("Search History", Context.MODE_PRIVATE)
         historyRepository = Creator.createHistoryRepository(sharedPreferences)
-        historyUseCase = Creator.createHistoryUseCase(historyRepository)
+        historyInteractor = Creator.createHistoryUseCase(historyRepository)
 
         searchRepository = Creator.createSearchRepository(itunesSearchApi)
         searchUseCase = Creator.createSearchUseCase(searchRepository)
-        val viewModelFactory = SearchViewModelFactory(historyUseCase, searchUseCase)
+        val viewModelFactory = SearchViewModelFactory(historyInteractor, searchUseCase)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SearchViewModel::class.java)
-        viewModel.loadSearchHistory(historyUseCase, searchUseCase)
+        viewModel.loadSearchHistory(historyInteractor, searchUseCase)
 
         searchHistoryAdapter = SearchHistoryAdapter(viewModel.searchHistory.value ?: emptyList())
         recyclerView.adapter = searchHistoryAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        searchHistory = historyUseCase.loadSearchHistory()
+        searchHistory = historyInteractor.loadSearchHistory()
         clearHistoryButton = findViewById(R.id.clearHistoryButton)
 
         viewModel.searchHistory.observe(this) { searchHistory ->
@@ -129,7 +129,7 @@ class SearchActivity : AppCompatActivity() {
 
         clearHistoryButton.visibility = if (searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         clearHistoryButton.setOnClickListener {
-            historyUseCase.clearSearchHistory()
+            historyInteractor.clearSearchHistory()
             searchHistory.clear()
             recyclerView.adapter?.notifyDataSetChanged()
             clearHistoryButton.visibility = View.GONE
@@ -269,7 +269,7 @@ class SearchActivity : AppCompatActivity() {
 
 
     private fun addTrackToHistory(track: ItunesSearchResult) {
-        historyUseCase.addTrackToHistory(track)
+        historyInteractor.addTrackToHistory(track)
         startActivity(intent)
     }
 }

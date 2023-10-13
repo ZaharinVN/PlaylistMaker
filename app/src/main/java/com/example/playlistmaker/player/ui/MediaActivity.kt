@@ -1,76 +1,98 @@
 package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
+import android.provider.MediaStore.Audio.AudioColumns.TRACK
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.databinding.ActivityMediaBinding
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
-
+import com.google.gson.Gson
 
 class MediaActivity : AppCompatActivity() {
     private lateinit var viewModel: MediaViewModel
-    private lateinit var binding: ActivityMediaBinding
-
-    companion object {
-        const val EXTRA_PREVIEW = "previewUrl"
-    }
+    private var binding: ActivityMediaBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMediaBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding?.root)
 
-        val intent = intent
-        val repository = Creator.createMediaRepository(intent)
+        val track = getTrack()
+        bind(track)
 
         viewModel = ViewModelProvider(
-            this,
-            MediaViewModelFactory(repository)
-        ).get(MediaViewModel::class.java)
+            this, MediaViewModel
+                .getViewModelFactory(track.previewUrl)
+        )[MediaViewModel::class.java]
 
-        setupViews()
-        observeViewModel()
+        viewModel.observeState().observe(this) {
+            updateScreen(it)
+        }
 
-        viewModel.initialize(
-            binding.btnPlay,
-            binding.btnPause,
-            binding.progressTime,
-            binding.btnFavorite,
-            binding.btnDisLike,
-            intent.getStringExtra(EXTRA_PREVIEW),
-            Creator.createInteractor(intent.getStringExtra(EXTRA_PREVIEW))
-        )
-    }
+        viewModel.observeTimer().observe(this) {
+            updateTimer(it)
+        }
 
-    private fun setupViews() {
-        binding.btnPlay.setOnClickListener { viewModel.onPlayClicked() }
-        binding.btnPause.setOnClickListener { viewModel.onPauseAudioClicked() }
-        binding.btnFavorite.setOnClickListener { viewModel.onFavoriteClicked() }
-        binding.btnDisLike.setOnClickListener { viewModel.onDisLikeClicked() }
-        binding.btnPlayerBack.setOnClickListener { finish() }
-    }
-
-    private fun observeViewModel() {
-        viewModel.mediaViewState.observe(this) { state ->
-            state.trackCoverUrl?.let { trackCoverUrl ->
-                val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
-                Glide.with(this)
-                    .load(MediaViewModel.getCoverArtwork(trackCoverUrl))
-                    .transform(RoundedCorners(radius.toInt()))
-                    .placeholder(R.drawable.placeholder)
-                    .into(binding.trackCover)
+        binding?.btnPlay?.setOnClickListener {
+            if (viewModel.isClickAllowed()) {
+                viewModel.playbackControl()
             }
-            binding.trackNameResult.text = state.trackName
-            binding.artistNameResult.text = state.artistName
-            binding.trackTimeResult.text = state.trackTime?.let {MediaViewModel.formatTrackDuration(it)}
-            binding.collectionName.text = state.collectionName
-            binding.releaseDate.text = state.releaseDate?.let { MediaViewModel.formatReleaseDate(it) }
-            binding.primaryGenreName.text = state.primaryGenreName
-            binding.country.text = state.country
-            binding.progressTime.text = state.progressTime
+        }
+
+        binding?.btnPlayerBack?.setOnClickListener {
+            finish()
+        }
+    }
+
+    private fun bind(track: TrackPlayerModel) {
+        val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
+
+        Glide.with(this)
+            .load(track.getCoverArtwork())
+            .transform(RoundedCorners(radius.toInt()))
+            .placeholder(R.drawable.placeholder)
+            .into(binding?.trackCover!!)
+
+        binding?.apply {
+            trackNameResult.text = track.trackName
+            artistNameResult.text = track.artistName
+            trackTimeResult.text = getString(R.string.default_playtime_value)
+            progressTime.text = track.formatTrackDuration()
+            collectionName.text = track.collectionName
+            releaseDate.text = track.formatReleaseDate()
+            primaryGenreName.text = track.primaryGenreName
+            country.text = track.country
+
+            trackNameResult.isSelected = true
+            artistNameResult.isSelected = true
+        }
+    }
+
+    private fun getTrack() =
+        Gson().fromJson(intent.getStringExtra(TRACK), TrackPlayerModel::class.java)
+
+    private fun updateTimer(time: String) {
+        binding?.progressTime?.text = time
+    }
+
+    private fun updateScreen(state: MediaPlayerState) {
+        when (state) {
+            is MediaPlayerState.Playing -> {
+                binding?.btnPlay?.setImageResource(R.drawable.ic_pause)
+            }
+
+            is MediaPlayerState.Paused -> {
+                binding?.btnPlay?.setImageResource(R.drawable.ic_play)
+            }
+
+            is MediaPlayerState.Prepared -> {
+                binding?.btnPlay?.setImageResource(R.drawable.ic_play)
+                binding?.progressTime?.setText(R.string.default_playtime_value)
+            }
+
+            else -> {}
         }
     }
 

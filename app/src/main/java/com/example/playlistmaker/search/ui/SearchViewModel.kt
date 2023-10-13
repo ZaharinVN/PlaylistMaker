@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.search.domain.ItunesSearchResult
-import com.example.playlistmaker.search.domain.HistoryUseCase
+import com.example.playlistmaker.search.domain.HistoryInteractor
 import com.example.playlistmaker.search.domain.SearchUseCase
 
 class SearchViewModel(
-    private val historyUseCase: HistoryUseCase,
+    private val historyInteractor: HistoryInteractor,
     private val searchUseCase: SearchUseCase
 ) : ViewModel() {
 
@@ -18,8 +18,8 @@ class SearchViewModel(
     private val _searchQuery = MutableLiveData<String>()
     val searchQuery: LiveData<String> = _searchQuery
 
-    fun loadSearchHistory(historyUseCase: HistoryUseCase, searchUseCase: SearchUseCase) {
-        _searchHistory.value = this.historyUseCase.loadSearchHistory()
+    fun loadSearchHistory(historyInteractor: HistoryInteractor, searchUseCase: SearchUseCase) {
+        _searchHistory.value = this.historyInteractor.loadSearchHistory()
     }
 
     fun saveSearchQuery(query: String) {

@@ -1,7 +1,7 @@
 package com.example.playlistmaker.search.domain
 
-class HistoryUseCaseImpl(private val historyRepository: HistoryRepository) : HistoryRepository,
-    HistoryUseCase {
+class HistoryInteractorImpl(private val historyRepository: HistoryRepository) : HistoryRepository,
+    HistoryInteractor {
 
     override fun addTrackToHistory(track: ItunesSearchResult) {
         historyRepository.addTrackToHistory(track)

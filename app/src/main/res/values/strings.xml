@@ -15,4 +15,5 @@
     <string name="sendText">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="noInternet">Проблемы со связью\n\nЗагрузка не удалась.Проверьте \n подключение к интернету"</string>
     <string name="NoResults">Ничего не нашлось</string>
+    <string name="default_playtime_value">00:00</string>
 </resources>

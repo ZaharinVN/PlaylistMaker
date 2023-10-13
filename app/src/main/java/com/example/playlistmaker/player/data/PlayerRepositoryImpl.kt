@@ -4,9 +4,9 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
-import com.example.playlistmaker.player.domain.api.Player
+import com.example.playlistmaker.player.domain.api.PlayerRepository
 
-class PlayerImpl(private val audioUrl: String?) : Player {
+class PlayerRepositoryImpl(private val audioUrl: String?) : PlayerRepository {
 
     private var mediaPlayer: MediaPlayer? = null
     private var currentPosition: Int = 0
@@ -35,7 +35,6 @@ class PlayerImpl(private val audioUrl: String?) : Player {
     override fun preparePlayer(
         dataSource: String,
         onPreparedListener: () -> Unit,
-        onCompletionListener: () -> Unit
     ) {
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(
@@ -48,10 +47,6 @@ class PlayerImpl(private val audioUrl: String?) : Player {
             setOnPreparedListener {
                 onPreparedListener()
                 playbackState = PlayerState.PREPARED
-            }
-            setOnCompletionListener {
-                onCompletionListener()
-                playbackState = PlayerState.DEFAULT
             }
         }
     }
@@ -74,7 +69,17 @@ class PlayerImpl(private val audioUrl: String?) : Player {
         }
     }
 
-    private fun clickDebounce(): Boolean {
+
+    override fun setOnCompletionListener(onCompletionListener: () -> Unit) {
+        mediaPlayer = MediaPlayer().apply {
+            setOnCompletionListener {
+                onCompletionListener()
+                playbackState = PlayerState.DEFAULT
+            }
+        }
+    }
+
+    fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
@@ -82,7 +87,9 @@ class PlayerImpl(private val audioUrl: String?) : Player {
         }
         return current
     }
-
+    override  fun destroyPlayer() {
+        mediaPlayer?.release()
+    }
     enum class PlayerState {
         DEFAULT, PREPARED, PLAYING, PAUSED
     }
