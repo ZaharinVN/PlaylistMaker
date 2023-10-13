@@ -85,9 +85,11 @@ class PlayerRepositoryImpl(private val audioUrl: String?) : PlayerRepository {
         }
         return current
     }
-    override  fun destroyPlayer() {
+
+    override fun destroyPlayer() {
         mediaPlayer?.release()
     }
+
     enum class PlayerState {
         DEFAULT, PREPARED, PLAYING, PAUSED
     }

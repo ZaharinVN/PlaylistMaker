@@ -19,12 +19,12 @@ import com.example.playlistmaker.settings.data.SettingsInteractorImpl
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.domain.SettingsInteractor
 import com.example.playlistmaker.settings.domain.SettingsRepository
+import com.example.playlistmaker.settings.ui.SettingsViewModelFactory
 import com.example.playlistmaker.sharing.domain.SharingRepository
 import com.example.playlistmaker.sharing.data.SharingRepositoryImpl
 import com.example.playlistmaker.sharing.domain.SharingInteractor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
 
 object Creator {
     val retrofit = Retrofit.Builder()
@@ -43,15 +43,19 @@ object Creator {
     fun createSharingInteractor(sharingRepository: SharingRepository): SharingInteractor {
         return SharingInteractor(sharingRepository)
     }
+
     fun createHistoryUseCase(historyRepository: HistoryRepository): HistoryInteractor {
         return HistoryInteractorImpl(historyRepository)
     }
+
     fun createHistoryRepository(sharedPreferences: SharedPreferences): HistoryRepository {
         return HistoryRepositoryImpl(sharedPreferences)
     }
+
     fun createSearchRepository(itunesSearchApi: ItunesSearchApi): SearchRepository {
         return SearchRepositoryImpl(itunesSearchApi)
     }
+
     fun createSearchUseCase(searchRepository: SearchRepository): SearchUseCase {
         return SearchUseCaseImpl(searchRepository)
     }
@@ -64,8 +68,22 @@ object Creator {
         return SharingRepositoryImpl(context)
     }
 
-    fun createSettingsInteractor(settingsRepository: SettingsRepository, sharingRepository: SharingRepository): SettingsInteractor {
-        return SettingsInteractorImpl(settingsRepository, sharingRepository)
+    fun createSettingsInteractor(
+        settingsRepository: SettingsRepository,
+        sharingRepository: SharingRepository
+    ): SettingsInteractor {
+        return SettingsInteractorImpl(settingsRepository,sharingRepository)
     }
-
+    fun createSettingsRepository(context: Context): SettingsRepository {
+        val sharedPrefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        // Создание и возвращение репозитория
+        return SettingsRepositoryImpl(sharedPrefs)
+    }
+    fun createSettingsViewModelFactory(context: Context): SettingsViewModelFactory {
+        val settingsRepository = createSettingsRepository(context)
+        val sharingRepository = createSharingRepository(context)
+        val settingsInteractor = createSettingsInteractor(settingsRepository,sharingRepository)
+        val sharingInteractor = createSharingInteractor(sharingRepository)
+        return SettingsViewModelFactory(settingsInteractor, sharingInteractor)
+    }
 }

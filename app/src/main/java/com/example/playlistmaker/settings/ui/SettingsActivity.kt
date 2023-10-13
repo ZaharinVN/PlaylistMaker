@@ -1,7 +1,6 @@
 package com.example.playlistmaker.settings.ui
 
 import androidx.appcompat.app.AppCompatActivity
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -20,15 +19,9 @@ class SettingsActivity : AppCompatActivity() {
 
         switch = findViewById(R.id.themeSwitcher)
 
-        val sharedPrefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val settingsRepository = Creator.createSettingsRepository(sharedPrefs)
-        val sharingRepository = Creator.createSharingRepository(this)
+        val viewModelFactory =
+            Creator.createSettingsViewModelFactory(this)
 
-        val settingsInteractor =
-            Creator.createSettingsInteractor(settingsRepository, sharingRepository)
-        val sharingInteractor = Creator.createSharingInteractor(sharingRepository)
-
-        val viewModelFactory = SettingsViewModelFactory(settingsInteractor, sharingInteractor)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SettingsViewModel::class.java)
 
         viewModel.getDarkThemeLiveData().observe(this) { isDarkTheme ->
@@ -41,7 +34,8 @@ class SettingsActivity : AppCompatActivity() {
             viewModel.setAppTheme()
         }
 
-        val savedDarkTheme = sharedPrefs.getBoolean("darkTheme", false)
+        val savedDarkTheme =
+            viewModel.getDarkTheme()
         switch.isChecked = savedDarkTheme
 
         val backButton = findViewById<Button>(R.id.btnSettingsBack)
@@ -51,12 +45,8 @@ class SettingsActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.setAppTheme()
-        val sharedPrefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val editor = sharedPrefs.edit()
-        editor.putBoolean("darkTheme", switch.isChecked)
-        editor.apply()
-    }
 
+    }
 
     fun onShareClick(view: View?) {
         viewModel.shareApp()

@@ -26,6 +26,7 @@ class SettingsViewModel(
         return settingsInteractor.getDarkTheme()
     }
 
+
     fun shareApp() {
         sharingInteractor.shareApp()
     }
