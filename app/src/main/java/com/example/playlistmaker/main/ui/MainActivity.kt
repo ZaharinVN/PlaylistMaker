@@ -1,7 +1,5 @@
 package com.example.playlistmaker.main.ui
 
-
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -51,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             val sharedPrefs = mainActivity.getSharedPreferences("settings", MODE_PRIVATE)
             val darkMode = sharedPrefs.getBoolean("darkTheme", false)
             mainActivity.viewModel.setDarkModeEnabled(darkMode)
-    
+
             mainActivity.viewModel.darkModeEnabled.observe(mainActivity) { enabled ->
                 if (enabled) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

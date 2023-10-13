@@ -10,5 +10,6 @@ interface PlayerRepository {
     fun preparePlayer(url: String, onPreparedListener: () -> Unit)
     fun setOnCompletionListener(onCompletionListener: () -> Unit)
     fun destroyPlayer()
+
 }
 

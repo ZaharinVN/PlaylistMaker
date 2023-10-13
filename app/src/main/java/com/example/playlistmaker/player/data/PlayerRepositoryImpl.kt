@@ -7,7 +7,6 @@ import android.os.Looper
 import com.example.playlistmaker.player.domain.api.PlayerRepository
 
 class PlayerRepositoryImpl(private val audioUrl: String?) : PlayerRepository {
-
     private var mediaPlayer: MediaPlayer? = null
     private var currentPosition: Int = 0
     private var playbackState: PlayerState = PlayerState.DEFAULT
@@ -68,7 +67,6 @@ class PlayerRepositoryImpl(private val audioUrl: String?) : PlayerRepository {
             PlayerState.DEFAULT -> {}
         }
     }
-
 
     override fun setOnCompletionListener(onCompletionListener: () -> Unit) {
         mediaPlayer = MediaPlayer().apply {

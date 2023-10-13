@@ -91,7 +91,6 @@ class MediaActivity : AppCompatActivity() {
                 binding?.btnPlay?.setImageResource(R.drawable.ic_play)
                 binding?.progressTime?.setText(R.string.default_playtime_value)
             }
-
             else -> {}
         }
     }

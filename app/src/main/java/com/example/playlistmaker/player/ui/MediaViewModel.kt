@@ -19,7 +19,6 @@ class MediaViewModel(
 ) : ViewModel() {
 
     private val handler = Handler(Looper.getMainLooper())
-
     private var clickAllowed = true
 
     private val stateLiveData = MutableLiveData<MediaPlayerState>()
@@ -66,12 +65,10 @@ class MediaViewModel(
             is MediaPlayerState.Playing -> {
                 pauseAudioPlayer()
             }
-
             is MediaPlayerState.Prepared, MediaPlayerState.Paused -> {
                 startAudioPlayer()
                 handler.post(updateTime())
             }
-
             else -> {}
         }
     }

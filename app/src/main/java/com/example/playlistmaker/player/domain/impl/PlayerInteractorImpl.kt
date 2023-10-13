@@ -32,6 +32,7 @@ class PlayerInteractorImpl(private val playerRepository: PlayerRepository) : Pla
     override fun playbackControl(onStartPlayer: () -> Unit, onPausePlayer: () -> Unit) {
         playerRepository.playbackControl(onStartPlayer, onPausePlayer)
     }
+
     override fun destroyPlayer() {
         playerRepository.destroyPlayer()
     }
