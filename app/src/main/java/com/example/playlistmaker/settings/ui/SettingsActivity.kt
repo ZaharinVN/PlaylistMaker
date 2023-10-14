@@ -45,7 +45,6 @@ class SettingsActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.setAppTheme()
-
     }
 
     fun onShareClick(view: View?) {

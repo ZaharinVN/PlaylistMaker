@@ -1,6 +1,8 @@
-package com.example.playlistmaker.search.domain
+package com.example.playlistmaker.search.data.dto
 
-data class ItunesSearchResult(
+import java.io.Serializable
+
+data class TrackDto(
     val trackId: String,
     val trackName: String,
     val artistName: String,
@@ -11,5 +13,4 @@ data class ItunesSearchResult(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String
-)
-
+) : Serializable

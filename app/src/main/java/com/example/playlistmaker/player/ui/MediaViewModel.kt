@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.player.domain.api.MediaPlayerState
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -49,7 +50,6 @@ class MediaViewModel(
         renderState(MediaPlayerState.Paused)
     }
 
-
     private fun getCurrentPosition(): Int {
         return mediaPlayerInteractor.currentPosition()
     }
@@ -65,10 +65,12 @@ class MediaViewModel(
             is MediaPlayerState.Playing -> {
                 pauseAudioPlayer()
             }
+
             is MediaPlayerState.Prepared, MediaPlayerState.Paused -> {
                 startAudioPlayer()
                 handler.post(updateTime())
             }
+
             else -> {}
         }
     }
@@ -109,7 +111,7 @@ class MediaViewModel(
     }
 
     companion object {
-        private const val CLICK_DEBOUNCE_DELAY_MS = 1000L
+        private const val CLICK_DEBOUNCE_DELAY_MS = 2000L
         private const val PLAYBACK_UPDATE_DELAY_MS = 300L
 
         fun getViewModelFactory(url: String): ViewModelProvider.Factory = viewModelFactory() {

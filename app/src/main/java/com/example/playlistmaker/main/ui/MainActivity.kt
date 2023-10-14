@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import com.example.playlistmaker.LibraryActivity
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.ui.SearchActivity
+import com.example.playlistmaker.search.ui.activity.SearchActivity
 import com.example.playlistmaker.settings.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {

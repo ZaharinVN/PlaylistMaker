@@ -8,6 +8,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.databinding.ActivityMediaBinding
 import com.example.playlistmaker.R
+import com.example.playlistmaker.player.domain.api.MediaPlayerState
+import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.google.gson.Gson
 
 class MediaActivity : AppCompatActivity() {
@@ -46,14 +48,14 @@ class MediaActivity : AppCompatActivity() {
         }
     }
 
-    private fun bind(track: TrackPlayerModel) {
+    private fun bind(track: TrackSearchModel) {
         val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
 
         Glide.with(this)
             .load(track.getCoverArtwork())
             .transform(RoundedCorners(radius.toInt()))
             .placeholder(R.drawable.placeholder)
-            .into(binding?.trackCover!!)
+            .into(binding!!.trackCover)
 
         binding?.apply {
             trackNameResult.text = track.trackName
@@ -71,7 +73,7 @@ class MediaActivity : AppCompatActivity() {
     }
 
     private fun getTrack() =
-        Gson().fromJson(intent.getStringExtra(TRACK), TrackPlayerModel::class.java)
+        Gson().fromJson(intent.getStringExtra(TRACK), TrackSearchModel::class.java)
 
     private fun updateTimer(time: String) {
         binding?.progressTime?.text = time

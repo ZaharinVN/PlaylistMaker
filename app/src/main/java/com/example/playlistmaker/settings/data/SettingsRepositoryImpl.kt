@@ -4,7 +4,9 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.settings.domain.SettingsRepository
 
-class SettingsRepositoryImpl(private val sharedPrefs: SharedPreferences) : SettingsRepository {
+class SettingsRepositoryImpl(
+    private val sharedPrefs: SharedPreferences
+) : SettingsRepository {
     override fun getDarkTheme(): Boolean {
         return sharedPrefs.getBoolean("darkTheme", false)
     }

@@ -95,6 +95,6 @@ class PlayerRepositoryImpl(private val audioUrl: String?) : PlayerRepository {
     }
 
     companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val CLICK_DEBOUNCE_DELAY = 2000L
     }
 }

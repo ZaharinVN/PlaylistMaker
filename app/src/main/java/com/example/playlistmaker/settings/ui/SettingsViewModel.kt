@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.settings.domain.SettingsInteractor
 import com.example.playlistmaker.sharing.domain.SharingInteractor
 
-
 class SettingsViewModel(
     private val settingsInteractor: SettingsInteractor,
     private val sharingInteractor: SharingInteractor
@@ -26,7 +25,6 @@ class SettingsViewModel(
         return settingsInteractor.getDarkTheme()
     }
 
-
     fun shareApp() {
         sharingInteractor.shareApp()
     }
@@ -41,7 +39,6 @@ class SettingsViewModel(
 
     fun setAppTheme() {
         settingsInteractor.setAppTheme()
-
     }
 }
 

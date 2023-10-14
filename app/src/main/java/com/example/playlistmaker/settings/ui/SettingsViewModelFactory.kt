@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.settings.domain.SettingsInteractor
 import com.example.playlistmaker.sharing.domain.SharingInteractor
 
-
 class SettingsViewModelFactory(
     private val settingsInteractor: SettingsInteractor,
     private val sharingInteractor: SharingInteractor
