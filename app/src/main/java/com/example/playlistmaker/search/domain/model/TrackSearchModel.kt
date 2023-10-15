@@ -1,10 +1,11 @@
 package com.example.playlistmaker.search.domain.model
 
+import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 data class TrackSearchModel(
-    val trackId: String,
+    val trackId: Long,
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: Long,
@@ -14,7 +15,9 @@ data class TrackSearchModel(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String
-) {
+) : Serializable
+{
+
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
 
     fun formatTrackDuration() = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)

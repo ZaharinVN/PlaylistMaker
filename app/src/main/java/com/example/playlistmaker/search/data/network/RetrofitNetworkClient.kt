@@ -28,16 +28,14 @@ class RetrofitNetworkClient(
         if (!isConnected()) {
             return Response().apply { resultCode = -1 }
         }
-        if (dto is TracksSearchRequest) {
+        if (dto !is TracksSearchRequest) {
+            return Response().apply { resultCode = HttpsURLConnection.HTTP_BAD_REQUEST }
+        }
             val response = iTunesService.search(dto.expression).execute()
-            val body = response.body() ?: Response()
-            return body?.apply {
-                resultCode = response.code()
-            }!!
-        } else {
-            return Response().apply {
-                resultCode = HttpsURLConnection.HTTP_BAD_REQUEST
-            }
+        val body = response.body()
+
+        return body?.apply { resultCode = response.code() } ?: Response().apply {
+            resultCode = response.code()
         }
     }
 

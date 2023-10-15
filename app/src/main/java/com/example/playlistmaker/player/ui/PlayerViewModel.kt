@@ -9,64 +9,64 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.player.domain.api.MediaPlayerState
+import com.example.playlistmaker.player.domain.api.PlayerState
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class MediaViewModel(
-    private val mediaPlayerInteractor: PlayerInteractor,
+class PlayerViewModel(
+    private val playerInteractor: PlayerInteractor,
     private val trackUrl: String
 ) : ViewModel() {
 
     private val handler = Handler(Looper.getMainLooper())
     private var clickAllowed = true
 
-    private val stateLiveData = MutableLiveData<MediaPlayerState>()
+    private val stateLiveData = MutableLiveData<PlayerState>()
     private val timerLiveData = MutableLiveData<String>()
-    fun observeState(): LiveData<MediaPlayerState> = stateLiveData
+    fun observeState(): LiveData<PlayerState> = stateLiveData
     fun observeTimer(): LiveData<String> = timerLiveData
 
     init {
-        renderState(MediaPlayerState.Default)
+        renderState(PlayerState.Default)
         preparePlayer()
         setOnCompleteListener()
         isClickAllowed()
     }
 
     private fun preparePlayer() {
-        mediaPlayerInteractor.preparePlayer(trackUrl) {
-            renderState(MediaPlayerState.Prepared)
+        playerInteractor.preparePlayer(trackUrl) {
+            renderState(PlayerState.Prepared)
         }
     }
 
     private fun startAudioPlayer() {
-        mediaPlayerInteractor.startAudio()
-        renderState(MediaPlayerState.Playing(mediaPlayerInteractor.currentPosition()))
+        playerInteractor.startPlayer()
+        renderState(PlayerState.Playing(playerInteractor.getCurrentPosition()))
     }
 
     private fun pauseAudioPlayer() {
-        mediaPlayerInteractor.pauseAudio()
-        renderState(MediaPlayerState.Paused)
+        playerInteractor.pausePlayer()
+        renderState(PlayerState.Paused)
     }
 
     private fun getCurrentPosition(): Int {
-        return mediaPlayerInteractor.currentPosition()
+        return playerInteractor.getCurrentPosition()
     }
 
     private fun setOnCompleteListener() {
-        mediaPlayerInteractor.setOnCompletionListener {
-            renderState(MediaPlayerState.Prepared)
+        playerInteractor.setOnCompletionListener {
+            renderState(PlayerState.Prepared)
         }
     }
 
     fun playbackControl() {
         when (stateLiveData.value) {
-            is MediaPlayerState.Playing -> {
+            is PlayerState.Playing -> {
                 pauseAudioPlayer()
             }
 
-            is MediaPlayerState.Prepared, MediaPlayerState.Paused -> {
+            is PlayerState.Prepared, PlayerState.Paused -> {
                 startAudioPlayer()
                 handler.post(updateTime())
             }
@@ -75,13 +75,13 @@ class MediaViewModel(
         }
     }
 
-    private fun renderState(state: MediaPlayerState) {
+    private fun renderState(state: PlayerState) {
         stateLiveData.postValue(state)
     }
 
     override fun onCleared() {
         handler.removeCallbacksAndMessages(null)
-        mediaPlayerInteractor.destroyPlayer()
+        playerInteractor.destroyPlayer()
     }
 
     fun onPause() {
@@ -116,7 +116,7 @@ class MediaViewModel(
 
         fun getViewModelFactory(url: String): ViewModelProvider.Factory = viewModelFactory() {
             initializer {
-                MediaViewModel(Creator.provideMediaPlayerInteractor(), url)
+                PlayerViewModel(Creator.providePlayerInteractor(), url)
             }
         }
     }

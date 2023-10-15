@@ -10,13 +10,18 @@ import android.os.Looper
 import android.os.PersistableBundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.player.ui.MediaActivity
+import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.example.playlistmaker.search.ui.TracksAdapter
 import com.example.playlistmaker.search.ui.model.ScreenState
@@ -49,21 +54,25 @@ class SearchActivity : AppCompatActivity() {
         viewModel.stateLiveData().observe(this) {
             updateScreen(it)
         }
+
         binding.apply {
             rvSearchResult.adapter = searchAdapter
-
+            rvHistory.adapter = historyAdapter
         }
+
         buttonsConfig()
         queryInputConfig(initTextWatcher())
     }
 
     private fun initTextWatcher() = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             binding.apply {
-                clearHistoryButton.visibility = clearButtonVisibility(s)
+                clearImageView.visibility = clearButtonVisibility(s)
                 rvSearchResult.visibility = View.GONE
             }
+
             userInput = s.toString()
             viewModel.searchDebounce(userInput, false)
         }
@@ -71,13 +80,14 @@ class SearchActivity : AppCompatActivity() {
         override fun afterTextChanged(s: Editable?) {}
     }
 
+
     private fun buttonsConfig() {
         binding.apply {
-            btnSettingsBack.setOnClickListener {
+            btnSearchBack.setOnClickListener {
                 finish()
             }
 
-            clearHistoryButton.setOnClickListener {
+            clearImageView.setOnClickListener {
                 searchEditText.setText("")
                 hideKeyboard()
                 tracks.clear()
@@ -88,7 +98,7 @@ class SearchActivity : AppCompatActivity() {
             clearHistoryButton.setOnClickListener {
                 viewModel.clearHistory()
                 viewModel.getTracksHistory()
-                rvSearchResult.visibility = View.GONE
+                rvHistory.visibility = View.GONE
             }
 
             refresh.setOnClickListener {
@@ -105,7 +115,7 @@ class SearchActivity : AppCompatActivity() {
                 if (hasFocus && this.text.isEmpty())
                     viewModel.getTracksHistory()
                 else
-                    binding.rvSearchResult.visibility = View.GONE
+                    binding.rvHistory.visibility = View.GONE
             }
         }
     }
@@ -142,7 +152,7 @@ class SearchActivity : AppCompatActivity() {
         if (isClickAllowed()) {
             viewModel.addTrackToHistory(track)
             val playIntent =
-                Intent(this, MediaActivity::class.java).putExtra(TRACK, Gson().toJson(track))
+                Intent(this, PlayerActivity::class.java).putExtra(TRACK, Gson().toJson(track))
             startActivity(playIntent)
         }
     }
@@ -156,14 +166,13 @@ class SearchActivity : AppCompatActivity() {
         return current
     }
 
-
     private fun updateScreen(state: ScreenState) {
         binding.apply {
             when (state) {
                 is ScreenState.Content -> {
                     tracks.clear()
                     tracks.addAll(state.tracks as ArrayList<TrackSearchModel>)
-                    progressBar.visibility = View.GONE
+                    progressSearch.visibility = View.GONE
                     rvSearchResult.visibility = View.VISIBLE
                     noInternet.visibility = View.GONE
                     noResults.visibility = View.GONE
@@ -171,18 +180,18 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 is ScreenState.Error -> {
-                    progressBar.visibility = View.GONE
+                    progressSearch.visibility = View.GONE
                     noInternet.visibility = View.VISIBLE
-
+                    noResults.visibility = View.GONE
                     imageViewNoInternet.setImageResource(R.drawable.ic_no_internet)
                     textViewNoInternet.setText(R.string.noInternet)
                     refresh.visibility = View.VISIBLE
                 }
 
                 is ScreenState.Empty -> {
-                    progressBar.visibility = View.GONE
+                    progressSearch.visibility = View.GONE
+                    noInternet.visibility = View.GONE
                     noResults.visibility = View.VISIBLE
-
                     imageViewNoResults.setImageResource(R.drawable.ic_no_results)
                     textViewNoResults.setText(R.string.NoResults)
                     refresh.visibility = View.GONE
@@ -191,20 +200,22 @@ class SearchActivity : AppCompatActivity() {
                 is ScreenState.Loading -> {
                     noInternet.visibility = View.GONE
                     noResults.visibility = View.GONE
+                    rvHistory.visibility = View.GONE
                     rvSearchResult.visibility = View.GONE
-
+                    progressSearch.visibility = View.VISIBLE
                     progressBar.visibility = View.VISIBLE
+                    hideKeyboard()
                 }
 
                 is ScreenState.ContentHistoryList -> {
-                    rvSearchResult.visibility = View.VISIBLE
+                    rvHistory.visibility = View.VISIBLE
                     tracksHistory.clear()
                     tracksHistory.addAll(state.historyList)
                     historyAdapter.notifyDataSetChanged()
                 }
 
                 is ScreenState.EmptyHistoryList -> {
-                    rvSearchResult.visibility = View.GONE
+                    rvHistory.visibility = View.GONE
                 }
             }
         }
@@ -215,6 +226,7 @@ class SearchActivity : AppCompatActivity() {
         private const val USER_INPUT = "USER_INPUT"
     }
 }
+
 
 
 

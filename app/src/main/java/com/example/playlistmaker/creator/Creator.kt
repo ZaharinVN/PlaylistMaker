@@ -1,6 +1,7 @@
 package com.example.playlistmaker.creator
 
 import android.content.Context
+import android.media.MediaPlayer
 import com.example.playlistmaker.player.data.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.api.PlayerRepository
@@ -21,12 +22,12 @@ import com.example.playlistmaker.sharing.domain.SharingInteractor
 
 object Creator {
 
-    fun provideMediaPlayerInteractor(): PlayerInteractor {
-        return PlayerInteractorImpl(provideMediaPlayerRepository(String.toString()))
+    fun providePlayerInteractor(): PlayerInteractor {
+        return PlayerInteractorImpl(providePlayerRepository(MediaPlayer()))
     }
 
-    private fun provideMediaPlayerRepository(audioUrl: String?): PlayerRepository {
-        return PlayerRepositoryImpl(audioUrl)
+    fun providePlayerRepository(Player: MediaPlayer): PlayerRepository {
+        return PlayerRepositoryImpl(Player)
     }
 
     fun createSharingInteractor(sharingRepository: SharingRepository): SharingInteractor {
@@ -57,7 +58,7 @@ object Creator {
         return SettingsViewModelFactory(settingsInteractor, sharingInteractor)
     }
 
-    private fun provideSearchRepository(context: Context): SearchRepository {
+    fun provideSearchRepository(context: Context): SearchRepository {
         return SearchRepositoryImpl(
             RetrofitNetworkClient(context),
             com.example.playlistmaker.search.data.sharedPrefs.SharedPrefsSearchDataStorage(context),

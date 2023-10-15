@@ -31,14 +31,9 @@ class TracksAdapter(
     override fun onBindViewHolder(holder: TracksViewHolder, position: Int) {
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener { clickListener.onTrackClick(tracks.get(position)) }
-        animateItemClick(holder.itemView)
     }
 
     fun interface TrackClickListener {
         fun onTrackClick(track: TrackSearchModel)
-    }
-    private fun animateItemClick(view: View) {
-        val anim = AnimationUtils.loadAnimation(view.context, R.anim.click_animation)
-        view.startAnimation(anim)
     }
 }

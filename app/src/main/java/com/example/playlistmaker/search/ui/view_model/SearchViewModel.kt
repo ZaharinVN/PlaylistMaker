@@ -21,7 +21,7 @@ class SearchViewModel(
 ) : ViewModel() {
 
     private val handler = Handler(Looper.getMainLooper())
-    lateinit var searchRunnable: Runnable
+
     private val _stateLiveData = MutableLiveData<ScreenState>()
     fun stateLiveData(): LiveData<ScreenState> = _stateLiveData
 
