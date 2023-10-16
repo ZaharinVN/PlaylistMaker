@@ -10,17 +10,13 @@ import android.os.Looper
 import android.os.PersistableBundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.player.domain.TrackPlayerModel
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.example.playlistmaker.search.ui.TracksAdapter
@@ -81,6 +77,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun buttonsConfig() {
         binding.apply {
             btnSearchBack.setOnClickListener {
@@ -150,12 +147,26 @@ class SearchActivity : AppCompatActivity() {
 
     private fun trackClickListener(track: TrackSearchModel) {
         if (isClickAllowed()) {
+            val trackPlayerModel = TrackPlayerModel(
+                track.trackId,
+                track.trackName,
+                track.artistName,
+                track.trackTimeMillis,
+                track.artworkUrl100,
+                track.collectionName,
+                track.releaseDate,
+                track.primaryGenreName,
+                track.country,
+                track.previewUrl
+            )
             viewModel.addTrackToHistory(track)
             val playIntent =
-                Intent(this, PlayerActivity::class.java).putExtra(TRACK, Gson().toJson(track))
+                Intent(this, PlayerActivity::class.java).putExtra(TRACK, Gson().toJson(trackPlayerModel))
             startActivity(playIntent)
         }
     }
+
+
 
     private fun isClickAllowed(): Boolean {
         val current = clickAllowed
@@ -166,6 +177,7 @@ class SearchActivity : AppCompatActivity() {
         return current
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun updateScreen(state: ScreenState) {
         binding.apply {
             when (state) {

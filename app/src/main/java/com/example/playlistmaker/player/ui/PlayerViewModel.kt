@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.domain.api.PlayerState
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -81,7 +82,6 @@ class PlayerViewModel(
 
     override fun onCleared() {
         handler.removeCallbacksAndMessages(null)
-        playerInteractor.destroyPlayer()
     }
 
     fun onPause() {

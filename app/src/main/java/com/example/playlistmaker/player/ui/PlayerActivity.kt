@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore.Audio.AudioColumns.TRACK
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +11,7 @@ import com.example.playlistmaker.databinding.ActivityMediaBinding
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.TrackPlayerModel
 import com.example.playlistmaker.player.domain.api.PlayerState
-import com.example.playlistmaker.search.domain.model.TrackSearchModel
+import com.example.playlistmaker.search.ui.activity.SearchActivity
 import com.google.gson.Gson
 
 class PlayerActivity : AppCompatActivity() {
@@ -46,11 +47,14 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         binding?.btnPlayerBack?.setOnClickListener {
-            finish()
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
         }
     }
+    private fun getTrack() =
+        Gson().fromJson(intent.getStringExtra(TRACK), TrackPlayerModel::class.java)
 
-    private fun bind(track: TrackSearchModel?) {
+    private fun bind(track: TrackPlayerModel?) {
         track?.let {
             val cornerRadius = this.resources.getDimensionPixelSize(R.dimen.corner_radius)
             binding?.let {
@@ -69,14 +73,9 @@ class PlayerActivity : AppCompatActivity() {
                 releaseDate.text = it.formatReleaseDate()
                 primaryGenreName.text = it.primaryGenreName
                 country.text = it.country
-
             }
         }
     }
-
-
-    private fun getTrack() =
-        Gson().fromJson(intent.getStringExtra(TRACK), TrackSearchModel::class.java)
 
     private fun updateTimer(time: String) {
         binding?.progressTime?.text = time
