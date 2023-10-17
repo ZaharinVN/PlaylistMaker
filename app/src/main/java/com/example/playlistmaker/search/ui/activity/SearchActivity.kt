@@ -16,13 +16,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.player.domain.TrackPlayerModel
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.example.playlistmaker.search.ui.TracksAdapter
 import com.example.playlistmaker.search.ui.model.ScreenState
 import com.example.playlistmaker.search.ui.view_model.SearchViewModel
-import com.example.playlistmaker.utils.TRACK
 import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {
@@ -55,20 +55,21 @@ class SearchActivity : AppCompatActivity() {
             rvSearchResult.adapter = searchAdapter
             rvHistory.adapter = historyAdapter
         }
-
+        binding.btnSearchBack.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
         buttonsConfig()
         queryInputConfig(initTextWatcher())
     }
 
     private fun initTextWatcher() = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             binding.apply {
                 clearImageView.visibility = clearButtonVisibility(s)
                 rvSearchResult.visibility = View.GONE
             }
-
             userInput = s.toString()
             viewModel.searchDebounce(userInput, false)
         }
@@ -76,26 +77,27 @@ class SearchActivity : AppCompatActivity() {
         override fun afterTextChanged(s: Editable?) {}
     }
 
-
     @SuppressLint("NotifyDataSetChanged")
     private fun buttonsConfig() {
         binding.apply {
-            btnSearchBack.setOnClickListener {
-                finish()
-            }
-
             clearImageView.setOnClickListener {
                 searchEditText.setText("")
                 hideKeyboard()
                 tracks.clear()
                 viewModel.getTracksHistory()
                 searchAdapter.notifyDataSetChanged()
+                rvHistory.visibility = View.VISIBLE
+                noInternet.visibility = View.GONE
+                noResults.visibility = View.GONE
+                clearHistoryButton.visibility = View.VISIBLE
+                historyMessage.visibility = View.VISIBLE
             }
-
             clearHistoryButton.setOnClickListener {
                 viewModel.clearHistory()
                 viewModel.getTracksHistory()
                 rvHistory.visibility = View.GONE
+                historyMessage.visibility = View.GONE
+                clearHistoryButton.visibility = View.GONE
             }
 
             refresh.setOnClickListener {
@@ -161,11 +163,13 @@ class SearchActivity : AppCompatActivity() {
             )
             viewModel.addTrackToHistory(track)
             val playIntent =
-                Intent(this, PlayerActivity::class.java).putExtra(TRACK, Gson().toJson(trackPlayerModel))
+                Intent(this, PlayerActivity::class.java).putExtra(
+                    EXTRA_TRACK,
+                    Gson().toJson(trackPlayerModel)
+                )
             startActivity(playIntent)
         }
     }
-
 
 
     private fun isClickAllowed(): Boolean {
@@ -198,12 +202,16 @@ class SearchActivity : AppCompatActivity() {
                     imageViewNoInternet.setImageResource(R.drawable.ic_no_internet)
                     textViewNoInternet.setText(R.string.noInternet)
                     refresh.visibility = View.VISIBLE
+                    clearHistoryButton.visibility = View.GONE
+                    historyMessage.visibility = View.GONE
                 }
 
                 is ScreenState.Empty -> {
                     progressSearch.visibility = View.GONE
                     noInternet.visibility = View.GONE
                     noResults.visibility = View.VISIBLE
+                    clearHistoryButton.visibility = View.GONE
+                    historyMessage.visibility = View.GONE
                     imageViewNoResults.setImageResource(R.drawable.ic_no_results)
                     textViewNoResults.setText(R.string.NoResults)
                     refresh.visibility = View.GONE
@@ -236,6 +244,7 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         private const val CLICK_DEBOUNCE_DELAY_MS = 2000L
         private const val USER_INPUT = "USER_INPUT"
+        private const val EXTRA_TRACK = "EXTRA_TRACK"
     }
 }
 

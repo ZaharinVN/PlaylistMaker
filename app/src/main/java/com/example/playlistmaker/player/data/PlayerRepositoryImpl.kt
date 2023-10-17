@@ -32,12 +32,4 @@ class PlayerRepositoryImpl(private val player: MediaPlayer) : PlayerRepository {
     override fun destroyPlayer() {
         player.release()
     }
-
-    enum class PlayerState {
-        DEFAULT, PREPARED, PLAYING, PAUSED
-    }
-
-    companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 2000L
-    }
 }

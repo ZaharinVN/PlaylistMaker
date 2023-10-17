@@ -2,7 +2,6 @@ package com.example.playlistmaker.player.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.MediaStore.Audio.AudioColumns.TRACK
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -13,6 +12,7 @@ import com.example.playlistmaker.player.domain.TrackPlayerModel
 import com.example.playlistmaker.player.domain.api.PlayerState
 import com.example.playlistmaker.search.ui.activity.SearchActivity
 import com.google.gson.Gson
+import kotlin.math.roundToInt
 
 class PlayerActivity : AppCompatActivity() {
     private var binding: ActivityMediaBinding? = null
@@ -51,23 +51,24 @@ class PlayerActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
     private fun getTrack() =
-        Gson().fromJson(intent.getStringExtra(TRACK), TrackPlayerModel::class.java)
+        Gson().fromJson(intent.getStringExtra(EXTRA_TRACK), TrackPlayerModel::class.java)
 
     private fun bind(track: TrackPlayerModel?) {
         track?.let {
-            val cornerRadius = this.resources.getDimensionPixelSize(R.dimen.corner_radius)
+            val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
             binding?.let {
                 Glide.with(this)
                     .load(track.getCoverArtwork())
                     .placeholder(R.drawable.placeholder)
-                    .transform(RoundedCorners(cornerRadius))
+                    .transform(RoundedCorners(radius.roundToInt()))
                     .into(it.trackCover)
             }
             binding?.apply {
                 trackNameResult.text = it.trackName
                 artistNameResult.text = it.artistName
-                trackTimeResult.text = getString(R.string.default_playtime_value)
+                trackTimeResult.text = it.formatTrackDuration()
                 progressTime.text = it.formatTrackDuration()
                 collectionName.text = it.collectionName
                 releaseDate.text = it.formatReleaseDate()
@@ -104,7 +105,12 @@ class PlayerActivity : AppCompatActivity() {
         super.onPause()
         viewModel.onPause()
     }
+
+    companion object {
+        private const val EXTRA_TRACK = "EXTRA_TRACK"
+    }
 }
+
 
 
 

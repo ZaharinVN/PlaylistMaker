@@ -15,10 +15,7 @@ data class TrackSearchModel(
     val country: String,
     val previewUrl: String
 ) {
-    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
-
-    fun formatTrackDuration() = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
-
-    fun formatReleaseDate() = releaseDate.substringBefore('-')
+    fun formatTrackDuration() =
+        SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
 }
 

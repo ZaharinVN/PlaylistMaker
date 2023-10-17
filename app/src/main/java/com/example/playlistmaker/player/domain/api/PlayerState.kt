@@ -6,5 +6,6 @@ sealed interface PlayerState {
     data class Playing(
         val time: Int
     ) : PlayerState
+
     object Paused : PlayerState
 }

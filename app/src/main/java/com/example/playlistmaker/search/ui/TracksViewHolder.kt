@@ -1,6 +1,5 @@
 package com.example.playlistmaker.search.ui
 
-
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
@@ -9,7 +8,7 @@ import com.example.playlistmaker.search.domain.model.TrackSearchModel
 
 class TracksViewHolder(
     private val binding: LayoutTrackBinding
-    ) :
+) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: TrackSearchModel) {

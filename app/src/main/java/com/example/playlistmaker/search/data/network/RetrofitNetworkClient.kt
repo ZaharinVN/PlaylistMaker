@@ -3,7 +3,6 @@ package com.example.playlistmaker.search.data.network
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.util.Log
 import com.example.playlistmaker.search.data.dto.Response
 import com.example.playlistmaker.search.data.dto.TracksSearchRequest
 import retrofit2.Retrofit
@@ -31,7 +30,7 @@ class RetrofitNetworkClient(
         if (dto !is TracksSearchRequest) {
             return Response().apply { resultCode = HttpsURLConnection.HTTP_BAD_REQUEST }
         }
-            val response = iTunesService.search(dto.expression).execute()
+        val response = iTunesService.search(dto.expression).execute()
         val body = response.body()
 
         return body?.apply { resultCode = response.code() } ?: Response().apply {
@@ -39,7 +38,7 @@ class RetrofitNetworkClient(
         }
     }
 
- private fun isConnected(): Boolean {
+    private fun isConnected(): Boolean {
         val connectivityManager = context.getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager
