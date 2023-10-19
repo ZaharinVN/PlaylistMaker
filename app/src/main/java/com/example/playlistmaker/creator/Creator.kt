@@ -16,6 +16,7 @@ import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.domain.SettingsInteractor
 import com.example.playlistmaker.settings.domain.SettingsRepository
 import com.example.playlistmaker.settings.ui.SettingsViewModelFactory
+import com.example.playlistmaker.sharing.data.SharingInteractorImpl
 import com.example.playlistmaker.sharing.domain.SharingRepository
 import com.example.playlistmaker.sharing.data.SharingRepositoryImpl
 import com.example.playlistmaker.sharing.domain.SharingInteractor
@@ -31,7 +32,7 @@ object Creator {
     }
 
     fun createSharingInteractor(sharingRepository: SharingRepository): SharingInteractor {
-        return SharingInteractor(sharingRepository)
+        return SharingInteractorImpl(sharingRepository)
     }
 
     fun createSharingRepository(context: Context): SharingRepository {

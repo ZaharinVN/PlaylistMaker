@@ -16,8 +16,7 @@ import com.example.playlistmaker.search.ui.model.ScreenState
 import com.example.playlistmaker.utils.App
 
 class SearchViewModel(
-    private val searchInteractor: SearchInteractor,
-    private val app: App
+    private val searchInteractor: SearchInteractor
 ) : ViewModel() {
 
     private val handler = Handler(Looper.getMainLooper())
@@ -59,7 +58,7 @@ class SearchViewModel(
                                 renderState(ScreenState.Empty())
                             }
 
-                            tracks.isNotEmpty() -> {
+                            else -> {
                                 renderState(ScreenState.Content(tracks))
                             }
                         }
@@ -104,8 +103,7 @@ class SearchViewModel(
             initializer {
                 val app = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as App)
                 SearchViewModel(
-                    searchInteractor = Creator.provideSearchInteractor(app.applicationContext),
-                    app = app
+                    searchInteractor = Creator.provideSearchInteractor(app.applicationContext)
                 )
             }
         }

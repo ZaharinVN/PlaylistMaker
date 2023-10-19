@@ -10,3 +10,4 @@ val retrofit: Retrofit =
 const val SHARED_PREFERENCES = "shared_preferences"
 const val THEME_SWITCH_KEY = "theme_key"
 const val SEARCH_HISTORY_KEY = "history_key"
+const val DARK_THEME_KEY = "darkTheme"

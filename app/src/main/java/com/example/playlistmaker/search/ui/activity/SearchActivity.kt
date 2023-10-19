@@ -16,14 +16,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.player.domain.TrackPlayerModel
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.example.playlistmaker.search.ui.TracksAdapter
 import com.example.playlistmaker.search.ui.model.ScreenState
 import com.example.playlistmaker.search.ui.view_model.SearchViewModel
-import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {
 
@@ -54,13 +52,15 @@ class SearchActivity : AppCompatActivity() {
         binding.apply {
             rvSearchResult.adapter = searchAdapter
             rvHistory.adapter = historyAdapter
+            clearHistoryButton.visibility = View.GONE
+            historyMessage.visibility = View.GONE
         }
         binding.btnSearchBack.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            finish()
         }
         buttonsConfig()
         queryInputConfig(initTextWatcher())
+
     }
 
     private fun initTextWatcher() = object : TextWatcher {
@@ -89,8 +89,8 @@ class SearchActivity : AppCompatActivity() {
                 rvHistory.visibility = View.VISIBLE
                 noInternet.visibility = View.GONE
                 noResults.visibility = View.GONE
-                clearHistoryButton.visibility = View.VISIBLE
-                historyMessage.visibility = View.VISIBLE
+                clearHistoryButton.visibility = if (tracksHistory.isEmpty()) View.GONE else View.VISIBLE
+                historyMessage.visibility = if (tracksHistory.isEmpty()) View.GONE else View.VISIBLE
             }
             clearHistoryButton.setOnClickListener {
                 viewModel.clearHistory()
@@ -162,11 +162,8 @@ class SearchActivity : AppCompatActivity() {
                 track.previewUrl
             )
             viewModel.addTrackToHistory(track)
-            val playIntent =
-                Intent(this, PlayerActivity::class.java).putExtra(
-                    EXTRA_TRACK,
-                    Gson().toJson(trackPlayerModel)
-                )
+            val playIntent = Intent(this, PlayerActivity::class.java)
+                .putExtra(EXTRA_TRACK, trackPlayerModel)
             startActivity(playIntent)
         }
     }
@@ -236,6 +233,8 @@ class SearchActivity : AppCompatActivity() {
 
                 is ScreenState.EmptyHistoryList -> {
                     rvHistory.visibility = View.GONE
+                    clearHistoryButton.visibility = View.GONE
+                    historyMessage.visibility = View.GONE
                 }
             }
         }

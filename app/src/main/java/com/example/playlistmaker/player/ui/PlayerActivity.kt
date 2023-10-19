@@ -15,7 +15,7 @@ import com.google.gson.Gson
 import kotlin.math.roundToInt
 
 class PlayerActivity : AppCompatActivity() {
-    private var binding: ActivityMediaBinding? = null
+    private lateinit var binding: ActivityMediaBinding
     private lateinit var viewModel: PlayerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,20 +40,20 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
 
-        binding?.btnPlay?.setOnClickListener {
+        binding.btnPlay.setOnClickListener {
             if (::viewModel.isInitialized && viewModel.isClickAllowed()) {
                 viewModel.playbackControl()
             }
         }
 
-        binding?.btnPlayerBack?.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
+        binding.btnPlayerBack.setOnClickListener {
+            finish()
         }
     }
 
-    private fun getTrack() =
-        Gson().fromJson(intent.getStringExtra(EXTRA_TRACK), TrackPlayerModel::class.java)
+    private fun getTrack(): TrackPlayerModel? {
+        return intent.getSerializableExtra(EXTRA_TRACK) as? TrackPlayerModel
+    }
 
     private fun bind(track: TrackPlayerModel?) {
         track?.let {
@@ -79,22 +79,22 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun updateTimer(time: String) {
-        binding?.progressTime?.text = time
+        binding.progressTime.text = time
     }
 
     private fun updateScreen(state: PlayerState) {
         when (state) {
             is PlayerState.Playing -> {
-                binding?.btnPlay?.setImageResource(R.drawable.ic_pause)
+                binding.btnPlay.setImageResource(R.drawable.ic_pause)
             }
 
             is PlayerState.Paused -> {
-                binding?.btnPlay?.setImageResource(R.drawable.ic_play)
+                binding.btnPlay.setImageResource(R.drawable.ic_play)
             }
 
             is PlayerState.Prepared -> {
-                binding?.btnPlay?.setImageResource(R.drawable.ic_play)
-                binding?.progressTime?.setText(R.string.default_playtime_value)
+                binding.btnPlay.setImageResource(R.drawable.ic_play)
+                binding.progressTime.setText(R.string.default_playtime_value)
             }
 
             else -> {}

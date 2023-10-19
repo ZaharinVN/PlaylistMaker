@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.domain
 
+import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -14,7 +15,8 @@ data class TrackPlayerModel(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String
-) {
+) : Serializable
+{
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
 
     fun formatTrackDuration() =

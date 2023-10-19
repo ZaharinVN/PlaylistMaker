@@ -47,17 +47,18 @@ class SettingsActivity : AppCompatActivity() {
         viewModel.setAppTheme()
     }
 
-    fun onShareClick(view: View?) {
+    fun onShareClick(view: View) {
         viewModel.shareApp()
     }
 
-    fun onSupportClick(view: View?) {
+    fun onSupportClick(view: View) {
         viewModel.sendSupportEmail()
     }
 
-    fun onAgreementClick(view: View?) {
+    fun onAgreementClick(view: View) {
         viewModel.openAgreementUrl()
     }
+
 }
 
 
