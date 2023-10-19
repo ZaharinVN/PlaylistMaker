@@ -1,6 +1,6 @@
 package com.example.playlistmaker.search.data
 
-import com.example.playlistmaker.search.data.dto.ResponseStatus
+import com.example.playlistmaker.search.domain.ResponseStatus
 import com.example.playlistmaker.search.data.dto.TrackDto
 import com.example.playlistmaker.search.data.dto.TracksSearchRequest
 import com.example.playlistmaker.search.data.dto.TracksSearchResponse
