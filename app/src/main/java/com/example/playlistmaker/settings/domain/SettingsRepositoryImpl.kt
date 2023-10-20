@@ -1,4 +1,4 @@
-package com.example.playlistmaker.settings.data
+package com.example.playlistmaker.settings.domain
 
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate

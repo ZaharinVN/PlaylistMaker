@@ -1,11 +1,10 @@
-package com.example.playlistmaker.sharing.data
+package com.example.playlistmaker.sharing.domain
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import com.example.playlistmaker.R
-import com.example.playlistmaker.sharing.domain.SharingRepository
 import java.lang.Exception
 
 class SharingRepositoryImpl(
