@@ -1,8 +1,7 @@
 package com.example.playlistmaker.settings.domain
 
-import com.example.playlistmaker.settings.domain.SettingsInteractor
-import com.example.playlistmaker.settings.domain.SettingsRepository
-import com.example.playlistmaker.sharing.domain.SharingRepository
+import com.example.playlistmaker.settings.data.SettingsRepository
+import com.example.playlistmaker.sharing.data.SharingRepository
 
 class SettingsInteractorImpl(
     private val settingsRepository: SettingsRepository,
