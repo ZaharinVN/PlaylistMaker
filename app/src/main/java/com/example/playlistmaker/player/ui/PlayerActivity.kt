@@ -1,6 +1,5 @@
 package com.example.playlistmaker.player.ui
 
-
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -9,13 +8,12 @@ import com.example.playlistmaker.databinding.ActivityMediaBinding
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.TrackPlayerModel
 import com.example.playlistmaker.player.domain.api.PlayerState
-import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.math.roundToInt
 
 class PlayerActivity : AppCompatActivity() {
-    private var binding: ActivityMediaBinding? = null
+    private lateinit var binding: ActivityMediaBinding
     private val viewModel: PlayerViewModel by viewModel {
         parametersOf(getTrack()!!.previewUrl)
     }
@@ -25,69 +23,73 @@ class PlayerActivity : AppCompatActivity() {
         binding = ActivityMediaBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        bind(getTrack())
+        val track = getTrack()
+        bind(track)
 
-        viewModel.observeState().observe(this) {
-            updateScreen(it)
+        if (track != null) {
+            viewModel.observeState().observe(this) {
+                updateScreen(it)
+            }
+            viewModel.observeTimer().observe(this) {
+                updateTimer(it)
+            }
         }
 
-        viewModel.observeTimer().observe(this) {
-            updateTimer(it)
-        }
-
-
-        binding?.btnPlay?.setOnClickListener {
+        binding.btnPlay.setOnClickListener {
             if (viewModel.isClickAllowed()) {
                 viewModel.playbackControl()
             }
         }
 
-        binding?.btnPlayerBack?.setOnClickListener {
+        binding.btnPlayerBack.setOnClickListener {
             finish()
         }
     }
 
-    private fun bind(track: TrackPlayerModel) {
-        val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
-        binding?.let {
-            Glide.with(this)
-                .load(track.getCoverArtwork())
-                .placeholder(R.drawable.placeholder)
-                .transform(RoundedCorners(radius.roundToInt()))
-                .into(it.trackCover)
-        }
-        binding?.apply {
-            trackNameResult.text = track.trackName
-            artistNameResult.text = track.artistName
-            trackTimeResult.text = track.formatTrackDuration()
-            progressTime.text = track.formatTrackDuration()
-            collectionName.text = track.collectionName
-            releaseDate.text = track.formatReleaseDate()
-            primaryGenreName.text = track.primaryGenreName
-            country.text = track.country
+    private fun getTrack(): TrackPlayerModel? {
+        return intent.getSerializableExtra(EXTRA_TRACK) as? TrackPlayerModel
+    }
+
+    private fun bind(track: TrackPlayerModel?) {
+        track?.let {
+            val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
+            binding?.let {
+                Glide.with(this)
+                    .load(track.getCoverArtwork())
+                    .placeholder(R.drawable.placeholder)
+                    .transform(RoundedCorners(radius.roundToInt()))
+                    .into(it.trackCover)
+            }
+            binding?.apply {
+                trackNameResult.text = it.trackName
+                artistNameResult.text = it.artistName
+                trackTimeResult.text = it.formatTrackDuration()
+                progressTime.text = it.formatTrackDuration()
+                collectionName.text = it.collectionName
+                releaseDate.text = it.formatReleaseDate()
+                primaryGenreName.text = it.primaryGenreName
+                country.text = it.country
+            }
         }
     }
 
-    private fun getTrack() =
-        Gson().fromJson(intent.getStringExtra(EXTRA_TRACK), TrackPlayerModel::class.java)
-
     private fun updateTimer(time: String) {
-        binding?.progressTime?.text = time
+        binding.progressTime.text = time
     }
 
     private fun updateScreen(state: PlayerState) {
         when (state) {
             is PlayerState.Playing -> {
-                binding?.btnPlay?.setImageResource(R.drawable.ic_pause)
+                binding.btnPlay.setImageResource(R.drawable.ic_pause)
             }
 
             is PlayerState.Paused -> {
-                binding?.btnPlay?.setImageResource(R.drawable.ic_play)
+                binding.btnPlay.setImageResource(R.drawable.ic_play)
             }
 
             is PlayerState.Prepared -> {
-                binding?.btnPlay?.setImageResource(R.drawable.ic_play)
-                binding?.progressTime?.setText(R.string.default_playtime_value)
+                binding.btnPlay.setImageResource(R.drawable.ic_play)
+                binding.progressTime.setText(R.string.default_playtime_value)
             }
 
             else -> {}
