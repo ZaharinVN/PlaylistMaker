@@ -12,14 +12,14 @@ import com.example.playlistmaker.search.domain.SearchInteractor
 import com.example.playlistmaker.search.domain.SearchRepository
 import com.example.playlistmaker.search.domain.impl.SearchInteractorImpl
 import com.example.playlistmaker.settings.domain.SettingsInteractorImpl
-import com.example.playlistmaker.settings.domain.SettingsRepositoryImpl
-import com.example.playlistmaker.settings.domain.SettingsInteractor
-import com.example.playlistmaker.settings.data.SettingsRepository
+import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
+import com.example.playlistmaker.settings.domain.api.SettingsInteractor
+import com.example.playlistmaker.settings.domain.api.SettingsRepository
 import com.example.playlistmaker.settings.ui.SettingsViewModelFactory
 import com.example.playlistmaker.sharing.domain.SharingInteractorImpl
-import com.example.playlistmaker.sharing.data.SharingRepository
-import com.example.playlistmaker.sharing.domain.SharingRepositoryImpl
-import com.example.playlistmaker.sharing.domain.SharingInteractor
+import com.example.playlistmaker.sharing.domain.api.SharingRepository
+import com.example.playlistmaker.sharing.data.SharingRepositoryImpl
+import com.example.playlistmaker.sharing.domain.api.SharingInteractor
 
 object Creator {
 

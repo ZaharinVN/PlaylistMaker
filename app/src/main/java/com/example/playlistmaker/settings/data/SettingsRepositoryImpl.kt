@@ -1,8 +1,8 @@
-package com.example.playlistmaker.settings.domain
+package com.example.playlistmaker.settings.data
 
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.settings.data.SettingsRepository
+import com.example.playlistmaker.settings.domain.api.SettingsRepository
 import com.example.playlistmaker.utils.DARK_THEME_KEY
 
 class SettingsRepositoryImpl(

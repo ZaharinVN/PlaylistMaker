@@ -1,6 +1,7 @@
 package com.example.playlistmaker.sharing.domain
 
-import com.example.playlistmaker.sharing.data.SharingRepository
+import com.example.playlistmaker.sharing.domain.api.SharingInteractor
+import com.example.playlistmaker.sharing.domain.api.SharingRepository
 
 class SharingInteractorImpl(
     private val sharingRepository: SharingRepository
