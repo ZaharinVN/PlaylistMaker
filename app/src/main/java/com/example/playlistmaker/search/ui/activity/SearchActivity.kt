@@ -89,7 +89,8 @@ class SearchActivity : AppCompatActivity() {
                 rvHistory.visibility = View.VISIBLE
                 noInternet.visibility = View.GONE
                 noResults.visibility = View.GONE
-                clearHistoryButton.visibility = if (tracksHistory.isEmpty()) View.GONE else View.VISIBLE
+                clearHistoryButton.visibility =
+                    if (tracksHistory.isEmpty()) View.GONE else View.VISIBLE
                 historyMessage.visibility = if (tracksHistory.isEmpty()) View.GONE else View.VISIBLE
             }
             clearHistoryButton.setOnClickListener {

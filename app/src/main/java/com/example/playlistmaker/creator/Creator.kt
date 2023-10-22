@@ -6,17 +6,18 @@ import com.example.playlistmaker.player.data.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
-import com.example.playlistmaker.search.data.SearchRepositoryImpl
+import com.example.playlistmaker.search.data.impl.SearchRepositoryImpl
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
-import com.example.playlistmaker.search.domain.SearchInteractor
-import com.example.playlistmaker.search.domain.SearchRepository
+import com.example.playlistmaker.search.data.sharedPrefs.SharedPrefsSearchDataStorage
+import com.example.playlistmaker.search.domain.api.SearchInteractor
+import com.example.playlistmaker.search.domain.api.SearchRepository
 import com.example.playlistmaker.search.domain.impl.SearchInteractorImpl
-import com.example.playlistmaker.settings.domain.SettingsInteractorImpl
+import com.example.playlistmaker.settings.domain.impl.SettingsInteractorImpl
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.domain.api.SettingsInteractor
 import com.example.playlistmaker.settings.domain.api.SettingsRepository
 import com.example.playlistmaker.settings.ui.SettingsViewModelFactory
-import com.example.playlistmaker.sharing.domain.SharingInteractorImpl
+import com.example.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 import com.example.playlistmaker.sharing.domain.api.SharingRepository
 import com.example.playlistmaker.sharing.data.SharingRepositoryImpl
 import com.example.playlistmaker.sharing.domain.api.SharingInteractor
@@ -62,7 +63,7 @@ object Creator {
     fun provideSearchRepository(context: Context): SearchRepository {
         return SearchRepositoryImpl(
             RetrofitNetworkClient(context),
-            com.example.playlistmaker.search.data.sharedPrefs.SharedPrefsSearchDataStorage(context),
+            SharedPrefsSearchDataStorage(context),
         )
     }
 

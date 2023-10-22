@@ -1,4 +1,4 @@
-package com.example.playlistmaker.sharing.domain
+package com.example.playlistmaker.sharing.domain.impl
 
 import com.example.playlistmaker.sharing.domain.api.SharingInteractor
 import com.example.playlistmaker.sharing.domain.api.SharingRepository

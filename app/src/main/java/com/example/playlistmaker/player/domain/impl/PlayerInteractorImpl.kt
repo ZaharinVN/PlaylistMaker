@@ -3,7 +3,9 @@ package com.example.playlistmaker.player.domain.impl
 import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 
-class PlayerInteractorImpl(private val playerRepository: PlayerRepository) : PlayerInteractor {
+class PlayerInteractorImpl(
+    private val playerRepository
+    : PlayerRepository) : PlayerInteractor {
 
     override fun preparePlayer(url: String, onPreparedListener: () -> Unit) {
         playerRepository.preparePlayer(url, onPreparedListener)

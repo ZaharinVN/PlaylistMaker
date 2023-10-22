@@ -1,11 +1,12 @@
-package com.example.playlistmaker.search.data
+package com.example.playlistmaker.search.data.impl
 
+import com.example.playlistmaker.search.data.SearchDataStorage
 import com.example.playlistmaker.search.domain.ResponseStatus
 import com.example.playlistmaker.search.data.dto.TrackDto
 import com.example.playlistmaker.search.data.dto.TracksSearchRequest
 import com.example.playlistmaker.search.data.dto.TracksSearchResponse
 import com.example.playlistmaker.search.data.network.NetworkClient
-import com.example.playlistmaker.search.domain.SearchRepository
+import com.example.playlistmaker.search.domain.api.SearchRepository
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import javax.net.ssl.HttpsURLConnection
 

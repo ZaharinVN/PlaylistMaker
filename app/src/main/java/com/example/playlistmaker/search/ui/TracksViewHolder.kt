@@ -12,7 +12,6 @@ class TracksViewHolder(
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: TrackSearchModel) {
-
         binding.trackName.text = model.trackName
         binding.artistName.text = model.artistName
         binding.trackTime.text = model.formatTrackDuration()

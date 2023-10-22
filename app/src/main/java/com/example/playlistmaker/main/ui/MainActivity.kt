@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
     private fun setAppTheme() {
         val mainTheme = getSharedPreferences("settings", Context.MODE_PRIVATE)
         val darkMode = mainTheme.getBoolean("darkTheme", false)

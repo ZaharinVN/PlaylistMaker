@@ -1,12 +1,14 @@
 package com.example.playlistmaker.search.domain.impl
 
 import com.example.playlistmaker.search.domain.ResponseStatus
-import com.example.playlistmaker.search.domain.SearchInteractor
-import com.example.playlistmaker.search.domain.SearchRepository
+import com.example.playlistmaker.search.domain.api.SearchInteractor
+import com.example.playlistmaker.search.domain.api.SearchRepository
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import java.util.concurrent.Executors
 
-class SearchInteractorImpl(private val repository: SearchRepository) : SearchInteractor {
+class SearchInteractorImpl(
+    private val repository: SearchRepository
+) : SearchInteractor {
 
     private val executor = Executors.newCachedThreadPool()
 
