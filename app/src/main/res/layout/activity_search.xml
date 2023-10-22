@@ -9,7 +9,7 @@
     tools:ignore="ExtraText">
 
     <Button
-        android:id="@+id/btnSettingsBack"
+        android:id="@+id/btnSearchBack"
         style="@style/SettingsBackBtnStyle"
         android:text="@string/search" />
 
@@ -83,7 +83,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="gone">
-
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"
@@ -93,6 +92,7 @@
             android:indeterminate="true"
             android:indeterminateDrawable="@drawable/ic_progress_animation"
             android:visibility="gone" />
+
     </FrameLayout>
 
     <LinearLayout
@@ -107,7 +107,7 @@
             android:layout_marginTop="0dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/rvSearchResult"
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:layout_marginTop="8dp"
@@ -116,10 +116,18 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/layout_track" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_history"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/layout_track" />
         <Button
             android:id="@+id/clearHistoryButton"
             style="@style/ClearBtnStyle"
             app:backgroundTint="@color/main_black" />
+
 
     </LinearLayout>
 
