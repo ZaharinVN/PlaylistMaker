@@ -5,24 +5,18 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.widget.SwitchCompat
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var switch: SwitchCompat
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel by viewModel<SettingsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
         switch = findViewById(R.id.themeSwitcher)
-
-        val viewModelFactory =
-            Creator.createSettingsViewModelFactory(this)
-
-        viewModel = ViewModelProvider(this, viewModelFactory).get(SettingsViewModel::class.java)
 
         viewModel.getDarkThemeLiveData().observe(this) { isDarkTheme ->
             switch.isChecked = isDarkTheme
