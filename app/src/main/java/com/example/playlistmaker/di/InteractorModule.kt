@@ -6,6 +6,8 @@ import com.example.playlistmaker.search.domain.api.SearchInteractor
 import com.example.playlistmaker.search.domain.impl.SearchInteractorImpl
 import com.example.playlistmaker.settings.domain.api.SettingsInteractor
 import com.example.playlistmaker.settings.domain.impl.SettingsInteractorImpl
+import com.example.playlistmaker.sharing.domain.api.SharingInteractor
+import com.example.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 import org.koin.dsl.module
 
 val interactorModule = module {
@@ -14,8 +16,12 @@ val interactorModule = module {
         PlayerInteractorImpl(playerRepository = get())
     }
 
-    factory<SettingsInteractor> {
+    single<SettingsInteractor> {
         SettingsInteractorImpl(settingsRepository = get(), sharingRepository = get())
+    }
+
+    single<SharingInteractor> {
+        SharingInteractorImpl(sharingRepository = get())
     }
 
     factory<SearchInteractor> {

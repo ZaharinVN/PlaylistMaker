@@ -9,6 +9,8 @@ import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.sharedPrefs.SharedPrefsSearchDataStorage
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.domain.api.SettingsRepository
+import com.example.playlistmaker.sharing.data.SharingRepositoryImpl
+import com.example.playlistmaker.sharing.domain.api.SharingRepository
 import com.example.playlistmaker.utils.ITUNES_BASE_URL
 import com.example.playlistmaker.utils.SHARED_PREFERENCES
 import com.google.gson.Gson
@@ -19,9 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModule = module {
 
-    factory {
-        MediaPlayer()
-    }
+    factory { MediaPlayer() }
 
     single {
         androidContext().getSharedPreferences(
@@ -31,7 +31,10 @@ val dataModule = module {
     }
 
     single<SettingsRepository> {
-        SettingsRepositoryImpl(sharedPrefs = get())
+        SettingsRepositoryImpl(get())
+    }
+    single<SharingRepository> {
+        SharingRepositoryImpl(get())
     }
 
     single<ITunesSearchApi> {
@@ -43,11 +46,11 @@ val dataModule = module {
     }
 
     single<NetworkClient> {
-        RetrofitNetworkClient(iTunesService = get(), androidContext())
+        RetrofitNetworkClient(get(), androidContext())
     }
 
     single<SearchDataStorage> {
-        SharedPrefsSearchDataStorage(sharedPref = get(), gson = get())
+        SharedPrefsSearchDataStorage(get(), get())
     }
 
     factory { Gson() }

@@ -8,6 +8,7 @@ import com.example.playlistmaker.di.interactorModule
 import com.example.playlistmaker.di.repositoryModule
 import com.example.playlistmaker.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
 
 class App : Application() {
@@ -16,6 +17,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         startKoin {
+            androidLogger()
             androidContext(this@App)
             modules(dataModule, repositoryModule, interactorModule, viewModelModule)
         }
@@ -25,8 +27,8 @@ class App : Application() {
     private fun initTheme() {
         sharedPref = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
 
-        if (sharedPref.contains(THEME_SWITCH_KEY)) {
-            darkTheme = sharedPref.getBoolean(THEME_SWITCH_KEY, false)
+        if (sharedPref.contains(DARK_THEME_KEY)) {
+            darkTheme = sharedPref.getBoolean(DARK_THEME_KEY, false)
             switchTheme(darkTheme)
         } else {
             darkTheme = false

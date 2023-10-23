@@ -11,9 +11,11 @@ class SettingsRepositoryImpl(
     override fun getDarkTheme(): Boolean {
         return sharedPrefs.getBoolean(DARK_THEME_KEY, false)
     }
+
     override fun setDarkTheme(enabled: Boolean) {
         sharedPrefs.edit().putBoolean(DARK_THEME_KEY, enabled).apply()
     }
+
     override fun setAppTheme() {
         val darkMode = this.getDarkTheme()
         if (darkMode) {
@@ -23,3 +25,5 @@ class SettingsRepositoryImpl(
         }
     }
 }
+
+

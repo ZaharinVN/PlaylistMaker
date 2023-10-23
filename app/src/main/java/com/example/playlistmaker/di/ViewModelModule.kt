@@ -9,22 +9,15 @@ import org.koin.dsl.module
 val viewModelModule = module {
 
     viewModel { (trackUrl: String) ->
-        PlayerViewModel(
-            playerInteractor = get(),
-            trackUrl = trackUrl
-        )
+        PlayerViewModel(playerInteractor = get(), trackUrl = trackUrl)
     }
 
     viewModel {
-        SettingsViewModel(
-            settingsInteractor = get(),
-            sharingInteractor = get()
-        )
+        SettingsViewModel(settingsInteractor = get(), sharingInteractor = get())
     }
 
     viewModel {
         SearchViewModel(
-            searchInteractor = get()
-        )
+            searchInteractor = get())
     }
 }
