@@ -2,6 +2,7 @@ package com.example.playlistmaker.search.ui
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.LayoutTrackBinding
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
@@ -20,6 +21,13 @@ class TracksViewHolder(
             .load(model.artworkUrl100)
             .placeholder(R.drawable.placeholder)
             .centerCrop()
+            .transform(
+                RoundedCorners(
+                    itemView.resources.getDimensionPixelSize(
+                        R.dimen.album_cover_corner_radius
+                    )
+                )
+            )
             .into(binding.trackArtwork)
     }
 }

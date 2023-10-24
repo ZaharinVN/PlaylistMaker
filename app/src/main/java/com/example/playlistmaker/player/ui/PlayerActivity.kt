@@ -10,7 +10,6 @@ import com.example.playlistmaker.player.domain.TrackPlayerModel
 import com.example.playlistmaker.player.domain.api.PlayerState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import kotlin.math.roundToInt
 
 class PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMediaBinding
@@ -36,9 +35,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         binding.btnPlay.setOnClickListener {
-            if (viewModel.isClickAllowed()) {
-                viewModel.playbackControl()
-            }
+            viewModel.onPlay()
         }
 
         binding.btnPlayerBack.setOnClickListener {
@@ -52,12 +49,12 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun bind(track: TrackPlayerModel?) {
         track?.let {
-            val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
+            val radius = resources.getDimensionPixelSize(R.dimen.cover_radius)
             binding?.let {
                 Glide.with(this)
                     .load(track.getCoverArtwork())
                     .placeholder(R.drawable.placeholder)
-                    .transform(RoundedCorners(radius.roundToInt()))
+                    .transform(RoundedCorners(radius))
                     .into(it.trackCover)
             }
             binding?.apply {

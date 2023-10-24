@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import androidx.core.content.res.TypedArrayUtils.getString
 import com.example.playlistmaker.R
 import com.example.playlistmaker.sharing.domain.api.SharingRepository
 import java.lang.Exception
@@ -19,7 +18,15 @@ class SharingRepositoryImpl(
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, context.getString(R.string.shareApp))
         }
-        context.startActivity(shareIntent)
+        try {
+            context.startActivity(shareIntent)
+        } catch (e: Exception) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.share_app_not_found),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     override fun sendSupportEmail() {
@@ -48,6 +55,14 @@ class SharingRepositoryImpl(
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
             data = Uri.parse(context.getString(R.string.agreementUrl))
         }
-        context.startActivity(licenseIntent)
+        try {
+            context.startActivity(licenseIntent)
+        } catch (e: Exception) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.browser_app_not_found),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 }

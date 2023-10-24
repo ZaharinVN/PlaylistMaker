@@ -84,6 +84,12 @@ class PlayerViewModel(
         handler.removeCallbacksAndMessages(updateTime())
     }
 
+    fun onPlay() {
+        if (isClickAllowed()) {
+            playbackControl()
+        }
+    }
+
     private fun updateTime(): Runnable {
         return object : Runnable {
             override fun run() {
@@ -104,6 +110,7 @@ class PlayerViewModel(
         }
         return current
     }
+
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY_MS = 2000L
