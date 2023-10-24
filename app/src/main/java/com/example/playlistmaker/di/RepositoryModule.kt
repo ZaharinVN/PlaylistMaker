@@ -16,8 +16,8 @@ val repositoryModule = module {
         PlayerRepositoryImpl(player = get())
     }
 
-    factory<SettingsRepository> {
-        SettingsRepositoryImpl(sharedPrefs = get())
+    single<SettingsRepository> {
+        SettingsRepositoryImpl(get())
     }
 
     factory<SharingRepository> {

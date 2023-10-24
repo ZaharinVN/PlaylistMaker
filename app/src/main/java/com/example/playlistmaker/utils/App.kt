@@ -26,13 +26,12 @@ class App : Application() {
 
     private fun initTheme() {
         sharedPref = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
-
         if (sharedPref.contains(DARK_THEME_KEY)) {
             darkTheme = sharedPref.getBoolean(DARK_THEME_KEY, false)
-            switchTheme(darkTheme)
         } else {
             darkTheme = false
         }
+        switchTheme(darkTheme)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
