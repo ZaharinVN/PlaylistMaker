@@ -12,31 +12,28 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
 
 class App : Application() {
-    private var darkTheme = false
-    private lateinit var sharedPref: SharedPreferences
+    private lateinit var sharedPrefs: SharedPreferences
+
     override fun onCreate() {
         super.onCreate()
+
         startKoin {
             androidLogger()
             androidContext(this@App)
             modules(dataModule, repositoryModule, interactorModule, viewModelModule)
         }
+
+        sharedPrefs = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
+
         initTheme()
     }
 
-    private fun initTheme() {
-        sharedPref = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
-
-        if (sharedPref.contains(DARK_THEME_KEY)) {
-            darkTheme = sharedPref.getBoolean(DARK_THEME_KEY, false)
-            switchTheme(darkTheme)
-        } else {
-            darkTheme = false
-        }
+    fun initTheme() {
+        val darkMode = sharedPrefs.getBoolean(DARK_THEME_KEY, false)
+        setAppTheme(darkMode)
     }
 
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        darkTheme = darkThemeEnabled
+    fun setAppTheme(darkThemeEnabled: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) {
                 AppCompatDelegate.MODE_NIGHT_YES
@@ -44,5 +41,8 @@ class App : Application() {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
+        sharedPrefs.edit().putBoolean(DARK_THEME_KEY, darkThemeEnabled).apply()
     }
 }
+
+

@@ -23,9 +23,9 @@ class SettingsRepositoryImpl(
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
-        sharedPrefs.edit().putBoolean(DARK_THEME_KEY, darkMode).apply()
     }
 }
+
 
 
 
