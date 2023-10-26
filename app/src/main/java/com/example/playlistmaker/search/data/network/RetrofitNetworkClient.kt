@@ -11,9 +11,10 @@ import java.io.IOException
 import javax.net.ssl.HttpsURLConnection
 
 class RetrofitNetworkClient(
-private val iTunesService: ITunesSearchApi,
-private val context: Context
+    private val iTunesService: ITunesSearchApi,
+    private val context: Context
 ) : NetworkClient {
+
     override fun doRequest(dto: Any): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = -1 }
@@ -21,7 +22,6 @@ private val context: Context
         if (dto !is TracksSearchRequest) {
             return Response().apply { resultCode = HttpsURLConnection.HTTP_BAD_REQUEST }
         }
-
         try {
             val response = iTunesService.search(dto.expression).execute()
             val body = response.body()
@@ -29,15 +29,9 @@ private val context: Context
                 resultCode = response.code()
             }
         } catch (e: IOException) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.IOException_text),
-                Toast.LENGTH_LONG
-            ).show()
-            return Response().apply { resultCode = -1 }
+            throw e
         }
     }
-
 
     private fun isConnected(): Boolean {
         val connectivityManager = context.getSystemService(
