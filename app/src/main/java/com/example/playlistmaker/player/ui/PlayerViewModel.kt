@@ -5,10 +5,6 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.domain.api.PlayerState
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import java.text.SimpleDateFormat
@@ -88,6 +84,12 @@ class PlayerViewModel(
         handler.removeCallbacksAndMessages(updateTime())
     }
 
+    fun onPlay() {
+        if (isClickAllowed()) {
+            playbackControl()
+        }
+    }
+
     private fun updateTime(): Runnable {
         return object : Runnable {
             override fun run() {
@@ -109,18 +111,13 @@ class PlayerViewModel(
         return current
     }
 
+
     companion object {
         private const val CLICK_DEBOUNCE_DELAY_MS = 2000L
         private const val PLAYBACK_UPDATE_DELAY_MS = 300L
-
-        fun getViewModelFactory(url: String): ViewModelProvider.Factory = viewModelFactory() {
-            initializer {
-                PlayerViewModel(Creator.providePlayerInteractor(), url)
-            }
-        }
     }
-
 }
+
 
 
 

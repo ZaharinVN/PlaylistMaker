@@ -17,4 +17,7 @@
     <string name="NoResults">Ничего не нашлось</string>
     <string name="default_playtime_value">00:00</string>
     <string name="mail_app_not_found">У Вас не установлен ни один почтовый клиент!</string>
+    <string name="share_app_not_found">На Вашем устройстве нет подходящего приложения!</string>
+    <string name="browser_app_not_found">Установите браузер на Ваше устройство!</string>
+    <string name="IOException_text">Произошла ошибка при выполнении запроса</string>
 </resources>

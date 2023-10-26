@@ -1,4 +1,4 @@
-package com.example.playlistmaker.main.ui
+package com.example.playlistmaker.main
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,17 +7,22 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.LibraryActivity
 import com.example.playlistmaker.R
+import com.example.playlistmaker.library.LibraryActivity
 import com.example.playlistmaker.search.ui.activity.SearchActivity
 import com.example.playlistmaker.settings.ui.SettingsActivity
+import com.example.playlistmaker.utils.App
 
 class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setAppTheme()
+
+        val app = application as App
+        app.initTheme()
+
         setContentView(R.layout.activity_main)
+
         val btnSearch = findViewById<Button>(R.id.btnSearch)
         btnSearch.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
@@ -34,17 +39,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-
-    private fun setAppTheme() {
-        val mainTheme = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val darkMode = mainTheme.getBoolean("darkTheme", false)
-        if (darkMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
-    }
 }
+
+
 
 
 

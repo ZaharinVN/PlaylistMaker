@@ -3,25 +3,20 @@ package com.example.playlistmaker.search.ui.activity
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.os.PersistableBundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.player.domain.TrackPlayerModel
-import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.example.playlistmaker.search.ui.TracksAdapter
 import com.example.playlistmaker.search.ui.model.ScreenState
 import com.example.playlistmaker.search.ui.view_model.SearchViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -29,21 +24,15 @@ class SearchActivity : AppCompatActivity() {
     private val tracksHistory = ArrayList<TrackSearchModel>()
     private val searchAdapter = TracksAdapter(tracks) { trackClickListener(it) }
     private val historyAdapter = TracksAdapter(tracksHistory) { trackClickListener(it) }
-    private val handler = Handler(Looper.getMainLooper())
     private var userInput = ""
-    private var clickAllowed = true
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel by viewModel<SearchViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater).also {
             setContentView(it.root)
         }
-
-        viewModel = ViewModelProvider(
-            this, SearchViewModel.getViewModelFactory()
-        )[SearchViewModel::class.java]
 
         viewModel.stateLiveData().observe(this) {
             updateScreen(it)
@@ -149,34 +138,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun trackClickListener(track: TrackSearchModel) {
-        if (isClickAllowed()) {
-            val trackPlayerModel = TrackPlayerModel(
-                track.trackId,
-                track.trackName,
-                track.artistName,
-                track.trackTimeMillis,
-                track.artworkUrl100,
-                track.collectionName,
-                track.releaseDate,
-                track.primaryGenreName,
-                track.country,
-                track.previewUrl
-            )
-            viewModel.addTrackToHistory(track)
-            val playIntent = Intent(this, PlayerActivity::class.java)
-                .putExtra(EXTRA_TRACK, trackPlayerModel)
-            startActivity(playIntent)
-        }
-    }
-
-
-    private fun isClickAllowed(): Boolean {
-        val current = clickAllowed
-        if (clickAllowed) {
-            clickAllowed = false
-            handler.postDelayed({ clickAllowed = true }, CLICK_DEBOUNCE_DELAY_MS)
-        }
-        return current
+        viewModel.onTrackClick(track)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -242,9 +204,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val CLICK_DEBOUNCE_DELAY_MS = 2000L
         private const val USER_INPUT = "USER_INPUT"
-        private const val EXTRA_TRACK = "EXTRA_TRACK"
     }
 }
 

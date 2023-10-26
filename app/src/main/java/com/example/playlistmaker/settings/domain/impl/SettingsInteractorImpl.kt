@@ -16,6 +16,9 @@ class SettingsInteractorImpl(
     override fun setDarkTheme(enabled: Boolean) {
         settingsRepository.setDarkTheme(enabled)
     }
+    override fun setAppTheme() {
+        settingsRepository.setAppTheme()
+    }
 
     override fun shareApp() {
         sharingRepository.shareApp()
@@ -29,7 +32,5 @@ class SettingsInteractorImpl(
         sharingRepository.openAgreementUrl()
     }
 
-    override fun setAppTheme() {
-        settingsRepository.setAppTheme()
-    }
+
 }

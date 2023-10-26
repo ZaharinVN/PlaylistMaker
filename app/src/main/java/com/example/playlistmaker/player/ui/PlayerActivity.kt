@@ -1,22 +1,21 @@
 package com.example.playlistmaker.player.ui
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.databinding.ActivityMediaBinding
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.TrackPlayerModel
 import com.example.playlistmaker.player.domain.api.PlayerState
-import com.example.playlistmaker.search.ui.activity.SearchActivity
-import com.google.gson.Gson
-import kotlin.math.roundToInt
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMediaBinding
-    private lateinit var viewModel: PlayerViewModel
+    private val viewModel: PlayerViewModel by viewModel {
+        parametersOf(getTrack()!!.previewUrl)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,23 +26,16 @@ class PlayerActivity : AppCompatActivity() {
         bind(track)
 
         if (track != null) {
-            viewModel = ViewModelProvider(
-                this, PlayerViewModel.getViewModelFactory(track.previewUrl)
-            )[PlayerViewModel::class.java]
-
             viewModel.observeState().observe(this) {
                 updateScreen(it)
             }
-
             viewModel.observeTimer().observe(this) {
                 updateTimer(it)
             }
         }
 
         binding.btnPlay.setOnClickListener {
-            if (::viewModel.isInitialized && viewModel.isClickAllowed()) {
-                viewModel.playbackControl()
-            }
+            viewModel.onPlay()
         }
 
         binding.btnPlayerBack.setOnClickListener {
@@ -57,12 +49,12 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun bind(track: TrackPlayerModel?) {
         track?.let {
-            val radius = resources.getDimensionPixelSize(R.dimen.cover_radius).toFloat()
+            val radius = resources.getDimensionPixelSize(R.dimen.cover_radius)
             binding?.let {
                 Glide.with(this)
                     .load(track.getCoverArtwork())
                     .placeholder(R.drawable.placeholder)
-                    .transform(RoundedCorners(radius.roundToInt()))
+                    .transform(RoundedCorners(radius))
                     .into(it.trackCover)
             }
             binding?.apply {
@@ -110,6 +102,7 @@ class PlayerActivity : AppCompatActivity() {
         private const val EXTRA_TRACK = "EXTRA_TRACK"
     }
 }
+
 
 
 
