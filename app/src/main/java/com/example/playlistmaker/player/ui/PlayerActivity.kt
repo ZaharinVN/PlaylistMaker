@@ -1,6 +1,8 @@
 package com.example.playlistmaker.player.ui
 
+import android.content.res.Configuration
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -36,6 +38,12 @@ class PlayerActivity : AppCompatActivity() {
 
         binding.btnPlay.setOnClickListener {
             viewModel.onPlay()
+        }
+        binding.btnFavorite.setOnClickListener {
+            binding.btnDisLike.visibility = View.VISIBLE
+        }
+        binding.btnDisLike.setOnClickListener {
+            binding.btnDisLike.visibility = View.GONE
         }
 
         binding.btnPlayerBack.setOnClickListener {
@@ -75,22 +83,34 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun updateScreen(state: PlayerState) {
+
         when (state) {
             is PlayerState.Playing -> {
-                binding.btnPlay.setImageResource(R.drawable.ic_pause)
+                binding.btnPlay.setImageResource(
+                    if (isDarkTheme()) R.drawable.ic_pause_dark else R.drawable.ic_pause
+                )
             }
 
             is PlayerState.Paused -> {
-                binding.btnPlay.setImageResource(R.drawable.ic_play)
+                binding.btnPlay.setImageResource(
+                    if (isDarkTheme()) R.drawable.ic_play_dark else R.drawable.ic_play
+                )
             }
 
             is PlayerState.Prepared -> {
-                binding.btnPlay.setImageResource(R.drawable.ic_play)
+                binding.btnPlay.setImageResource(
+                    if (isDarkTheme()) R.drawable.ic_play_dark else R.drawable.ic_play
+                )
                 binding.progressTime.setText(R.string.default_playtime_value)
             }
 
             else -> {}
         }
+    }
+
+    private fun isDarkTheme(): Boolean {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
     }
 
     override fun onPause() {

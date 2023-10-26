@@ -85,9 +85,7 @@ class PlayerViewModel(
     }
 
     fun onPlay() {
-        if (isClickAllowed()) {
-            playbackControl()
-        }
+        playbackControl()
     }
 
     private fun updateTime(): Runnable {
