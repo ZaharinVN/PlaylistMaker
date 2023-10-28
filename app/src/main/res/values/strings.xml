@@ -20,4 +20,12 @@
     <string name="share_app_not_found">На Вашем устройстве нет подходящего приложения!</string>
     <string name="browser_app_not_found">Установите браузер на Ваше устройство!</string>
     <string name="IOException_text">Произошла ошибка при выполнении запроса</string>
+
+    <string name="favorites_tracks">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="add_playlist">Новый плейлист</string>
+    <string name="no_favorites">Ваша медиатека пуста</string>
+    <string name="no_playlists">Вы не создали
+        \nни одного плейлиста</string>
+
 </resources>
