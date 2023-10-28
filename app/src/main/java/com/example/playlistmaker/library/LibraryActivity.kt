@@ -1,8 +1,7 @@
 package com.example.playlistmaker.library
 
-import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityLibraryBinding
 import com.google.android.material.tabs.TabLayoutMediator
