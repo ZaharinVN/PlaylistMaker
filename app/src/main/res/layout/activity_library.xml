@@ -1,26 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".library.LibraryActivity">
+    android:orientation="vertical"
+    android:paddingHorizontal="18dp"
+    android:paddingTop="16dp"
+    android:theme="@style/Theme.PlaylistMaker">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:paddingBottom="4dp">
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/main_black" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:fontFamily="@font/ys_display_regular"
+            android:gravity="center"
+            android:textColor="@color/main_black"
+            android:padding="8dp"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:text="@string/library"
+            android:textAlignment="textStart" />
+    </LinearLayout>
 
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:width="50dp"
-        android:height="50dp"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_library" />
-
-    <TextView
-        android:id="@+id/Search"
-        android:layout_width="wrap_content"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/libraryTabLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="@color/main_black"
-        android:text="Медиатека"
-        android:textSize="50dp"
-        android:textStyle="bold" />
+        style="@style/TabLayout"
+         />
 
-</FrameLayout>
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>
