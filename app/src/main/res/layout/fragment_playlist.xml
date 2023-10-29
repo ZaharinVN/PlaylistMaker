@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/playlist_container"
         style="@style/LibraryContainerStyle"
-        android:paddingTop="70dp">
+        android:paddingTop="72dp">
 
         <Button
             android:id="@+id/btn_add_playlist"

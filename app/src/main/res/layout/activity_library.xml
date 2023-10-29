@@ -38,7 +38,7 @@
         android:id="@+id/libraryTabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/NightTabLayout"
+        style="@style/TabLayout"
          />
 
     <androidx.viewpager2.widget.ViewPager2

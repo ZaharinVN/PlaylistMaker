@@ -387,7 +387,7 @@
         <item name="android:background">@drawable/ic_no_results</item>
     </style>
 
-    <style name="DayTabLayout" parent="Widget.Design.TabLayout">
+    <style name="TabLayout" parent="Widget.Design.TabLayout">
         <item name="tabIndicatorColor">@color/black</item>
         <item name="tabTextColor">@color/black</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
