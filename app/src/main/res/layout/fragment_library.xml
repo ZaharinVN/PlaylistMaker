@@ -12,26 +12,19 @@
         android:layout_height="48dp"
         android:orientation="horizontal"
         android:paddingBottom="4dp">
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="4dp"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="@color/main_black" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="0dp"
             android:fontFamily="@font/ys_display_regular"
-            android:gravity="center"
-            android:textColor="@color/main_black"
+            android:gravity="start"
             android:padding="8dp"
-            android:textSize="24sp"
-            android:textStyle="bold"
             android:text="@string/library"
-            android:textAlignment="textStart" />
+            android:textAlignment="textStart"
+            android:textColor="@color/main_black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout

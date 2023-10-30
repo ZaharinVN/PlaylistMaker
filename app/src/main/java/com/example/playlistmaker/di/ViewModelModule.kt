@@ -1,8 +1,8 @@
 package com.example.playlistmaker.di
 
-import com.example.playlistmaker.library.FavoriteViewModel
-import com.example.playlistmaker.library.PlaylistViewModel
-import com.example.playlistmaker.player.ui.PlayerViewModel
+import com.example.playlistmaker.library.ui.view_model.FavoriteViewModel
+import com.example.playlistmaker.library.ui.view_model.PlaylistViewModel
+import com.example.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.example.playlistmaker.search.ui.view_model.SearchViewModel
 import com.example.playlistmaker.settings.ui.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel

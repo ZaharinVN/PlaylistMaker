@@ -11,6 +11,7 @@ import com.example.playlistmaker.R
 
 import com.example.playlistmaker.player.domain.TrackPlayerModel
 import com.example.playlistmaker.player.domain.api.PlayerState
+import com.example.playlistmaker.player.ui.view_model.PlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
