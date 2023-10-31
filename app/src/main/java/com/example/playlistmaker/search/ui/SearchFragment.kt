@@ -2,7 +2,6 @@ package com.example.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,7 +14,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.example.playlistmaker.search.ui.model.ScreenState
-import com.example.playlistmaker.search.ui.view_model.SearchViewModel
+import com.example.playlistmaker.search.ui.viewModel.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -75,7 +74,7 @@ class SearchFragment : Fragment() {
         binding.apply {
             clearImageView.setOnClickListener {
                 searchEditText.setText("")
-                //hideKeyboard()
+                hideKeyboard()
                 tracks.clear()
                 viewModel.getTracksHistory()
                 searchAdapter.notifyDataSetChanged()
@@ -127,16 +126,6 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private fun Activity.hideKeyboard() {
-        hideKeyboard(currentFocus ?: View(this))
-    }
-
-    private fun Context.hideKeyboard(view: View) {
-        val inputMethodManager =
-            getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
     private fun trackClickListener(track: TrackSearchModel) {
         viewModel.onTrackClick(track)
     }
@@ -184,7 +173,7 @@ class SearchFragment : Fragment() {
                     rvSearchResult.visibility = View.GONE
                     progressSearch.visibility = View.VISIBLE
                     progressBar.visibility = View.VISIBLE
-                    //hideKeyboard()
+                    hideKeyboard()
                 }
 
                 is ScreenState.ContentHistoryList -> {
@@ -201,6 +190,13 @@ class SearchFragment : Fragment() {
                 }
             }
         }
+    }
+
+    fun Fragment.hideKeyboard() {
+        val inputMethodManager =
+            requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = activity?.currentFocus ?: View(requireContext())
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     companion object {

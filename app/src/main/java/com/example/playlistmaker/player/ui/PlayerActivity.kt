@@ -6,12 +6,11 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.R
-
+import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.player.domain.TrackPlayerModel
 import com.example.playlistmaker.player.domain.api.PlayerState
-import com.example.playlistmaker.player.ui.view_model.PlayerViewModel
+import com.example.playlistmaker.player.ui.viewModel.PlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -24,7 +23,7 @@ class PlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
+        setContentView(binding.root)
 
         val track = getTrack()
         bind(track)
@@ -60,14 +59,14 @@ class PlayerActivity : AppCompatActivity() {
     private fun bind(track: TrackPlayerModel?) {
         track?.let {
             val radius = resources.getDimensionPixelSize(R.dimen.cover_radius)
-            binding?.let {
+            binding.let {
                 Glide.with(this)
                     .load(track.getCoverArtwork())
                     .placeholder(R.drawable.placeholder)
                     .transform(RoundedCorners(radius))
                     .into(it.trackCover)
             }
-            binding?.apply {
+            binding.apply {
                 trackNameResult.text = it.trackName
                 artistNameResult.text = it.artistName
                 trackTimeResult.text = it.formatTrackDuration()
@@ -85,27 +84,20 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun updateScreen(state: PlayerState) {
-
         when (state) {
             is PlayerState.Playing -> {
                 binding.btnPlay.setImageResource(
-                    if (isDarkTheme()) R.drawable.ic_pause_dark else R.drawable.ic_pause
-                )
+                    if (isDarkTheme()) R.drawable.ic_pause_dark else R.drawable.ic_pause)
             }
-
             is PlayerState.Paused -> {
                 binding.btnPlay.setImageResource(
-                    if (isDarkTheme()) R.drawable.ic_play_dark else R.drawable.ic_play
-                )
+                    if (isDarkTheme()) R.drawable.ic_play_dark else R.drawable.ic_play)
             }
-
             is PlayerState.Prepared -> {
                 binding.btnPlay.setImageResource(
-                    if (isDarkTheme()) R.drawable.ic_play_dark else R.drawable.ic_play
-                )
-                binding.progressTime.setText(R.string.default_playtime_value)
+                    if (isDarkTheme()) R.drawable.ic_play_dark else R.drawable.ic_play)
+                binding.progressTime.text = getString(R.string.default_playtime_value)
             }
-
             else -> {}
         }
     }

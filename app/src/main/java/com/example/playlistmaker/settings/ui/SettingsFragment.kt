@@ -48,4 +48,9 @@ class SettingsFragment : Fragment() {
             viewModel.openAgreementUrl()
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }
