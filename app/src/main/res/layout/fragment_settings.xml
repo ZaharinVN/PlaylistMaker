@@ -25,7 +25,7 @@
     </LinearLayout>
 
     <LinearLayout
-
+        android:id="@+id/shareApp"
         style="@style/SettingsLayoutStyle"
         android:onClick="onShareClick">
 
@@ -39,6 +39,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/sendSupportEmail"
         style="@style/SettingsLayoutStyle"
         android:onClick="onSupportClick">
 
@@ -52,6 +53,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/openAgreementUrl"
         style="@style/SettingsLayoutStyle"
         android:onClick="onAgreementClick">
 
