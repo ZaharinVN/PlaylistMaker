@@ -40,7 +40,6 @@ class PlayerViewModel(
     private fun preparePlayer() {
         playerInteractor.preparePlayer(trackUrl) {
             renderState(PlayerState.Prepared)
-            timerLiveData.postValue("00:00")
         }
     }
 
@@ -62,7 +61,6 @@ class PlayerViewModel(
         playerInteractor.setOnCompletionListener {
             renderState(PlayerState.Prepared)
             renderState(PlayerState.Prepared)
-            timerLiveData.postValue("00:00")
         }
     }
 
@@ -77,7 +75,6 @@ class PlayerViewModel(
                     while (isActive) {
                         updateTime()
                         delay(PLAYBACK_UPDATE_DELAY_MS)
-                        timerLiveData.postValue("00:00")
                     }
                 }
             }
