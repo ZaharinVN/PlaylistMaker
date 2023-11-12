@@ -12,11 +12,7 @@ import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.api.SearchInteractor
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.example.playlistmaker.search.ui.model.ScreenState
-import com.example.playlistmaker.utils.debounce
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -26,20 +22,23 @@ class SearchViewModel(
 ) : ViewModel() {
 
     private var clickAllowed = true
+
     private val _stateLiveData = MutableLiveData<ScreenState>()
     fun stateLiveData(): LiveData<ScreenState> = _stateLiveData
+
     private var latestSearchText: String? = null
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
-    private val searchTrack =
-        debounce<String>(SEARCH_DEBOUNCE_DELAY_MS, viewModelScope, true) { changedText ->
-            search(changedText)
+    private var searchJob: Job? = null
+
+    fun searchDebounce(changedText: String, hasError: Boolean) {
+        if (latestSearchText == changedText && !hasError) {
+            return
         }
-
-    fun searchDebounce(changedText: String) {
-        if (latestSearchText != changedText) {
-            latestSearchText = changedText
-            searchTrack(changedText)
+        latestSearchText = changedText
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY_MS)
+            search(changedText)
         }
     }
 
@@ -47,7 +46,7 @@ class SearchViewModel(
         val current = clickAllowed
         if (clickAllowed) {
             clickAllowed = false
-            coroutineScope.launch {
+            viewModelScope.launch {
                 delay(CLICK_DEBOUNCE_DELAY_MS)
                 clickAllowed = true
             }
@@ -58,28 +57,22 @@ class SearchViewModel(
     private fun search(expression: String) {
         if (expression.isNotEmpty()) {
             renderState(ScreenState.Loading)
-
-            searchInteractor.searchTracks(expression, object : SearchInteractor.SearchConsumer {
-                override fun consume(foundTracks: List<TrackSearchModel>?, hasError: Boolean?) {
-                    val tracks = mutableListOf<TrackSearchModel>()
-
-                    if (foundTracks != null) {
-                        tracks.addAll(foundTracks)
-
-                        when {
-                            tracks.isEmpty() -> {
-                                renderState(ScreenState.Empty())
+            viewModelScope.launch {
+                searchInteractor
+                    .searchTracks(expression)
+                    .collect { pair ->
+                        val tracks = mutableListOf<TrackSearchModel>()
+                        if (pair.first != null) {
+                            tracks.addAll(pair.first!!)
+                            when {
+                                tracks.isEmpty() -> renderState(ScreenState.Empty())
+                                else -> renderState(ScreenState.Content(tracks))
                             }
-
-                            else -> {
-                                renderState(ScreenState.Content(tracks))
-                            }
+                        } else {
+                            renderState(ScreenState.Error())
                         }
-                    } else {
-                        renderState(ScreenState.Error())
                     }
-                }
-            })
+            }
         }
     }
 
@@ -132,7 +125,7 @@ class SearchViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        coroutineScope.cancel()
+        searchJob?.cancel()
     }
 
     companion object {
@@ -141,5 +134,6 @@ class SearchViewModel(
         const val CLICK_DEBOUNCE_DELAY_MS = 2000L
     }
 }
+
 
 

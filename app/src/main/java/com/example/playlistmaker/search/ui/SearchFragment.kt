@@ -12,7 +12,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.root.RootActivity
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.example.playlistmaker.search.ui.model.ScreenState
 import com.example.playlistmaker.search.ui.viewModel.SearchViewModel
@@ -64,7 +63,7 @@ class SearchFragment : Fragment() {
                 rvSearchResult.visibility = View.GONE
             }
             userInput = s.toString()
-            viewModel.searchDebounce(userInput)
+            viewModel.searchDebounce(userInput, false)
         }
 
         override fun afterTextChanged(s: Editable?) {}
@@ -95,7 +94,7 @@ class SearchFragment : Fragment() {
             }
 
             refresh.setOnClickListener {
-                viewModel.searchDebounce(userInput)
+                viewModel.searchDebounce(userInput, false)
             }
         }
     }
