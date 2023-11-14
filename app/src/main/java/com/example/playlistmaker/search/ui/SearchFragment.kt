@@ -94,7 +94,7 @@ class SearchFragment : Fragment() {
             }
 
             refresh.setOnClickListener {
-                viewModel.searchDebounce(userInput, true)
+                viewModel.debouncedSearch(userInput)
             }
         }
     }
