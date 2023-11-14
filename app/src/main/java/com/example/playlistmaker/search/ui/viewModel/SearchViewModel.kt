@@ -12,6 +12,7 @@ import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.api.SearchInteractor
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.example.playlistmaker.search.ui.model.ScreenState
+import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -35,11 +36,15 @@ class SearchViewModel(
             return
         }
         latestSearchText = changedText
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
-            delay(SEARCH_DEBOUNCE_DELAY_MS)
-            search(changedText)
-        }
+        debouncedSearch(changedText)
+    }
+
+    val debouncedSearch: (String) -> Unit = debounce(
+        SEARCH_DEBOUNCE_DELAY_MS,
+        viewModelScope,
+        true
+    ) { changedText ->
+        search(changedText)
     }
 
     private fun isClickAllowed(): Boolean {

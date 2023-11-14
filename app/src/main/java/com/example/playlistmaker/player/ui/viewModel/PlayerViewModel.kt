@@ -1,6 +1,5 @@
 package com.example.playlistmaker.player.ui.viewModel
 
-import android.content.res.Resources
 import android.media.MediaPlayer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,7 +21,7 @@ class PlayerViewModel(
 ) : ViewModel() {
     private var timerJob: Job? = null
     private var clickAllowed = true
-    private var player: MediaPlayer = MediaPlayer()
+    private val player: MediaPlayer = MediaPlayer()
     private val stateLiveData = MutableLiveData<PlayerState>()
     private val timerLiveData = MutableLiveData<String>()
     private val viewModelScope = CoroutineScope(Dispatchers.Main)
@@ -89,7 +88,6 @@ class PlayerViewModel(
     override fun onCleared() {
         super.onCleared()
         releaseAudioPlayer()
-        timerJob?.cancel()
     }
 
     fun onPause() {
@@ -100,10 +98,13 @@ class PlayerViewModel(
         playbackControl()
     }
 
+    private val timeFormat: SimpleDateFormat by lazy {
+        SimpleDateFormat("mm:ss", Locale.getDefault())
+    }
+
     private fun updateTime() {
         timerLiveData.postValue(
-            SimpleDateFormat("mm:ss", Locale.getDefault())
-                .format(getCurrentPosition())
+            timeFormat.format(getCurrentPosition())
         )
     }
 
@@ -120,7 +121,7 @@ class PlayerViewModel(
     private fun releaseAudioPlayer() {
         player.stop()
         player.release()
-        renderState(PlayerState.Prepared)
+        renderState(PlayerState.Default)
     }
 
     companion object {
