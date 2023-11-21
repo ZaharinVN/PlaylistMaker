@@ -1,5 +1,7 @@
 package com.example.playlistmaker.search.data.impl
 
+import com.example.playlistmaker.library.data.converters.TrackDbConverter
+import com.example.playlistmaker.library.data.db.AppDatabase
 import com.example.playlistmaker.search.data.SearchDataStorage
 import com.example.playlistmaker.search.data.dto.TrackDto
 import com.example.playlistmaker.search.data.dto.TracksSearchRequest
@@ -14,7 +16,9 @@ import javax.net.ssl.HttpsURLConnection
 
 class SearchRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val searchDataStorage: SearchDataStorage
+    private val searchDataStorage: SearchDataStorage,
+    private val appDatabase: AppDatabase,
+    private val trackDbConverter: TrackDbConverter
 ) : SearchRepository {
     override suspend fun searchTracks(expression: String): Flow<ResponseStatus<List<TrackSearchModel>>> =
         flow {
@@ -40,6 +44,7 @@ class SearchRepositoryImpl(
                                 it.previewUrl
                             )
                         }
+                        saveTrack(results)
                         emit(ResponseStatus.Success(data))
                     }
                 }
@@ -87,6 +92,11 @@ class SearchRepositoryImpl(
 
     override fun clearHistory() {
         searchDataStorage.clearHistory()
+    }
+
+    private suspend fun saveTrack(tracks: List<TrackDto>) {
+        val trackEntities = tracks.map { track -> trackDbConverter.map(track) }
+        appDatabase.trackDao().insertTracks(trackEntities)
     }
 }
 

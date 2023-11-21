@@ -1,5 +1,7 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.library.domain.db.HistoryInteractor
+import com.example.playlistmaker.library.domain.impl.HistoryInteractorImpl
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.search.domain.api.SearchInteractor
@@ -26,5 +28,9 @@ val interactorModule = module {
 
     factory<SearchInteractor> {
         SearchInteractorImpl(repository = get())
+    }
+
+    single<HistoryInteractor> {
+        HistoryInteractorImpl(get())
     }
 }

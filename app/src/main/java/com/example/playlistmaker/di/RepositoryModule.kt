@@ -1,6 +1,8 @@
 package com.example.playlistmaker.di
 
 import com.example.playlistmaker.library.data.converters.TrackDbConverter
+import com.example.playlistmaker.library.data.impl.HistoryRepositoryImpl
+import com.example.playlistmaker.library.domain.db.HistoryRepository
 import com.example.playlistmaker.player.data.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.search.data.impl.SearchRepositoryImpl
@@ -26,9 +28,14 @@ val repositoryModule = module {
     }
 
     factory<SearchRepository> {
-        SearchRepositoryImpl(networkClient = get(), searchDataStorage = get())
+        SearchRepositoryImpl(networkClient = get(), searchDataStorage = get(),appDatabase = get(),trackDbConverter = get())
     }
+
     factory {
         TrackDbConverter()
+    }
+
+    single<HistoryRepository> {
+        HistoryRepositoryImpl(get(), get())
     }
 }
