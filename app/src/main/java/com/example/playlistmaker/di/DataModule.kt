@@ -2,6 +2,8 @@ package com.example.playlistmaker.di
 
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.room.Room
+import com.example.playlistmaker.library.data.db.AppDatabase
 import com.example.playlistmaker.search.data.SearchDataStorage
 import com.example.playlistmaker.search.data.network.ITunesSearchApi
 import com.example.playlistmaker.search.data.network.NetworkClient
@@ -53,5 +55,12 @@ val dataModule = module {
         SharedPrefsSearchDataStorage(get(), get())
     }
 
-    factory { Gson() }
+    factory {
+        Gson()
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
+    }
 }

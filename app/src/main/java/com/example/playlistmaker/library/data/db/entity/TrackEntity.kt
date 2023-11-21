@@ -1,9 +1,11 @@
-package com.example.playlistmaker.search.domain.model
+package com.example.playlistmaker.library.data.db.entity
 
-import java.text.SimpleDateFormat
-import java.util.Locale
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-data class TrackSearchModel(
+@Entity(tableName = "track_table")
+data class TrackEntity(
+    @PrimaryKey
     val trackId: String,
     val trackName: String,
     val artistName: String,
@@ -14,8 +16,4 @@ data class TrackSearchModel(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String
-) {
-    fun formatTrackDuration() =
-        SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
-}
-
+)
