@@ -7,9 +7,10 @@
     tools:context=".library.ui.fragment.FavoriteFragment">
 
     <LinearLayout
-        android:id="@+id/favorites_container"
+        android:id="@+id/favorites_empty"
         style="@style/LibraryContainerStyle"
-        android:paddingTop="154dp">
+        android:paddingTop="154dp"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/iv_no_favorites"
@@ -18,7 +19,16 @@
         <TextView
             android:id="@+id/tv_no_favorites"
             style="@style/LibraryTextStyle"
-            android:text="@string/no_favorites"
- />
+            android:text="@string/no_favorites" />
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favorites_list"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:visibility="visible"
+        tools:listitem="@layout/layout_track" />
+
 </FrameLayout>

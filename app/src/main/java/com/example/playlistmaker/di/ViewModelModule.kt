@@ -1,6 +1,5 @@
 package com.example.playlistmaker.di
 
-import com.example.playlistmaker.library.ui.history.HistoryViewModel
 import com.example.playlistmaker.library.ui.viewModel.FavoriteViewModel
 import com.example.playlistmaker.library.ui.viewModel.PlaylistViewModel
 import com.example.playlistmaker.player.ui.viewModel.PlayerViewModel
@@ -28,14 +27,11 @@ val viewModelModule = module {
     }
 
     viewModel {
-        FavoriteViewModel()
+        FavoriteViewModel(androidContext(), get())
     }
 
     viewModel {
         PlaylistViewModel()
     }
 
-    viewModel {
-        HistoryViewModel(androidContext(), get())
-    }
 }

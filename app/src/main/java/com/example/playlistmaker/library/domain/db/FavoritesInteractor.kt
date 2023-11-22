@@ -3,7 +3,7 @@ package com.example.playlistmaker.library.domain.db
 import com.example.playlistmaker.search.data.dto.TrackDto
 import kotlinx.coroutines.flow.Flow
 
-interface HistoryRepository {
+interface FavoritesInteractor {
 
-    fun historyTracks(): Flow<List<TrackDto>>
+    fun favoritesTracks(): Flow<List<TrackDto>>
 }

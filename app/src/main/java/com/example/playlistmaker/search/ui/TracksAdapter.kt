@@ -7,7 +7,7 @@ import com.example.playlistmaker.databinding.LayoutTrackBinding
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 
 class TracksAdapter(
-    private val tracks: ArrayList<TrackSearchModel>,
+    val tracks: ArrayList<TrackSearchModel>,
     private val clickListener: TrackClickListener
 ) : RecyclerView.Adapter<TracksViewHolder>() {
 
