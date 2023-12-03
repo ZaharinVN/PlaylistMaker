@@ -1,21 +1,25 @@
 package com.example.playlistmaker.search.domain.model
 
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.playlistmaker.search.data.dto.TrackDto
+import java.io.Serializable
 
 data class TrackSearchModel(
     val trackId: String,
     val trackName: String,
     val artistName: String,
-    val trackTimeMillis: Long,
+    val trackTimeMillis: String,
     val artworkUrl100: String,
     val collectionName: String,
     val releaseDate: String,
     val primaryGenreName: String,
     val country: String,
-    val previewUrl: String
-) {
-    fun formatTrackDuration() =
-        SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
+    val previewUrl: String,
+    var isFavorite: Boolean = false
+) : Serializable {
+    override fun equals(other: Any?): Boolean {
+        if (other == null || other !is TrackDto)
+            return false
+        return trackId == other.trackId
+    }
 }
 

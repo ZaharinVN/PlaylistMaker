@@ -3,6 +3,7 @@ package com.example.playlistmaker.di
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.room.Room
+import com.example.playlistmaker.library.data.converters.TrackDbConverter
 import com.example.playlistmaker.library.data.db.AppDatabase
 import com.example.playlistmaker.search.data.SearchDataStorage
 import com.example.playlistmaker.search.data.network.ITunesSearchApi
@@ -23,7 +24,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModule = module {
 
-    factory { MediaPlayer() }
+    factory {
+        MediaPlayer()
+    }
 
     single {
         androidContext().getSharedPreferences(
@@ -35,6 +38,7 @@ val dataModule = module {
     single<SettingsRepository> {
         SettingsRepositoryImpl(get())
     }
+
     single<SharingRepository> {
         SharingRepositoryImpl(get())
     }
@@ -61,6 +65,12 @@ val dataModule = module {
 
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .fallbackToDestructiveMigration()
             .build()
     }
+
+    factory {
+        TrackDbConverter()
+    }
+
 }

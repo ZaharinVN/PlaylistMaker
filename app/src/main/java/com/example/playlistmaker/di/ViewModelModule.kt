@@ -5,29 +5,25 @@ import com.example.playlistmaker.library.ui.viewModel.PlaylistViewModel
 import com.example.playlistmaker.player.ui.viewModel.PlayerViewModel
 import com.example.playlistmaker.search.ui.viewModel.SearchViewModel
 import com.example.playlistmaker.settings.ui.SettingsViewModel
-import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
 
-    viewModel { (trackUrl: String) ->
-        PlayerViewModel(
-            playerInteractor = get(),
-            trackUrl = trackUrl
-        )
+    viewModel {
+        PlayerViewModel(get(), get(), get())
     }
 
     viewModel {
-        SettingsViewModel(settingsInteractor = get(), sharingInteractor = get())
+        SettingsViewModel(get(), get())
     }
 
     viewModel {
-        SearchViewModel(app = get(), searchInteractor = get())
+        SearchViewModel(get(), get(), get())
     }
 
     viewModel {
-        FavoriteViewModel(androidContext(), get())
+        FavoriteViewModel(get(), get())
     }
 
     viewModel {

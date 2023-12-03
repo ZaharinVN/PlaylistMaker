@@ -16,7 +16,7 @@ import org.koin.dsl.module
 val repositoryModule = module {
 
     factory<PlayerRepository> {
-        PlayerRepositoryImpl(player = get())
+        PlayerRepositoryImpl()
     }
 
     single<SettingsRepository> {
@@ -24,7 +24,7 @@ val repositoryModule = module {
     }
 
     factory<SharingRepository> {
-        SharingRepositoryImpl(context = get())
+        SharingRepositoryImpl(get())
     }
 
     factory<SearchRepository> {
@@ -32,7 +32,6 @@ val repositoryModule = module {
             networkClient = get(),
             searchDataStorage = get(),
             appDatabase = get(),
-            trackDbConverter = get()
         )
     }
 

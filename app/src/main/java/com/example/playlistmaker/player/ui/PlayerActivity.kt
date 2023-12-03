@@ -2,104 +2,66 @@ package com.example.playlistmaker.player.ui
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.View
+import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
-import com.example.playlistmaker.player.domain.TrackPlayerModel
-import com.example.playlistmaker.player.domain.api.PlayerState
 import com.example.playlistmaker.player.ui.viewModel.PlayerViewModel
+import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
-    private val viewModel: PlayerViewModel by viewModel {
-        parametersOf(getTrack()!!.previewUrl)
-    }
+    private lateinit var playButton: ImageButton
+    private lateinit var timer: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val track = getTrack()
-        bind(track)
+        binding.apply {
+            playButton = btnPlay
+            timer = progressTime
+        }
 
-        if (track != null) {
-            viewModel.observeState().observe(this) {
-                updateScreen(it)
+        intent?.let {
+            val track = intent.extras?.getSerializable(EXTRA_TRACK) as TrackSearchModel
+            val viewModel by viewModel<PlayerViewModel> { parametersOf(track) }
+            preparePlayer(track)
+
+            viewModel.observePlayerState.observe(this) {
+                playButton.isEnabled = it.isPlayButtonEnabled
+                timer.text = it.progress
+                playButton.setImageResource(playButtonImage(it.isPlaying))
             }
-            viewModel.observeTimer().observe(this) {
-                updateTimer(it)
-            }
-        }
 
-        binding.btnPlay.setOnClickListener {
-            viewModel.onPlay()
-        }
-        binding.btnFavorite.setOnClickListener {
-            binding.btnDisLike.visibility = View.VISIBLE
-        }
-        binding.btnDisLike.setOnClickListener {
-            binding.btnDisLike.visibility = View.GONE
-        }
+            viewModel.observeIsFavorite.observe(this) { isFavorite ->
+                val dislikeIcon =
+                    if (isDarkTheme()) R.drawable.ic_dislike_dark else R.drawable.ic_dislike
+                val favoriteIcon =
+                    if (isDarkTheme()) R.drawable.ic_favorite_dark else R.drawable.ic_favorite
 
-        binding.btnPlayerBack.setOnClickListener {
-            finish()
-        }
-    }
+                binding.btnFavorite.setImageResource(if (isFavorite) dislikeIcon else favoriteIcon)
+                binding.btnPlayerBack.setOnClickListener { super.onBackPressed() }
+                binding.btnFavorite.setOnClickListener { viewModel.onFavoriteClicked() }
 
-    private fun getTrack(): TrackPlayerModel? {
-        return intent.getSerializableExtra(EXTRA_TRACK) as? TrackPlayerModel
-    }
-
-    private fun bind(track: TrackPlayerModel?) {
-        track?.let {
-            val radius = resources.getDimensionPixelSize(R.dimen.cover_radius)
-            binding.let {
-                Glide.with(this)
-                    .load(track.getCoverArtwork())
-                    .placeholder(R.drawable.placeholder)
-                    .transform(RoundedCorners(radius))
-                    .into(it.trackCover)
-            }
-            binding.apply {
-                trackNameResult.text = it.trackName
-                artistNameResult.text = it.artistName
-                trackTimeResult.text = it.formatTrackDuration()
-                progressTime.text = it.formatTrackDuration()
-                collectionName.text = it.collectionName
-                releaseDate.text = it.formatReleaseDate()
-                primaryGenreName.text = it.primaryGenreName
-                country.text = it.country
+                playButton.setOnClickListener {
+                    viewModel.playbackControl()
+                }
             }
         }
     }
 
-    private fun updateTimer(time: String) {
-        if (viewModel.observeState().value != PlayerState.Prepared) {binding.progressTime.text = time}
-    }
-
-    private fun updateScreen(state: PlayerState) {
-        when (state) {
-            is PlayerState.Playing -> {
-                binding.btnPlay.setImageResource(
-                    if (isDarkTheme()) R.drawable.ic_pause_dark else R.drawable.ic_pause)
-            }
-            is PlayerState.Paused -> {
-                binding.btnPlay.setImageResource(
-                    if (isDarkTheme()) R.drawable.ic_play_dark else R.drawable.ic_play)
-            }
-            is PlayerState.Prepared -> {
-                binding.btnPlay.setImageResource(
-                    if (isDarkTheme()) R.drawable.ic_play_dark else R.drawable.ic_play)
-                binding.progressTime.text = getString(R.string.default_playtime_value)
-            }
-            else -> {}
-        }
+    private fun playButtonImage(isPlaying: Boolean): Int {
+        val playIcon = if (isDarkTheme()) R.drawable.ic_play_dark else R.drawable.ic_play
+        val pauseIcon = if (isDarkTheme()) R.drawable.ic_pause_dark else R.drawable.ic_pause
+        return if (isPlaying) pauseIcon else playIcon
     }
 
     private fun isDarkTheme(): Boolean {
@@ -107,15 +69,30 @@ class PlayerActivity : AppCompatActivity() {
         return currentNightMode == Configuration.UI_MODE_NIGHT_YES
     }
 
-    override fun onPause() {
-        super.onPause()
-        viewModel.onPause()
+    private fun preparePlayer(track: TrackSearchModel) {
+        binding.apply {
+            trackNameResult.text = track.trackName
+            artistNameResult.text = track.artistName
+            trackTimeResult.text = track.trackTimeMillis
+            collectionName.text = track.collectionName
+            releaseDate.text = track.releaseDate.substring(0, 4)
+            primaryGenreName.text = track.primaryGenreName
+            country.text = track.country
+            progressTime.text = getString(R.string.default_playtime_value)
+        }
+
+        Glide.with(this)
+            .load(track.artworkUrl100)
+            .placeholder(R.drawable.placeholder)
+            .transform(CenterCrop(), RoundedCorners(8))
+            .into(binding.trackCover)
     }
 
     companion object {
         private const val EXTRA_TRACK = "EXTRA_TRACK"
     }
 }
+
 
 
 
