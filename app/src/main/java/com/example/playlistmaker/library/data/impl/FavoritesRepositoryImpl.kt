@@ -30,7 +30,7 @@ class FavoritesRepositoryImpl(
         deleteTrack(track)
     }
 
-    override fun getFavoritesID(): Flow<List<String>> = flow {
+    override fun getFavoritesID(): Flow<List<Long>> = flow {
         val tracksId = appDatabase.trackDao().getTracksID()
         emit(tracksId)
     }

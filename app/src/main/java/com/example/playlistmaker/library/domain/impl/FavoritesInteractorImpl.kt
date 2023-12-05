@@ -13,7 +13,7 @@ class FavoritesInteractorImpl(private val favoritesRepository: FavoritesReposito
         return favoritesRepository.favoritesTracks().map { it.reversed() }
     }
 
-    override fun getFavoritesID(): Flow<List<String>> {
+    override fun getFavoritesID(): Flow<List<Long>> {
         return favoritesRepository.getFavoritesID()
     }
 

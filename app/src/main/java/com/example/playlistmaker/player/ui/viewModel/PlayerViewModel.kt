@@ -75,11 +75,12 @@ class PlayerViewModel(
         }
     }
 
+    private val timeFormat: SimpleDateFormat by lazy {
+        SimpleDateFormat("mm:ss", Locale.getDefault())
+    }
+
     private fun getCurrentPosition(): String {
-        return SimpleDateFormat(
-            "mm:ss",
-            Locale.getDefault()
-        ).format(playerInteractor.getCurrentPosition())
+        return timeFormat.format(playerInteractor.getCurrentPosition())
     }
 
     override fun onCleared() {

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface FavoritesRepository {
     fun favoritesTracks(): Flow<List<TrackSearchModel>>
-    fun getFavoritesID(): Flow<List<String>>
+    fun getFavoritesID(): Flow<List<Long>>
     suspend fun addToFavorites(track: TrackSearchModel)
     suspend fun deleteFromFavorites(track: TrackSearchModel)
 }

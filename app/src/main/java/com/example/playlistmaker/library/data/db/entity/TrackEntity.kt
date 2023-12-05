@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "track_table")
 data class TrackEntity(
     @PrimaryKey
-    @ColumnInfo(name = "trackID")
-    val trackId: String,
+    @ColumnInfo(name = "ID")
+    val trackId: Long,
     val trackName: String,
     val artistName: String,
     val trackTime: String,

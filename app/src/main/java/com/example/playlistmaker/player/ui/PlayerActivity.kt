@@ -42,10 +42,12 @@ class PlayerActivity : AppCompatActivity() {
             }
 
             viewModel.observeIsFavorite.observe(this) { isFavorite ->
-                val dislikeIcon =
+                val dislikeIcon: Int by lazy {
                     if (isDarkTheme()) R.drawable.ic_dislike_dark else R.drawable.ic_dislike
-                val favoriteIcon =
+                }
+                val favoriteIcon: Int by lazy {
                     if (isDarkTheme()) R.drawable.ic_favorite_dark else R.drawable.ic_favorite
+                }
 
                 binding.btnFavorite.setImageResource(if (isFavorite) dislikeIcon else favoriteIcon)
                 binding.btnPlayerBack.setOnClickListener { super.onBackPressed() }

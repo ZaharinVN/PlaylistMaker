@@ -57,7 +57,7 @@ class FavoriteFragment : Fragment() {
             is FavoritesState.Loading -> View.GONE
             is FavoritesState.Empty -> {
                 binding.placeHolderText.text = state.message
-                View.VISIBLE
+                View.GONE
             }
 
             is FavoritesState.Content -> {
