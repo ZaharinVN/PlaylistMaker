@@ -7,11 +7,9 @@ interface SearchInteractor {
     suspend fun searchTracks(expression: String):
             Flow<Pair<List<TrackSearchModel>?, String?>>
 
-    fun getTracksHistory(consumer: HistoryConsumer)
-    fun addTrackToHistory(track: TrackSearchModel)
-    fun clearHistory()
+    suspend fun returnSavedTracks(): ArrayList<TrackSearchModel>
+    fun addTrackToHistory(item: TrackSearchModel)
+    fun clearSavedTracks()
 
-    interface HistoryConsumer {
-        fun consume(tracks: List<TrackSearchModel>?)
-    }
+
 }

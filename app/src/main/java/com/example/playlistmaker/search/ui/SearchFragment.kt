@@ -2,6 +2,8 @@ package com.example.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,22 +12,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
+import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.example.playlistmaker.search.ui.model.ScreenState
 import com.example.playlistmaker.search.ui.viewModel.SearchViewModel
+import com.example.playlistmaker.search.ui.viewModel.SearchViewModel.Companion.EXTRA_TRACK
+import com.example.playlistmaker.utils.Debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
-    private val tracks = ArrayList<TrackSearchModel>()
-    private val tracksHistory = ArrayList<TrackSearchModel>()
-    private val searchAdapter = TracksAdapter(tracks) { trackClickListener(it) }
-    private val historyAdapter = TracksAdapter(tracksHistory) { trackClickListener(it) }
     private var userInput = ""
+    private val trackAdapter = TracksAdapter {
+        onTrackClickDebounce(it)
+    }
+    private val savedTrackAdapter = TracksAdapter {
+        onTrackClickDebounce(it)
+    }
+    private var textWatcher: TextWatcher? = null
+    private val viewModel by viewModel<SearchViewModel>()
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModel<SearchViewModel>()
+    private lateinit var onTrackClickDebounce: (TrackSearchModel) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,157 +48,132 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.stateLiveData().observe(viewLifecycleOwner) {
-            updateScreen(it)
+        binding.rvSearchResult.adapter = trackAdapter
+        binding.rvHistory.adapter = savedTrackAdapter
+        setListeners()
+        searchHistory()
+        onTrackClickDebounce = Debounce().debounce(
+            CLICK_DEBOUNCE_DELAY_MILLIS,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) {
+            val mediaIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
+                putExtra(EXTRA_TRACK, it)
+            }
+            startActivity(mediaIntent)
+            viewModel.addTrackToHistory(it)
         }
-
-        binding.apply {
-            rvSearchResult.adapter = searchAdapter
-            rvHistory.adapter = historyAdapter
-            clearHistoryButton.visibility = View.GONE
-            historyMessage.visibility = View.GONE
-        }
-
-        buttonsConfig()
-        queryInputConfig(initTextWatcher())
-
+        viewModel.observeState().observe(viewLifecycleOwner, ::render)
+        viewModel.getSavedTracksLiveData()
+            .observe(viewLifecycleOwner) { savedTrackAdapter.updateTracks(it) }
     }
 
-    private fun initTextWatcher() = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            binding.apply {
-                clearImageView.visibility = clearButtonVisibility(s)
-                rvSearchResult.visibility = View.GONE
-            }
-            userInput = s.toString()
-            viewModel.searchDebounce(userInput, false)
+    private fun setListeners() {
+        binding.refresh.setOnClickListener {
+            viewModel.search(userInput)
         }
+        binding.clearImageView.setOnClickListener {
+            binding.searchEditText.setText("")
+            val inputMethodManager =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            inputMethodManager?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
+        }
+        binding.clearHistoryButton.setOnClickListener {
+            viewModel.clearHistory()
+            binding.rvSearchResult.visibility = View.GONE
+        }
+        textWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updateViewVisibility(s)
+                userInput = s.toString()
+                viewModel.searchDebounce(userInput)
+            }
 
-        override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {}
+        }
+        textWatcher?.let { binding.searchEditText.addTextChangedListener(it) }
+    }
+
+    private fun updateViewVisibility(s: CharSequence?) {
+        binding.clearImageView.visibility = clearButtonVisibility(s)
+        binding.rvSearchResult.visibility = View.GONE
+        binding.rvHistory.visibility = View.VISIBLE
+        binding.clearHistoryButton.visibility = View.VISIBLE
+    }
+
+    private fun searchHistory() {
+        binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && binding.searchEditText.text.isEmpty()) {
+                viewModel.showHistoryTracks()
+            }
+        }
+    }
+
+    private fun render(state: ScreenState) {
+        when (state) {
+            is ScreenState.Loading -> Loading()
+            is ScreenState.SearchedState -> SearchedState(state.tracks)
+            is ScreenState.SavedState -> SavedState(state.tracks)
+            is ScreenState.ErrorState -> ErrorState(state.errorMessage)
+            is ScreenState.EmptyState -> EmptyState(state.message)
+        }
+    }
+
+    private fun Loading() {
+        binding.progressSearch.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
+        hideKeyboard()
+    }
+
+    private fun ErrorState(errorMessage: String) {
+        binding.progressBar.visibility = View.GONE
+        binding.noInternet.visibility = View.VISIBLE
+        binding.refresh.visibility = View.VISIBLE
+        binding.noResults.visibility = View.VISIBLE
+        binding.imageViewNoResults.setImageResource(R.drawable.ic_no_internet)
+        binding.textViewNoResults.text = errorMessage
+        hideKeyboard()
+    }
+
+    private fun EmptyState(message: String) {
+        binding.progressBar.visibility = View.GONE
+        binding.noResults.visibility = View.VISIBLE
+        binding.imageViewNoResults.setImageResource(R.drawable.ic_no_results)
+        binding.textViewNoResults.text = message
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun buttonsConfig() {
-        binding.apply {
-            clearImageView.setOnClickListener {
-                searchEditText.setText("")
-                hideKeyboard()
-                tracks.clear()
-                viewModel.getTracksHistory()
-                searchAdapter.notifyDataSetChanged()
-                rvHistory.visibility = View.VISIBLE
-                noInternet.visibility = View.GONE
-                noResults.visibility = View.GONE
-                clearHistoryButton.visibility =
-                    if (tracksHistory.isEmpty()) View.GONE else View.VISIBLE
-                historyMessage.visibility = if (tracksHistory.isEmpty()) View.GONE else View.VISIBLE
-            }
-            clearHistoryButton.setOnClickListener {
-                viewModel.clearHistory()
-                viewModel.getTracksHistory()
-                rvHistory.visibility = View.GONE
-                historyMessage.visibility = View.GONE
-                clearHistoryButton.visibility = View.GONE
-            }
-
-            refresh.setOnClickListener {
-                viewModel.debouncedSearch(userInput)
-            }
-        }
+    private fun SearchedState(tracks: ArrayList<TrackSearchModel>) {
+        binding.noResults.visibility = View.GONE
+        binding.rvSearchResult.visibility = View.GONE
+        binding.progressSearch.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+        binding.noInternet.visibility = View.GONE
+        binding.refresh.visibility = View.GONE
+        binding.rvSearchResult.visibility = View.VISIBLE
+        binding.clearHistoryButton.visibility = View.GONE
+        trackAdapter.tracks.clear()
+        trackAdapter.tracks.addAll(tracks)
+        trackAdapter.notifyDataSetChanged()
     }
 
-    private fun queryInputConfig(textWatcher: TextWatcher) {
-        binding.searchEditText.apply {
-            addTextChangedListener(textWatcher)
-            setText(userInput)
-            setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus && this.text.isEmpty())
-                    viewModel.getTracksHistory()
-                else
-                    binding.rvHistory.visibility = View.GONE
-            }
-        }
+    @SuppressLint("NotifyDataSetChanged")
+    private fun SavedState(tracks: ArrayList<TrackSearchModel>) {
+        binding.noResults.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+        binding.refresh.visibility = View.GONE
+        binding.rvSearchResult.visibility = View.VISIBLE
+        savedTrackAdapter.tracks.clear()
+        savedTrackAdapter.tracks.addAll(tracks)
+        savedTrackAdapter.notifyDataSetChanged()
     }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(USER_INPUT, userInput)
-    }
-
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
             View.GONE
         } else {
             View.VISIBLE
-        }
-    }
-
-    private fun trackClickListener(track: TrackSearchModel) {
-        viewModel.onTrackClick(track)
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun updateScreen(state: ScreenState) {
-        binding.apply {
-            when (state) {
-                is ScreenState.Content -> {
-                    tracks.clear()
-                    tracks.addAll(state.tracks as ArrayList<TrackSearchModel>)
-                    progressSearch.visibility = View.GONE
-                    rvSearchResult.visibility = View.VISIBLE
-                    noInternet.visibility = View.GONE
-                    noResults.visibility = View.GONE
-                    searchAdapter.notifyDataSetChanged()
-                }
-
-                is ScreenState.Error -> {
-                    progressSearch.visibility = View.GONE
-                    noInternet.visibility = View.VISIBLE
-                    noResults.visibility = View.GONE
-                    imageViewNoInternet.setImageResource(R.drawable.ic_no_internet)
-                    textViewNoInternet.setText(R.string.noInternet)
-                    refresh.visibility = View.VISIBLE
-                    clearHistoryButton.visibility = View.GONE
-                    historyMessage.visibility = View.GONE
-                }
-
-                is ScreenState.Empty -> {
-                    progressSearch.visibility = View.GONE
-                    noInternet.visibility = View.GONE
-                    noResults.visibility = View.VISIBLE
-                    clearHistoryButton.visibility = View.GONE
-                    historyMessage.visibility = View.GONE
-                    imageViewNoResults.setImageResource(R.drawable.ic_no_results)
-                    textViewNoResults.setText(R.string.NoResults)
-                    refresh.visibility = View.GONE
-                }
-
-                is ScreenState.Loading -> {
-                    noInternet.visibility = View.GONE
-                    noResults.visibility = View.GONE
-                    rvHistory.visibility = View.GONE
-                    rvSearchResult.visibility = View.GONE
-                    progressSearch.visibility = View.VISIBLE
-                    progressBar.visibility = View.VISIBLE
-                    hideKeyboard()
-                }
-
-                is ScreenState.ContentHistoryList -> {
-                    rvHistory.visibility = View.VISIBLE
-                    tracksHistory.clear()
-                    tracksHistory.addAll(state.historyList)
-                    historyAdapter.notifyDataSetChanged()
-                }
-
-                is ScreenState.EmptyHistoryList -> {
-                    rvHistory.visibility = View.GONE
-                    clearHistoryButton.visibility = View.GONE
-                    historyMessage.visibility = View.GONE
-                }
-            }
         }
     }
 
@@ -199,7 +184,21 @@ class SearchFragment : Fragment() {
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
+    override fun onDestroyView() {
+        textWatcher?.let { binding.searchEditText.removeTextChangedListener(it) }
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.isEqual()
+    }
+
     companion object {
-        private const val USER_INPUT = "USER_INPUT"
+        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 300L
     }
 }
+
+
+

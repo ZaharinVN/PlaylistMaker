@@ -1,6 +1,8 @@
 package com.example.playlistmaker.search.data.dto
 
-import java.io.Serializable
+import java.text.SimpleDateFormat
+import java.util.Locale
+
 data class TrackDto(
     val trackId: Long,
     val trackName: String,
@@ -12,4 +14,8 @@ data class TrackDto(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String
-) : Serializable
+) {
+    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
+    fun getFormattedDuration() =
+        SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis.toInt())
+}
