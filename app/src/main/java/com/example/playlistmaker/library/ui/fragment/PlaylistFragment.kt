@@ -31,14 +31,22 @@ class PlaylistFragment : Fragment() {
     private fun setupUI() {
         binding.ivNoPlaylist.setImageResource(R.drawable.ic_no_results)
         binding.tvNoPlaylist.text = getString(R.string.no_playlists)
+
+        binding.btnAddPlaylist.setOnClickListener {
+            val playlistAddFragment = PlaylistAddFragment.newInstance()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(android.R.id.content, playlistAddFragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     private fun observeLiveData() {
-        viewModel.liveData.observe(viewLifecycleOwner) {
-        }
+        viewModel.liveData.observe(viewLifecycleOwner) {}
     }
 
     companion object {
         fun newInstance() = PlaylistFragment()
     }
 }
+

@@ -18,16 +18,20 @@
         android:id="@+id/playerActivity"
         android:name="com.example.playlistmaker.player.ui.PlayerActivity"
         android:label="PlayerActivity" />
-
     <fragment
         android:id="@+id/libraryFragment"
         android:name="com.example.playlistmaker.library.ui.fragment.LibraryFragment"
         android:label="fragment_library"
         tools:layout="@layout/fragment_library" >
         <action
-            android:id="@+id/action_libraryFragment_to_playerActivity"
-            app:destination="@id/playerActivity" />
+            android:id="@+id/action_libraryFragment_to_PlaylistAddFragment"
+            app:destination="@id/PlaylistAddFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/PlaylistAddFragment"
+        android:name="com.example.playlistmaker.library.ui.fragment.PlaylistAddFragment"
+        android:label="PlaylistAddFragment"/>
 
     <fragment
         android:id="@+id/settingsFragment"

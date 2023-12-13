@@ -17,9 +17,9 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:hardwareAccelerated="true"
-        android:icon="@drawable/ic_icon_new"
+        android:icon="@drawable/ic_icon_app"
         android:label="PlaylistMaker"
-        android:roundIcon="@drawable/ic_icon_new"
+        android:roundIcon="@drawable/ic_icon_app"
         android:supportsRtl="true"
         android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
