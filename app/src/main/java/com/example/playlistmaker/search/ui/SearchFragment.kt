@@ -3,7 +3,6 @@ package com.example.playlistmaker.search.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,11 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.example.playlistmaker.search.ui.model.ScreenState
 import com.example.playlistmaker.search.ui.viewModel.SearchViewModel
@@ -57,10 +57,10 @@ class SearchFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope,
             false
         ) {
-            val mediaIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
-                putExtra(EXTRA_TRACK, it)
-            }
-            startActivity(mediaIntent)
+            findNavController().navigate(
+                R.id.action_searchFragment_to_playerFragment,
+                bundleOf(EXTRA_TRACK to it)
+            )
             viewModel.addTrackToHistory(it)
         }
         viewModel.observeState().observe(viewLifecycleOwner, ::render)

@@ -1,17 +1,18 @@
 package com.example.playlistmaker.library.ui.fragment
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentFavoritesBinding
 import com.example.playlistmaker.library.ui.state.FavoritesState
 import com.example.playlistmaker.library.ui.viewModel.FavoriteViewModel
-import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.example.playlistmaker.search.ui.TracksAdapter
 import com.example.playlistmaker.search.ui.viewModel.SearchViewModel.Companion.EXTRA_TRACK
@@ -39,13 +40,12 @@ class FavoriteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         onTrackClick = {
-            val playIntent = Intent(requireContext(), PlayerActivity::class.java)
-            playIntent.putExtra(EXTRA_TRACK, it)
-            startActivity(playIntent)
+            findNavController().navigate(
+                R.id.action_libraryFragment_to_playerFragment,
+                bundleOf(EXTRA_TRACK to it)
+            )
         }
-
         viewModel.observeFavoritesState().observe(viewLifecycleOwner) {
             render(it)
         }

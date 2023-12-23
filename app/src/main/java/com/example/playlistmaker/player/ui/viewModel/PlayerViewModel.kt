@@ -5,25 +5,36 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.library.domain.db.FavoritesInteractor
+import com.example.playlistmaker.library.domain.db.PlaylistDatabaseInteractor
+import com.example.playlistmaker.library.domain.db.PlaylistMediaDatabaseInteractor
+import com.example.playlistmaker.library.domain.models.Playlist
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import com.example.playlistmaker.player.domain.api.PlaylistTrackDatabaseInteractor
 import com.example.playlistmaker.player.ui.PlayerState
+import com.example.playlistmaker.player.ui.PlaylistTrackState
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.util.ArrayList
 import java.util.Locale
 
 class PlayerViewModel(
     private val track: TrackSearchModel,
     private val playerInteractor: PlayerInteractor,
-    private val favoritesInteractor: FavoritesInteractor
+    private val favoritesInteractor: FavoritesInteractor,
+
 ) : ViewModel() {
+
     private var timerJob: Job? = null
     private val playerState = MutableLiveData<PlayerState>(PlayerState.Default())
     val observePlayerState: LiveData<PlayerState> = playerState
+
     private val isFavorite = MutableLiveData(track.isFavorite)
     val observeIsFavorite: LiveData<Boolean> = isFavorite
+
+
 
     init {
         playerInteractor.preparePlayer(
@@ -96,6 +107,7 @@ class PlayerViewModel(
             }
         }
     }
+
 
     private fun releaseAudioPlayer() {
         playerInteractor.destroyPlayer()
