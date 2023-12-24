@@ -17,7 +17,7 @@ data class TrackSearchModel(
     val previewUrl: String,
     var isFavorite: Boolean = false,
     val insertTimeStamp: Long? = null
-): Serializable
+) : Serializable
 
 fun TrackSearchModel.mapToPlaylistTrackEntity(): PlaylistTrackEntity {
     return PlaylistTrackEntity(
@@ -34,4 +34,5 @@ fun TrackSearchModel.mapToPlaylistTrackEntity(): PlaylistTrackEntity {
         System.currentTimeMillis()
     )
 }
+
 

@@ -10,7 +10,6 @@ data class Playlist(
     val listOfTracksId: String = "",
     val amountOfTracks: Int
 )
-
 fun Playlist.mapToPlaylistEntity(): PlaylistEntity = PlaylistEntity(
     id = id,
     name = name,
@@ -19,7 +18,6 @@ fun Playlist.mapToPlaylistEntity(): PlaylistEntity = PlaylistEntity(
     listOfTracksId = listOfTracksId,
     amountOfTracks = amountOfTracks
 )
-
 fun PlaylistEntity.mapToPlaylist(): Playlist = Playlist(
     id = id,
     name = name,

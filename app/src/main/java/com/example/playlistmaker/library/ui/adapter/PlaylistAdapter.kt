@@ -15,20 +15,17 @@ import java.io.File
 
 class PlaylistAdapter(val context: Context, private val clickListener: (Playlist) -> Unit) :
     RecyclerView.Adapter<PlaylistHolder>() {
-
-    val playlists = ArrayList<Playlist>()
+    val playlists = mutableListOf<Playlist>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistHolder {
         return PlaylistHolder(parent, context)
     }
 
-    override fun getItemCount(): Int {
-        return playlists.size
-    }
+    override fun getItemCount(): Int = playlists.size
 
     override fun onBindViewHolder(holder: PlaylistHolder, position: Int) {
         holder.bind(playlists[position])
-        holder.itemView.setOnClickListener { clickListener.invoke(playlists[position]) }
+        holder.itemView.setOnClickListener { clickListener(playlists[position]) }
     }
 }
 

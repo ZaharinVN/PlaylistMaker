@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
@@ -14,23 +13,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.library.domain.models.Playlist
 import com.example.playlistmaker.library.ui.viewModel.NewPlaylistViewModel
 import com.example.playlistmaker.root.BottomNavigationListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -47,13 +42,15 @@ class NewPlaylistFragment : Fragment() {
         super.onAttach(context)
         if (context is BottomNavigationListener) {
             bottomNavigationListener = context
-        } else {}
+        } else {
+        }
     }
 
     override fun onDetach() {
         super.onDetach()
         bottomNavigationListener = null
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -74,14 +71,13 @@ class NewPlaylistFragment : Fragment() {
         })
 
         binding.editNameNewPlaylist.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                //
-            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 enableNewPlaylistButton(p0.toString())
             }
-            override fun afterTextChanged(p0: Editable?) {
-            }
+
+            override fun afterTextChanged(p0: Editable?) {}
         })
 
         val pickMedia =
@@ -158,7 +154,7 @@ class NewPlaylistFragment : Fragment() {
     private fun showDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Завершить задание плейлиста?")
-            .setMessage("Все несохраненные данные будут потеряны!")
+            .setMessage("Все несохраненные данные будут потеряны")
             .setNeutralButton("Отмена") { dialog, which ->
             }
             .setPositiveButton("Завершить") { dialog, which ->

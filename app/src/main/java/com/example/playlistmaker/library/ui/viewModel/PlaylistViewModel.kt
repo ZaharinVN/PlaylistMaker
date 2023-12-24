@@ -25,12 +25,13 @@ class PlaylistViewModel(
         viewModelScope.launch {
             playlistMediaDatabaseInteractor
                 .getPlaylistsFromDatabase()
-                .collect {listOfPlaylists ->
+                .collect { listOfPlaylists ->
                     processResult(listOfPlaylists)
                 }
         }
 
     }
+
     private fun processResult(listOfPlaylists: List<Playlist>) {
         _databasePlaylistState.postValue(
             PlaylistState.Success(listOfPlaylists)

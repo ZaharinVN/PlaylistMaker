@@ -187,8 +187,7 @@
             android:layout_marginTop="36dp"
             android:gravity="center"
             android:text="Добавить в плейлист"
-            android:textColor="@color/text_gray"
-            android:textColorHint="@color/text_gray"
+            android:textColor="@color/main_black"
             android:textSize="19sp" />
 
         <Button
