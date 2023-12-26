@@ -10,4 +10,11 @@ class PlaylistTrackDatabaseInteractorImpl(
     override suspend fun insertTrackToPlaylistTrackDatabase(track: TrackSearchModel) {
         playlistTrackDatabaseRepository.insertTrackToPlaylistTrackDatabase(track)
     }
+
+    override fun isTrackInPlaylist(
+        playlistTracks: ArrayList<Int>,
+        track: TrackSearchModel?
+    ): Boolean {
+        return playlistTrackDatabaseRepository.isTrackInPlaylist(playlistTracks, track)
+    }
 }

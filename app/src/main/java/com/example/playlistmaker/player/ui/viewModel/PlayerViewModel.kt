@@ -128,12 +128,6 @@ class PlayerViewModel(
         }
     }
 
-    private fun insertTrackToDatabase(track: TrackSearchModel) {
-        viewModelScope.launch {
-            playlistTrackDatabaseInteractor.insertTrackToPlaylistTrackDatabase(track)
-        }
-    }
-
     private fun returnPlaylistToDatabase(playlist: Playlist) {
         viewModelScope.launch {
             playlistDatabaseInteractor.insertPlaylistToDatabase(playlist)
@@ -152,16 +146,15 @@ class PlayerViewModel(
 
     fun checkAndAddTrackToPlaylist(playlist: Playlist, track: TrackSearchModel?) {
         val listIdOfPlaylistTracks: ArrayList<Int> = convertStringToList(playlist.listOfTracksId)
-        if (!listIdOfPlaylistTracks.contains(track?.trackId?.toInt())) {
-            track.let { listIdOfPlaylistTracks.add(it?.trackId!!.toInt()) }
+        if (!playlistTrackDatabaseInteractor.isTrackInPlaylist(listIdOfPlaylistTracks, track)) {
+            track?.let { listIdOfPlaylistTracks.add(it.trackId!!.toInt()) }
             val listString = convertListToString(listIdOfPlaylistTracks)
             val modifiedPlaylist: Playlist = playlist.copy(
                 listOfTracksId = listString,
                 amountOfTracks = playlist.amountOfTracks + 1
             )
             returnPlaylistToDatabase(modifiedPlaylist)
-            track.let { insertTrackToDatabase(it!!) }
-
+            track?.let { insertTrackToDatabase(it) }
             _checkIsTrackInPlaylist.postValue(
                 PlaylistTrackState(
                     nameOfPlaylist = playlist.name,
@@ -177,6 +170,13 @@ class PlayerViewModel(
             )
         }
     }
+
+    private fun insertTrackToDatabase(track: TrackSearchModel) {
+        viewModelScope.launch {
+            playlistTrackDatabaseInteractor.insertTrackToPlaylistTrackDatabase(track)
+        }
+    }
+
 
     companion object {
         private const val PLAYBACK_UPDATE_DELAY_MS = 300L

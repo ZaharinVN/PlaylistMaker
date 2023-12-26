@@ -4,4 +4,5 @@ import com.example.playlistmaker.search.domain.model.TrackSearchModel
 
 interface PlaylistTrackDatabaseInteractor {
     suspend fun insertTrackToPlaylistTrackDatabase(track: TrackSearchModel)
+    fun isTrackInPlaylist(playlistTracks: ArrayList<Int>, track: TrackSearchModel?): Boolean
 }
