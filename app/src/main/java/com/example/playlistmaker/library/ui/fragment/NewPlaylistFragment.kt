@@ -1,7 +1,9 @@
 package com.example.playlistmaker.library.ui.fragment
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -16,11 +18,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.library.domain.models.Playlist
 import com.example.playlistmaker.library.ui.viewModel.NewPlaylistViewModel
@@ -64,11 +69,9 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                checkForDialogOutput()
-            }
-        })
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            checkForDialogOutput()
+        }
 
         binding.editNameNewPlaylist.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -152,15 +155,34 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun showDialog() {
-        MaterialAlertDialogBuilder(requireContext())
+        val dialogTheme = if (isNightModeEnabled()) R.style.DialogTheme else R.style.DialogTheme
+
+        val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext(), dialogTheme)
             .setTitle("Завершить задание плейлиста?")
             .setMessage("Все несохраненные данные будут потеряны")
             .setNeutralButton("Отмена") { dialog, which ->
+                // Действие при нажатии на кнопку "Отмена"
             }
             .setPositiveButton("Завершить") { dialog, which ->
+                // Действие при нажатии на кнопку "Завершить"
                 findNavController().navigateUp()
             }
-            .show()
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+
+        // Установка цвета текста для кнопок в ночной теме
+        if (isNightModeEnabled()) {
+            val positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            val neutralButton = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+            positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue))
+            neutralButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue))
+        }
+    }
+
+    private fun isNightModeEnabled(): Boolean {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
     }
 
     private fun saveImageToPrivateStorage(uri: Uri, nameOfFile: String) {

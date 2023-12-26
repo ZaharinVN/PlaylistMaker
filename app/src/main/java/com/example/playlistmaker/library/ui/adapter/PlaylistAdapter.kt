@@ -43,8 +43,8 @@ class PlaylistHolder(parent: ViewGroup, val context: Context) : RecyclerView.Vie
             playlistImageView.scaleType = ImageView.ScaleType.CENTER_CROP
             playlistImageView.setImageURI(getUriOfImageFromStorage(playlist.filePath))
         } else {
-            playlistImageView.scaleType = ImageView.ScaleType.CENTER
-            playlistImageView.setImageResource(R.drawable.placeholder)
+            playlistImageView.scaleType = ImageView.ScaleType.CENTER_CROP
+            playlistImageView.setImageResource(R.drawable.placeholder_playlist)
         }
         nameOfPlaylistTextView.text = playlist.name
         numberOfTracksTextView.text = pluralizeWord(playlist.amountOfTracks, "трек")

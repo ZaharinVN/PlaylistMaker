@@ -4,11 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="16dp"
-    android:paddingEnd="8dp">
+    android:paddingEnd="8dp"
+    android:paddingTop="16dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/playlist_coverview"
+        android:backgroundTint="@color/main_white"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:cardCornerRadius="8dp"
@@ -36,7 +37,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/playlist_coverview"
-        tools:text="HEADER" />
+        tools:text="Best Songs" />
 
     <TextView
         android:id="@+id/tv_amount_of_tracks"
@@ -47,6 +48,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_name_of_playlist"
-        tools:text="XX tracks" />
+        tools:text="98 tracks" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -37,6 +37,7 @@ class PlayerFragment : Fragment() {
     private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
     private var adapter: PlaylistBottomSheetAdapter? = null
     private lateinit var playlistRecyclerView: RecyclerView
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is BottomNavigationListener) {
@@ -191,10 +192,6 @@ class PlayerFragment : Fragment() {
             .into(binding.trackCover)
     }
 
-    fun hideBottomNavigation(isHide: Boolean) {
-        bottomNavigationListener?.toggleBottomNavigationViewVisibility(!isHide)
-    }
-
     fun addPlaylistsToBottomSheetRecyclerView(listOfPlaylists: List<Playlist>) {
         adapter?.playlists?.clear()
         adapter?.playlists?.addAll(listOfPlaylists)
@@ -209,6 +206,7 @@ class PlayerFragment : Fragment() {
         viewModel.checkAndAddTrackToPlaylist(playlist, track)
 
     }
+
     companion object {
         const val EXTRA_TRACK = "EXTRA_TRACK"
 

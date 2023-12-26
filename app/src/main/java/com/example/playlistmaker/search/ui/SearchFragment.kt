@@ -75,6 +75,7 @@ class SearchFragment : Fragment() {
         binding.clearImageView.setOnClickListener {
             binding.searchEditText.setText("")
             binding.historyMessage.visibility = View.VISIBLE
+            binding.clearHistoryButton.visibility = View.VISIBLE
             val inputMethodManager =
                 requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
@@ -106,7 +107,7 @@ class SearchFragment : Fragment() {
         binding.rvSearchResult.visibility = View.GONE
         binding.rvHistory.visibility = View.VISIBLE
         binding.historyMessage.visibility = View.VISIBLE
-        binding.clearHistoryButton.visibility = View.VISIBLE
+
     }
 
     private fun searchHistory() {
@@ -202,6 +203,7 @@ class SearchFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.isEqual()
+
     }
 
     companion object {
