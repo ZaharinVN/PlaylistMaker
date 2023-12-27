@@ -50,14 +50,14 @@ val repositoryModule = module {
     }
 
     single<PlaylistDatabaseRepository> {
-        PlaylistDatabaseRepositoryImpl(playlistDatabase = get())
+        PlaylistDatabaseRepositoryImpl(appDatabase = get())
     }
 
     single<PlaylistMediaDatabaseRepository> {
-        PlaylistMediaDatabaseRepositoryImpl(playlistDatabase = get())
+        PlaylistMediaDatabaseRepositoryImpl(appDatabase = get())
     }
 
     single<PlaylistTrackDatabaseRepository> {
-        PlaylistTrackDatabaseRepositoryImpl(playlistTrackDatabase = get())
+        PlaylistTrackDatabaseRepositoryImpl(appDatabase = get())
     }
 }

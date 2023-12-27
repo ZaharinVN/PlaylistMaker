@@ -5,8 +5,6 @@ import android.media.MediaPlayer
 import androidx.room.Room
 import com.example.playlistmaker.library.data.converters.TrackDbConverter
 import com.example.playlistmaker.library.data.db.AppDatabase
-import com.example.playlistmaker.library.data.db.PlaylistDatabase
-import com.example.playlistmaker.library.data.db.PlaylistTrackDatabase
 import com.example.playlistmaker.search.data.SearchDataStorage
 import com.example.playlistmaker.search.data.network.ITunesSearchApi
 import com.example.playlistmaker.search.data.network.NetworkClient
@@ -75,16 +73,5 @@ val dataModule = module {
         TrackDbConverter()
     }
 
-    single<PlaylistDatabase> {
-        Room.databaseBuilder(androidContext(), PlaylistDatabase::class.java, "playlist_database.db")
-            .fallbackToDestructiveMigration()
-            .build()
-    }
-
-    single<PlaylistTrackDatabase> {
-        Room.databaseBuilder(androidContext(), PlaylistTrackDatabase::class.java, "playlist_track_databases.db")
-            .fallbackToDestructiveMigration()
-            .build()
-    }
 
 }
