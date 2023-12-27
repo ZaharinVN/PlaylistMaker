@@ -2,9 +2,15 @@ package com.example.playlistmaker.di
 
 import com.example.playlistmaker.library.data.converters.TrackDbConverter
 import com.example.playlistmaker.library.data.impl.FavoritesRepositoryImpl
+import com.example.playlistmaker.library.data.impl.PlaylistDatabaseRepositoryImpl
+import com.example.playlistmaker.library.data.impl.PlaylistMediaDatabaseRepositoryImpl
 import com.example.playlistmaker.library.domain.db.FavoritesRepository
+import com.example.playlistmaker.library.domain.db.PlaylistDatabaseRepository
+import com.example.playlistmaker.library.domain.db.PlaylistMediaDatabaseRepository
 import com.example.playlistmaker.player.data.PlayerRepositoryImpl
+import com.example.playlistmaker.player.data.PlaylistTrackDatabaseRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerRepository
+import com.example.playlistmaker.player.domain.api.PlaylistTrackDatabaseRepository
 import com.example.playlistmaker.search.data.impl.SearchRepositoryImpl
 import com.example.playlistmaker.search.domain.api.SearchRepository
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
@@ -41,5 +47,17 @@ val repositoryModule = module {
 
     single<FavoritesRepository> {
         FavoritesRepositoryImpl(get(), get())
+    }
+
+    single<PlaylistDatabaseRepository> {
+        PlaylistDatabaseRepositoryImpl(appDatabase = get())
+    }
+
+    single<PlaylistMediaDatabaseRepository> {
+        PlaylistMediaDatabaseRepositoryImpl(appDatabase = get())
+    }
+
+    single<PlaylistTrackDatabaseRepository> {
+        PlaylistTrackDatabaseRepositoryImpl(appDatabase = get())
     }
 }

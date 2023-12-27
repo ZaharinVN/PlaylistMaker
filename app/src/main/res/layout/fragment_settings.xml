@@ -21,7 +21,9 @@
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/themeSwitcher"
-            style="@style/SettingsImageStyle" />
+            style="@style/SettingsImageStyle"
+
+            android:checked="true"/>
     </LinearLayout>
 
     <LinearLayout
