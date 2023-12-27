@@ -207,6 +207,20 @@ class PlayerFragment : Fragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        hideBottomNavigation(true)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        hideBottomNavigation(false)
+    }
+
+    private fun hideBottomNavigation(isHide: Boolean) {
+        bottomNavigationListener?.toggleBottomNavigationViewVisibility(!isHide)
+    }
+
     companion object {
         const val EXTRA_TRACK = "EXTRA_TRACK"
 
