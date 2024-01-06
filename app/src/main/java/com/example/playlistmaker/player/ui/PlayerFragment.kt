@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +23,7 @@ import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.library.domain.models.Playlist
 import com.example.playlistmaker.player.ui.viewModel.PlayerViewModel
 import com.example.playlistmaker.root.BottomNavigationListener
+import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -231,6 +233,9 @@ class PlayerFragment : Fragment() {
             val fragment = PlayerFragment()
             fragment.arguments = args
             return fragment
+        }
+        fun createArgs(track: TrackSearchModel): Bundle {
+            return bundleOf(EXTRA_TRACK to track)
         }
     }
 }
