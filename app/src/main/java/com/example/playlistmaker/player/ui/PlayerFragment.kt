@@ -23,7 +23,7 @@ import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.library.domain.models.Playlist
 import com.example.playlistmaker.player.ui.viewModel.PlayerViewModel
 import com.example.playlistmaker.root.BottomNavigationListener
-import com.example.playlistmaker.search.domain.model.Track
+
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -181,7 +181,7 @@ class PlayerFragment : Fragment() {
             artistName.text = track.artistName
             trackTimeResult.text = track.trackTimeMillis
             collectionName.text = track.collectionName
-            releaseDate.text = track.releaseDate.substring(0, 4)
+            releaseDate.text = track.releaseDate!!.substring(0, 4)
             primaryGenreName.text = track.primaryGenreName
             country.text = track.country
             progressTime.text = getString(R.string.default_playtime_value)

@@ -1,6 +1,6 @@
 package com.example.playlistmaker.player.domain.api
 
-import com.example.playlistmaker.search.domain.model.Track
+
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 
 interface PlaylistTrackDatabaseRepository {

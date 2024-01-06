@@ -36,7 +36,6 @@ class SearchRepositoryImpl(
                                 it.artistName,
                                 it.getFormattedDuration(),
                                 it.getCoverArtwork(),
-                                it.artworkUrl60,
                                 it.collectionName,
                                 it.releaseDate,
                                 it.primaryGenreName,

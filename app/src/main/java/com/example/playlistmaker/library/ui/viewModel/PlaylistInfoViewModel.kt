@@ -10,7 +10,7 @@ import com.example.playlistmaker.library.domain.db.PlaylistDatabaseInteractor
 import com.example.playlistmaker.library.domain.db.PlaylistMediaDatabaseInteractor
 import com.example.playlistmaker.library.domain.models.Playlist
 import com.example.playlistmaker.player.domain.api.PlaylistTrackDatabaseInteractor
-import com.example.playlistmaker.search.domain.model.Track
+
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -28,7 +28,7 @@ class PlaylistInfoViewModel(
 
     var updatedPlaylist: Playlist? = null
 
-    val listOfCurrentTracks = ArrayList<Track>()
+    val listOfCurrentTracks = ArrayList<TrackSearchModel>()
 
     private val _tracksForCurrentPlaylist = MutableLiveData<PlaylistInfoContainer>()
     val tracksForCurrentPlaylist: LiveData<PlaylistInfoContainer> = _tracksForCurrentPlaylist
@@ -39,7 +39,7 @@ class PlaylistInfoViewModel(
                 .getTracksForCurrentPlaylist(ids)
                 .collect { tracksForCurrentPlaylist ->
                     val listOfTotalTime = tracksForCurrentPlaylist.map { track ->
-                        val timeComponents = track.trackTime?.split(":") // Разделим время на минуты и секунды
+                        val timeComponents = track.trackTimeMillis?.split(":") // Разделим время на минуты и секунды
                         val minutes = timeComponents?.get(0)?.toIntOrNull() ?: 0 // Преобразуем минуты в целое число
                         val seconds = timeComponents?.get(1)?.toIntOrNull() ?: 0 // Преобразуем секунды в целое число
                         val totalMilliseconds = minutes * 60 * 1000 + seconds * 1000 // Переводим время в миллисекунды
@@ -52,7 +52,7 @@ class PlaylistInfoViewModel(
                     val reversedIds = ids.reversed()
 
                     val sortedTracks = tracksForCurrentPlaylist
-                        .sortedBy { track -> reversedIds.indexOf(track.trackId) }
+                        .sortedBy { track -> reversedIds.indexOf(track.trackId.toInt()) }
 
                     _tracksForCurrentPlaylist.postValue(
                         PlaylistInfoContainer(
@@ -64,19 +64,19 @@ class PlaylistInfoViewModel(
         }
     }
 
-    fun checkAndDeleteTrackFromPlaylistTrackDatabase(track: Track) {
+    fun checkAndDeleteTrackFromPlaylistTrackDatabase(track: TrackSearchModel) {
         viewModelScope.launch {
             playlistMediaDatabaseInteractor
                 .getPlaylistsFromDatabase()
                 .collect { listOfPlaylists ->
                     for (playlist in listOfPlaylists) {
                         val listsOfTrackIds = convertStringToList(playlist.listOfTracksId)
-                        if (listsOfTrackIds.contains(track.trackId)) {
+                        if (listsOfTrackIds.contains(track.trackId.toInt())) {
                             return@collect
                         }
                     }
 
-                    deletePlaylistTrackFromDatabaseById(track.trackId)
+                    deletePlaylistTrackFromDatabaseById(track.trackId.toInt())
 
                 }
         }
@@ -137,7 +137,7 @@ class PlaylistInfoViewModel(
             count++
 
             var formattedTime =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime?.toLong())
+                SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis?.toLong())
 
             var trackString = "$count ${track.artistName} - ${track.trackName} ($formattedTime) \n"
 

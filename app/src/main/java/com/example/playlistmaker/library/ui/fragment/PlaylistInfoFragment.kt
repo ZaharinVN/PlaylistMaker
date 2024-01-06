@@ -30,8 +30,8 @@ import com.example.playlistmaker.library.domain.models.Playlist
 import com.example.playlistmaker.library.ui.viewModel.PlaylistInfoViewModel
 import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.root.BottomNavigationListener
-import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
+
 import com.example.playlistmaker.search.ui.TracksAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -53,7 +53,7 @@ class PlaylistInfoFragment : Fragment() {
 
     var playlist: Playlist? = null
 
-    private val onLongClickAction = fun(track: Track): Boolean {
+    private val onLongClickAction = fun(track: TrackSearchModel): Boolean {
         showDeleteTrackDialog(track)
         return true
     }
@@ -269,7 +269,7 @@ class PlaylistInfoFragment : Fragment() {
         }
     }
 
-    private fun showDeleteTrackDialog(track: Track) {
+    private fun showDeleteTrackDialog(track: TrackSearchModel) {
         MaterialAlertDialogBuilder(requireContext(), R.style.MyDialogTheme)
             .setTitle(getString(R.string.delete_track_title))
             .setMessage(getString(R.string.delete_track_message))
@@ -323,12 +323,12 @@ class PlaylistInfoFragment : Fragment() {
         }
     }
 
-    private fun deleteTrackFromPlaylist(track: Track) {
+    private fun deleteTrackFromPlaylist(track: TrackSearchModel) {
 
         val listStringOfTrackIds: String? = playlist?.listOfTracksId
         val listOfTrackIds = listStringOfTrackIds?.let { viewModel.convertStringToList(it) }
 
-        listOfTrackIds?.remove(track.trackId)
+        listOfTrackIds?.remove(track.trackId.toInt())
 
         val newListStringOfTrackIds =
             listOfTrackIds?.let { viewModel.convertListToString(listOfTrackIds) }
@@ -401,8 +401,8 @@ class PlaylistInfoFragment : Fragment() {
         viewModel.listOfCurrentTracks.clear()
         viewModel.listOfCurrentTracks.addAll(playlistInfoContainer.playlistTracks)
 
-        adapter.tracksPL.clear()
-        adapter.tracksPL.addAll(playlistInfoContainer.playlistTracks)
+        adapter.tracks.clear()
+        adapter.tracks.addAll(playlistInfoContainer.playlistTracks)
         adapter.notifyDataSetChanged()
 
         totalAmountOfMinutesTextView.text = playlistInfoContainer.totalTime

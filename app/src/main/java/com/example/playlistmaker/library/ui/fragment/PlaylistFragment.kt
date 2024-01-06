@@ -70,7 +70,7 @@ class PlaylistFragment : Fragment() {
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
-            isClickAllowed = false
+            isClickAllowed = true
 
             viewLifecycleOwner.lifecycleScope.launch {
                 delay(CLICK_DEBOUNCE_DELAY)

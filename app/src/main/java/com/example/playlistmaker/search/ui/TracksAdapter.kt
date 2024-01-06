@@ -4,17 +4,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.domain.model.Track
+
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 
 class TracksAdapter(
-    private val onLongClickListener: (Track) -> Boolean = {true},
+    private val onLongClickListener: (TrackSearchModel) -> Boolean = {true},
     private val getArtWorkUrl60: Boolean = false,
     private val clickListener: TrackClickListener,
 ) : RecyclerView.Adapter<TracksViewHolder>() {
 
     var tracks = ArrayList<TrackSearchModel>()
-    var tracksPL = ArrayList<Track>()
+    var tracksPL = ArrayList<TrackSearchModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_track, parent, false)
