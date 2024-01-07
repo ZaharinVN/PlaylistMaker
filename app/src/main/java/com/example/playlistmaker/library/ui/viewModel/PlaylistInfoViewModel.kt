@@ -136,10 +136,10 @@ class PlaylistInfoViewModel(
         listOfCurrentTracks.forEach { track ->
             count++
 
-            var formattedTime =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis?.toLong())
+            val formattedTime =
+             track.trackTimeMillis?.split(":")
 
-            var trackString = "$count ${track.artistName} - ${track.trackName} ($formattedTime) \n"
+            val trackString = "$count ${track.artistName} - ${track.trackName} ($formattedTime) \n"
 
             message += trackString
         }

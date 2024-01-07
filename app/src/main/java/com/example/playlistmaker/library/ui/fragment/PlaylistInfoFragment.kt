@@ -306,21 +306,17 @@ class PlaylistInfoFragment : Fragment() {
     }
 
     private fun sendMessageToExternalResources() {
-        try {
-            val message = viewModel.getMessageForExternalResources(playlist)
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, message)
-                type = "text/plain"
-            }
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
-        } catch (e: Exception) {
-            Toast.makeText(
-                context, getString(R.string.share_app_not_found),
-                Toast.LENGTH_LONG
-            ).show()
+
+        var message = viewModel.getMessageForExternalResources(playlist)
+
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, message)
+            type = "text/plain"
         }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 
     private fun deleteTrackFromPlaylist(track: TrackSearchModel) {
