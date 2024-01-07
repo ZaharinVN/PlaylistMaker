@@ -28,7 +28,7 @@ class TracksAdapter(
         holder.itemView.setOnClickListener {
             clickListener.onTrackClick(tracks[position])
         }
-        holder.itemView.setOnLongClickListener { onLongClickListener.invoke(tracksPL[position]) }
+        holder.itemView.setOnLongClickListener { onLongClickListener.invoke(tracks[position]) }
     }
 
     fun updateTracks(newTracks: List<TrackSearchModel>) {

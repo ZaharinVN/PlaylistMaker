@@ -376,8 +376,8 @@ class PlaylistInfoFragment : Fragment() {
 
                 playlistCoverBottomSheetImageView.setImageURI(getUriOfImageFromStorage(playlist!!.filePath))
             } else {
-                playlistCoverImageView.setImageResource(R.drawable.placeholder)
-                playlistCoverBottomSheetImageView.setImageResource(R.drawable.placeholder_playlist)
+                playlistCoverImageView.setImageResource(R.drawable.placeholder_max)
+                playlistCoverBottomSheetImageView.setImageResource(R.drawable.placeholder)
             }
 
             nameOfPlaylistTextView.text = playlist!!.name
