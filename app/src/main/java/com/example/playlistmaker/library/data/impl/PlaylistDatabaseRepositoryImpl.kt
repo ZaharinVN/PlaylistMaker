@@ -10,5 +10,4 @@ class PlaylistDatabaseRepositoryImpl(private val appDatabase: AppDatabase) :
     override suspend fun insertPlaylistToDatabase(playlist: Playlist) {
         appDatabase.playlistDao().insertPlaylist(playlist.mapToPlaylistEntity())
     }
-
 }

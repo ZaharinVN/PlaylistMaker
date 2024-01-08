@@ -10,5 +10,4 @@ class PlaylistDatabaseInteractorImpl(
     override suspend fun insertPlaylistToDatabase(playlist: Playlist) {
         playlistDatabaseRepository.insertPlaylistToDatabase(playlist)
     }
-
 }

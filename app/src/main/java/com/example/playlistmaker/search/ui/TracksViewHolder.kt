@@ -24,7 +24,7 @@ class TracksViewHolder(
 
     fun bind(model: TrackSearchModel) {
         Glide.with(itemView)
-            .load(model.artworkUrl100)
+            .load(model.artworkUrl60)
             .placeholder(R.drawable.placeholder)
             .transform(
                 CenterCrop(),

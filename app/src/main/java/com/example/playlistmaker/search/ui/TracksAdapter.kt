@@ -14,7 +14,6 @@ class TracksAdapter(
 ) : RecyclerView.Adapter<TracksViewHolder>() {
 
     var tracks = ArrayList<TrackSearchModel>()
-    var tracksPL = ArrayList<TrackSearchModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_track, parent, false)

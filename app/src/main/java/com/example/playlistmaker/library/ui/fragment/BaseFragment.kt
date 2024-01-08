@@ -25,15 +25,10 @@ import java.io.File
 import java.io.FileOutputStream
 
 abstract class BaseFragment : Fragment() {
-
     var bottomNavigationListener: BottomNavigationListener? = null
-
     lateinit var binding: FragmentNewPlaylistBinding
-
     val viewModel: NewPlaylistViewModel by viewModel()
-
     var imageIsLoaded = false
-
     var uriOfImage: Uri? = null
 
     lateinit var backArrowImageView: ImageView
@@ -43,31 +38,19 @@ abstract class BaseFragment : Fragment() {
     lateinit var newPlayListButton: Button
 
     val textWatcher = object : TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            //
-        }
-
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            enableNewPlaylistButton(p0.toString())
-        }
-
-        override fun afterTextChanged(p0: Editable?) {
-            //
-        }
-
+            enableNewPlaylistButton(p0.toString()) }
+        override fun afterTextChanged(p0: Editable?) {}
     }
 
     val pickMediaCommon =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
                 loadImageImageView.scaleType = ImageView.ScaleType.CENTER_CROP
                 loadImageImageView.setImageURI(uri)
                 imageIsLoaded = true
                 uriOfImage = uri
-            } else {
-                Log.d("PhotoPicker", "No media selected")
             }
-        }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -114,7 +97,6 @@ abstract class BaseFragment : Fragment() {
         bottomNavigationListener?.toggleBottomNavigationViewVisibility(!isHide)
     }
 
-
     fun enableNewPlaylistButton(text: String?) {
         newPlayListButton.isEnabled = !text.isNullOrEmpty()
     }
@@ -126,14 +108,11 @@ abstract class BaseFragment : Fragment() {
             filePath.mkdirs()
         }
         val file = File(filePath, nameOfFile)
-
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
-
-        Log.d("d", "Сохранено в по адресу ${file.absolutePath}")
     }
 
 }

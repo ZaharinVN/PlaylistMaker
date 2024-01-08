@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.flow
 
 class PlaylistMediaDatabaseRepositoryImpl(private val appDatabase: AppDatabase) :
     PlaylistMediaDatabaseRepository {
+
     override suspend fun getPlaylistsFromDatabase(): Flow<List<Playlist>> = flow {
         val playlistEntityList = appDatabase.playlistDao().getPlaylists()
         emit(playlistEntityList.map { playlistEntity -> playlistEntity.mapToPlaylist() })
@@ -18,4 +19,5 @@ class PlaylistMediaDatabaseRepositoryImpl(private val appDatabase: AppDatabase) 
     override suspend fun deletePlaylist(playlist: Playlist) {
         appDatabase.playlistDao().deletePlaylist(playlist.mapToPlaylistEntity())
     }
+
 }
