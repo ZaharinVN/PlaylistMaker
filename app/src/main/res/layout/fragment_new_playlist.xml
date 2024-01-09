@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:text="@string/add_playlist"
         android:textSize="22sp"
+        android:textColor="@color/main_black"
         android:layout_marginStart="24dp"
         android:layout_marginTop="10dp"
         app:layout_constraintTop_toTopOf="parent"

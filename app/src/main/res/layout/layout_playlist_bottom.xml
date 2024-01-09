@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="XX tracks"
-        android:textColor="@color/text_gray"
+        android:textColor="@color/main_black"
         android:textSize="11sp"
         app:layout_constraintStart_toEndOf="@+id/coverView"
         app:layout_constraintTop_toBottomOf="@+id/tv_playlist_name" />
