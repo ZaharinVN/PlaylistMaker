@@ -21,7 +21,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistInfoBinding
-import com.example.playlistmaker.library.container.PlaylistInfoContainer
+import com.example.playlistmaker.library.domain.container.PlaylistInfoContainer
 import com.example.playlistmaker.library.domain.models.Playlist
 import com.example.playlistmaker.library.ui.viewModel.PlaylistInfoViewModel
 import com.example.playlistmaker.player.ui.PlayerFragment
@@ -232,7 +232,7 @@ class PlaylistInfoFragment : Fragment() {
             }
             .setPositiveButton(getString(R.string.yes)) { dialog, which ->
                 viewModel.deletePlaylist(playlist)
-                findNavController().navigateUp()
+                findNavController().popBackStack(R.id.libraryFragment, false)
             }
             .show()
     }

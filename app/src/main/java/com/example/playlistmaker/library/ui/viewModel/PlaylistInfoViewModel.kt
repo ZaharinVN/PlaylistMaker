@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.library.container.PlaylistInfoContainer
+import com.example.playlistmaker.library.domain.container.PlaylistInfoContainer
 import com.example.playlistmaker.library.domain.db.CurrentPlaylistInteractor
 import com.example.playlistmaker.library.domain.db.PlaylistDatabaseInteractor
 import com.example.playlistmaker.library.domain.db.PlaylistMediaDatabaseInteractor
@@ -12,8 +12,6 @@ import com.example.playlistmaker.library.domain.models.Playlist
 import com.example.playlistmaker.player.domain.api.PlaylistTrackDatabaseInteractor
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
 
 class PlaylistInfoViewModel(
     private val currentPlaylistInteractor: CurrentPlaylistInteractor,
@@ -34,14 +32,15 @@ class PlaylistInfoViewModel(
                 .getTracksForCurrentPlaylist(ids)
                 .collect { tracksForCurrentPlaylist ->
                     val listOfTotalTime = tracksForCurrentPlaylist.map { track ->
-                        val timeComponents =
-                            track.trackTimeMillis?.split(":") // Разделим время на минуты и секунды
-                        val minutes = timeComponents?.get(0)?.toIntOrNull()
-                            ?: 0 // Преобразуем минуты в целое число
-                        val seconds = timeComponents?.get(1)?.toIntOrNull()
-                            ?: 0 // Преобразуем секунды в целое число
-                        val totalMilliseconds =
-                            minutes * 60 * 1000 + seconds * 1000 // Переводим время в миллисекунды
+                        val timeComponents = track.trackTimeMillis?.split(":") ?: emptyList()
+                        val duration = timeComponents
+                            .map { component -> component.toIntOrNull() ?: 0 }
+                            .takeLast(3) // Оставляем только минуты, секунды и миллисекунды
+                        val totalMilliseconds = when (duration.size) {
+                            3 -> duration[0] * 60 * 60 * 1000 + duration[1] * 60 * 1000 + duration[2] * 1000
+                            2 -> duration[0] * 60 * 1000 + duration[1] * 1000
+                            else -> 0
+                        }
                         totalMilliseconds
                     }
 

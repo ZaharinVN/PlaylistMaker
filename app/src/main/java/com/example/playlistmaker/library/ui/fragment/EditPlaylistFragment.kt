@@ -26,6 +26,7 @@ class EditPlaylistFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 findNavController().navigateUp()
@@ -35,20 +36,20 @@ class EditPlaylistFragment : BaseFragment() {
         initViews()
 
         newPlaylistHeader = binding.newPlaylistHeader
-        editNameEditText.addTextChangedListener(textWatcher)
+        editNameEditText?.addTextChangedListener(textWatcher)
 
         val pickMedia = pickMediaCommon
         playlist = requireArguments().getSerializableExtra(EDIT_PLAYLIST, Playlist::class.java)
         renderWithSerializableData()
-        backArrowImageView.setOnClickListener {
+        backArrowImageView?.setOnClickListener {
             findNavController().navigateUp()
         }
 
-        loadImageImageView.setOnClickListener {
+        loadImageImageView?.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        newPlayListButton.setOnClickListener {
+        newPlayListButton?.setOnClickListener {
             editPlaylist()
         }
 
@@ -58,22 +59,22 @@ class EditPlaylistFragment : BaseFragment() {
         if (playlist != null) {
             newPlaylistHeader.text = getString(R.string.edit_current_playlist)
             if (playlist!!.filePath.isNotEmpty()) {
-                loadImageImageView.scaleType = ImageView.ScaleType.CENTER_CROP
-                loadImageImageView.setImageURI(getUriOfImageFromStorage(playlist!!.filePath))
+                loadImageImageView?.scaleType   = ImageView.ScaleType.CENTER_CROP
+                loadImageImageView?.setImageURI(getUriOfImageFromStorage(playlist!!.filePath))
             } else {
-                loadImageImageView.scaleType = ImageView.ScaleType.CENTER
-                loadImageImageView.setImageResource(R.drawable.ic_add_photo)
+                loadImageImageView?.scaleType   = ImageView.ScaleType.CENTER
+                loadImageImageView?.setImageResource(R.drawable.ic_add_photo)
             }
-            editNameEditText.setText(playlist!!.name)
-            editDescriptionEditText.setText(playlist!!.description)
-            newPlayListButton.text = getString(R.string.save_button_edit)
+            editNameEditText?.setText(playlist!!.name)
+            editDescriptionEditText?.setText(playlist!!.description)
+            newPlayListButton?.text   = getString(R.string.save_button_edit)
         }
     }
 
     private fun editPlaylist() {
         val filepath = if (uriOfImage != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                viewModel.getNameForFile(editNameEditText.text.toString()) ?: return
+                viewModel.getNameForFile(editNameEditText?.text.toString()) ?: return
             } else {
                 TODO("VERSION.SDK_INT < O")
             }  // Вызов функции и обработка возможного null результата
@@ -82,8 +83,8 @@ class EditPlaylistFragment : BaseFragment() {
         }
 
         val updatedPlaylist = playlist?.copy(
-            name = editNameEditText.text.toString(),
-            description = editDescriptionEditText.text.toString(),
+            name = editNameEditText?.text.toString(),
+            description = editDescriptionEditText?.text.toString(),
             filePath = filepath,
             insertTimeStamp = System.currentTimeMillis()
         )

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.library.container
+package com.example.playlistmaker.library.domain.container
 
 import com.example.playlistmaker.search.domain.model.TrackSearchModel
 

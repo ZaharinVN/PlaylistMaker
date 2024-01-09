@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,29 +27,31 @@ abstract class BaseFragment : Fragment() {
     var bottomNavigationListener: BottomNavigationListener? = null
     lateinit var binding: FragmentNewPlaylistBinding
     val viewModel: NewPlaylistViewModel by viewModel()
-    var imageIsLoaded = false
+    var imageIsLoaded: Boolean = false
     var uriOfImage: Uri? = null
 
-    lateinit var backArrowImageView: ImageView
-    lateinit var loadImageImageView: ImageView
-    lateinit var editNameEditText: TextInputEditText
-    lateinit var editDescriptionEditText: TextInputEditText
-    lateinit var newPlayListButton: Button
+    var backArrowImageView: ImageView? = null
+    var loadImageImageView: ImageView? = null
+    var editNameEditText: TextInputEditText? = null
+    var editDescriptionEditText: TextInputEditText? = null
+    var newPlayListButton: Button? = null
 
     val textWatcher = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            enableNewPlaylistButton(p0.toString()) }
+            enableNewPlaylistButton(p0.toString())
+        }
+
         override fun afterTextChanged(p0: Editable?) {}
     }
 
     val pickMediaCommon =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-                loadImageImageView.scaleType = ImageView.ScaleType.CENTER_CROP
-                loadImageImageView.setImageURI(uri)
-                imageIsLoaded = true
-                uriOfImage = uri
-            }
+            loadImageImageView?.scaleType = ImageView.ScaleType.CENTER_CROP
+            loadImageImageView?.setImageURI(uri)
+            imageIsLoaded = true
+            uriOfImage = uri
+        }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -98,7 +99,7 @@ abstract class BaseFragment : Fragment() {
     }
 
     fun enableNewPlaylistButton(text: String?) {
-        newPlayListButton.isEnabled = !text.isNullOrEmpty()
+        newPlayListButton?.isEnabled  = !text.isNullOrEmpty()
     }
 
     fun saveImageToPrivateStorage(uri: Uri, nameOfFile: String) {
