@@ -45,5 +45,4 @@ class FavoritesRepositoryImpl(
         appDatabase.trackDao().deleteFromFavorites(trackEntity)
     }
 
-
 }

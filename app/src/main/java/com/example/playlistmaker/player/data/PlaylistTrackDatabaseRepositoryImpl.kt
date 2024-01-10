@@ -19,4 +19,13 @@ class PlaylistTrackDatabaseRepositoryImpl(
     ): Boolean {
         return playlistTracks.contains(track?.trackId?.toInt())
     }
+
+    override suspend fun deletePlaylistTrackFromDatabase(track: TrackSearchModel) {
+        appDatabase.playlistTrackDao()
+            .deletePlaylistTrack(track.mapToPlaylistTrackEntity(newTimeStamp = false))
+    }
+
+    override suspend fun deletePlaylistTrackFromDatabaseById(id: Int) {
+        appDatabase.playlistTrackDao().deleteTrackById(id)
+    }
 }

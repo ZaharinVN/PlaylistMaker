@@ -25,5 +25,4 @@ class FavoritesInteractorImpl(private val favoritesRepository: FavoritesReposito
         favoritesRepository.deleteFromFavorites(track)
     }
 
-
 }
