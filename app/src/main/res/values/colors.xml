@@ -15,5 +15,5 @@
     <color name="main_white">#FFFFFFFF</color>
     <color name="text_gray">#AEAFB4</color>
     <color name="light_gray">#E6E8EB</color>
-
+    <color name="fill_gray">#AEAFB8</color>
 </resources>

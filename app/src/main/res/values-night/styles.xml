@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="MainTitleText">
         <item name="android:layout_width">150dp</item>
@@ -262,7 +262,7 @@
     <style name="playerCoverTrackStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>
-        <item name="android:layout_marginTop">32dp</item>
+        <item name="android:layout_marginTop">16dp</item>
         <item name="android:scaleType">centerCrop</item>
         <item name="layout_constraintDimensionRatio">1:1</item>
         <item name="layout_constraintEnd_toStartOf">@id/rightBorder</item>
@@ -291,8 +291,6 @@
         <item name="layout_constraintEnd_toStartOf">@+id/btnFavorite</item>
         <item name="layout_constraintTop_toBottomOf">@+id/artistName</item>
         <item name="layout_constraintBottom_toTopOf">@+id/progressTime</item>
-        <item name="android:layout_marginTop">44dp</item>
-        <item name="android:layout_weight">1</item>
         <item name="android:src">@drawable/ic_pause_dark</item>
     </style>
 
@@ -383,6 +381,7 @@
         <item name="android:letterSpacing">0</item>
         <item name="android:textAlignment">center</item>
     </style>
+
     <style name="TabLayoutTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
     </style>

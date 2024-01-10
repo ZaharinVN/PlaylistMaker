@@ -6,7 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        tools:context=".player.ui.PlayerFragment">
         <androidx.constraintlayout.widget.ConstraintLayout
             style="@style/playerBackBtnStyle"
             android:layout_width="match_parent"
@@ -150,7 +154,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+</ScrollView>
     <View
         android:id="@+id/overlay"
         android:layout_width="match_parent"
