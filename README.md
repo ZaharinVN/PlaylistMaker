@@ -48,6 +48,17 @@
 - Retrofit2
 - Glide
 
+# Системные требования
+- Минимальная версия SDK для Андроид **24**
+ 
+## Установка
+[![APK Download](https://img.shields.io/badge/APK-Download-brightgreen?logo=android)](https://github.com/ZaharinVN/PlaylistMaker/blob/master/PlaylistMaker.v.1.apk)
+
+Запуск проекта в Android Studio
+
+```bash
+https://github.com/ZaharinVN/PlaylistMaker.git
+```
 ## Скриншоты
 <p float="left">
     <img src="https://github.com/ZaharinVN/PlaylistMaker/blob/dev/Screenshot_1.png" width="250"> 
